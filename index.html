@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TelcoPulse MaaS | Huawei AICC & ModelArts Studio Hackathon</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            huawei: {
+              red: '#CF0A2C',
+              darkred: '#960018',
+              gray: '#1E232A',
+              card: '#161A22',
+              border: '#2A303C',
+              accent: '#3B82F6'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @keyframes pulse-slow {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(1.02); }
+    }
+    .pulse-glow {
+      box-shadow: 0 0 25px rgba(207, 10, 44, 0.35);
+    }
+    .waveform-bar {
+      transition: height 0.15s ease;
+    }
+    .toast-animate {
+      animation: fadeInOut 2.5s ease forwards;
+    }
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateY(10px); }
+      15% { opacity: 1; transform: translateY(0); }
+      85% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-10px); }
+    }
+  </style>
+</head>
+<body class="bg-[#0B0E14] text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-huawei-red selection:text-white">
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="hidden fixed bottom-6 right-6 z-50 bg-emerald-600 text-white text-xs font-bold px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 border border-emerald-400">
+    <i data-lucide="check-circle" class="w-4 h-4"></i>
+    <span id="toastMsg">¡Plantilla copiada al portapapeles!</span>
+  </div>
+
+  <!-- TOP HEADER -->
+  <header class="border-b border-[#222734] bg-[#121620]/90 backdrop-blur sticky top-0 z-50 px-6 py-3.5 flex items-center justify-between">
+    <div class="flex items-center gap-3.5">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-huawei-red to-orange-500 flex items-center justify-center font-bold text-white shadow-lg shadow-huawei-red/30">
+        <i data-lucide="activity" class="w-6 h-6"></i>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">TelcoPulse <span class="text-huawei-red">MaaS</span></span>
+          <span class="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-full bg-huawei-red/20 text-rose-300 border border-huawei-red/30">Huawei Cloud Hackathon Perú</span>
+        </div>
+        <p class="text-xs text-slate-400">Auditoría con <strong>Huawei AICC</strong> + Autocompletado de Plantillas <strong>Backoffice Hitss N2</strong></p>
+      </div>
+    </div>
+
+    <!-- STATUS CHIPS -->
+    <div class="flex items-center gap-4 text-xs">
+      <div class="hidden lg:flex items-center gap-2 bg-[#1A1F2C] border border-[#2C3345] px-3 py-1.5 rounded-lg">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span class="text-slate-300">Huawei AICC Telephony</span>
+        <span class="text-slate-500">|</span>
+        <span class="text-emerald-400 font-mono font-medium">Sincronizado</span>
+      </div>
+      <div class="hidden md:flex items-center gap-2 bg-[#1A1F2C] border border-[#2C3345] px-3 py-1.5 rounded-lg">
+        <i data-lucide="cpu" class="w-4 h-4 text-sky-400"></i>
+        <span class="text-slate-300">Inferencia:</span>
+        <span class="text-sky-300 font-mono font-semibold">Ascend 910B (MaaS)</span>
+      </div>
+      <div class="flex items-center gap-1.5 bg-huawei-red/15 border border-huawei-red/40 px-3 py-1.5 rounded-lg text-rose-300 font-medium">
+        <i data-lucide="shield-check" class="w-4 h-4 text-rose-400"></i>
+        <span>ModelArts Guard Active</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <div class="bg-[#121620] border-b border-[#222734] px-6 flex gap-6 text-sm">
+    <button onclick="switchTab('audit')" id="tab-audit" class="py-3 px-1 border-b-2 border-huawei-red text-white font-semibold flex items-center gap-2 transition">
+      <i data-lucide="phone-call" class="w-4 h-4 text-huawei-red"></i>
+      Auditoría N2 & Plantilla Hitss en Vivo
+    </button>
+    <button onclick="switchTab('dashboard')" id="tab-dashboard" class="py-3 px-1 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-medium flex items-center gap-2 transition">
+      <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+      Portal de Calidad y Formación (Llamadas 15m - 1h)
+    </button>
+    <button onclick="switchTab('architecture')" id="tab-architecture" class="py-3 px-1 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-medium flex items-center gap-2 transition">
+      <i data-lucide="network" class="w-4 h-4"></i>
+      Arquitectura Huawei AICC + MaaS
+    </button>
+  </div>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 p-6 max-w-7xl w-full mx-auto">
+
+    <!-- ========================================== -->
+    <!-- TAB 1: AUDITORÍA DE LLAMADA EN VIVO & PLANTILLAS -->
+    <!-- ========================================== -->
+    <div id="content-audit" class="space-y-6">
+
+      <!-- TOP SELECTION CARD -->
+      <div class="bg-[#151922] border border-[#232938] rounded-2xl p-5 shadow-xl">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i data-lucide="inbox" class="w-5 h-5 text-huawei-red"></i>
+              Sesión de Grabación desde Huawei AICC (Llamada Extensa N2)
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5">Llamadas reales de soporte técnico (15 a 60 min). MaaS las audita en segundos y genera la plantilla oficial de Backoffice Hitss.</p>
+          </div>
+          
+          <div class="flex items-center gap-3">
+            <select id="caseSelector" onchange="loadCase()" class="bg-[#1D2331] border border-[#30384C] text-sm text-slate-200 rounded-xl px-3.5 py-2 focus:ring-2 focus:ring-huawei-red focus:outline-none cursor-pointer">
+              <option value="case1">🔴 Caso 1: Cola Marcador Robot AICC (38m) - Upstream fuera de rango (Flyer 41) + Sin Pausa + SIAC/Helix</option>
+              <option value="case2">🟡 Caso 2: Primer Toque (24m) - Cobertura FTTH + Repetidores Terceros + Educación Plume</option>
+              <option value="case3">🔵 Caso 3: Primer Toque (No Contesta) - Auto-Gestión Ciclo 2x3 (3 llamadas c/2h x 2 días en AICC/SIAC)</option>
+            </select>
+            <button onclick="runAuditAnalysis()" id="btnAnalyze" class="bg-gradient-to-r from-huawei-red to-rose-700 hover:from-rose-600 hover:to-huawei-red text-white text-sm font-bold px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-lg shadow-huawei-red/30 transition transform active:scale-95">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              <span>Procesar con MaaS</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CALL REPLAYER & TRANSCRIPTION -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- LEFT: AUDIO & TRANSCRIPT (5 COLS) -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="bg-[#151922] border border-[#232938] rounded-2xl p-5 shadow-lg">
+            <div class="flex items-center justify-between border-b border-[#232938] pb-3 mb-4">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold">
+                  <i data-lucide="headphones" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <h3 class="text-sm font-semibold text-white" id="callCustomerName">Cliente: Fernando Alarcón (Tel: 982280035)</h3>
+                  <span class="text-[11px] text-slate-400 font-mono" id="callMeta">Huawei AICC ID: 7b0ab79d-927f-4b64... | Duración: 38m 45s</span>
+                </div>
+              </div>
+              <span id="callBadge" class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-rose-500/20 text-rose-300 border border-rose-500/30">N2 Crítica (38 min)</span>
+            </div>
+
+            <!-- SIMULATED AUDIO PLAYER -->
+            <div class="bg-[#0F121A] border border-[#1E2433] rounded-xl p-3.5 space-y-2.5">
+              <div class="flex items-center justify-between text-xs text-slate-400">
+                <div class="flex items-center gap-2">
+                  <button id="btnPlayAudio" onclick="togglePlayAudio()" class="w-7 h-7 rounded-full bg-huawei-red hover:bg-rose-600 text-white flex items-center justify-center transition">
+                    <i data-lucide="play" class="w-3.5 h-3.5" id="playIcon"></i>
+                  </button>
+                  <span class="text-slate-300 font-medium">Audio Huawei AICC (Grabación Estéreo)</span>
+                </div>
+                <span class="font-mono text-slate-400" id="audioTime">12:35 / 38:45</span>
+              </div>
+              
+              <!-- VISUAL WAVEFORM -->
+              <div class="h-8 flex items-center gap-1 px-1 bg-[#161B26] rounded-lg overflow-hidden" id="waveform"></div>
+            </div>
+
+            <!-- TRANSCRIPT CONTAINER -->
+            <div class="mt-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                  <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                  Transcripción AICC (Descartes Técnicos en Vivo)
+                </span>
+                <span class="text-[10px] text-amber-400 font-mono">Incógnito • Schaman • TR-069</span>
+              </div>
+              <div id="transcriptBox" class="h-80 overflow-y-auto space-y-2.5 pr-2 text-xs font-sans text-slate-300 bg-[#0E1118] p-3 rounded-xl border border-[#1E2433] leading-relaxed"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: MAAS REAL-TIME ANALYSIS ENGINE (7 COLS) -->
+        <div class="lg:col-span-7 space-y-4">
+
+          <!-- LIVE STATUS & API REQUEST BANNER -->
+          <div id="maasStatusBanner" class="bg-gradient-to-r from-slate-900 to-[#151A26] border border-[#263044] rounded-2xl p-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-huawei-red/20 text-rose-400 flex items-center justify-center">
+                <i data-lucide="zap" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-sm font-bold text-white">Huawei Cloud ModelArts MaaS API</span>
+                  <span class="px-2 py-0.5 text-[10px] font-mono rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">200 OK</span>
+                </div>
+                <p class="text-xs text-slate-400">Contexto Largo: <span class="text-sky-300 font-mono font-medium">38 min procesados en 240 ms con Ascend NPU</span></p>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="text-xs text-slate-400 block">Ahorro en ACW Asesor</span>
+              <span class="text-sm font-mono font-bold text-emerald-400">~4 min 15 seg</span>
+            </div>
+          </div>
+
+          <!-- OPERATIONAL COMPLIANCE & ANTI-PAUSE SHIELD -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div class="bg-[#131722] border border-emerald-900/40 rounded-xl p-2.5 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="text-slate-300">Auditoría Horaria AICC:</span>
+                <strong class="text-emerald-400 font-mono">100% CUMPLIDO</strong>
+              </div>
+              <span class="text-[10px] text-slate-400">Cero casos pendientes</span>
+            </div>
+            <div class="bg-[#131722] border border-sky-900/40 rounded-xl p-2.5 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5 text-sky-400"></i>
+                <span class="text-slate-300">Protección Marcador Robot:</span>
+                <strong class="text-sky-300 font-mono">Pausa: 0m 12s</strong>
+              </div>
+              <span class="text-[10px] text-emerald-400 font-medium">¡Límite 3 min seguro!</span>
+            </div>
+          </div>
+
+          <!-- KEY AI SCORES GRID -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+            <!-- SENTIMENT -->
+            <div class="bg-[#151922] border border-[#232938] rounded-xl p-3.5 relative overflow-hidden">
+              <div class="flex items-center justify-between text-slate-400 text-xs mb-1">
+                <span>Frustración / Sentimiento</span>
+                <i data-lucide="frown" class="w-4 h-4 text-rose-400" id="sentimentIcon"></i>
+              </div>
+              <div class="text-xl font-black text-rose-400 mt-1" id="scoreSentiment">-88%</div>
+              <div class="w-full bg-[#1E2433] h-1.5 rounded-full mt-2 overflow-hidden">
+                <div id="barSentiment" class="bg-rose-500 h-full rounded-full transition-all duration-500" style="width: 88%"></div>
+              </div>
+              <span class="text-[10px] text-slate-400 mt-1 block font-medium" id="labelSentiment">Cliente molesto por 40m en línea</span>
+            </div>
+
+            <!-- CHURN RISK -->
+            <div class="bg-[#151922] border border-[#232938] rounded-xl p-3.5 relative overflow-hidden">
+              <div class="flex items-center justify-between text-slate-400 text-xs mb-1">
+                <span>Riesgo Fuga / Portabilidad</span>
+                <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-400" id="churnIcon"></i>
+              </div>
+              <div class="text-xl font-black text-amber-400 mt-1" id="scoreChurn">94%</div>
+              <div class="w-full bg-[#1E2433] h-1.5 rounded-full mt-2 overflow-hidden">
+                <div id="barChurn" class="bg-amber-500 h-full rounded-full transition-all duration-500" style="width: 94%"></div>
+              </div>
+              <span class="text-[10px] text-rose-400 mt-1 block font-medium" id="labelChurn">Amenaza con portar 3 líneas</span>
+            </div>
+
+            <!-- QA AUDIT / FLYER 41 -->
+            <div class="bg-[#151922] border border-[#232938] rounded-xl p-3.5 relative overflow-hidden">
+              <div class="flex items-center justify-between text-slate-400 text-xs mb-1">
+                <span>Auditoría Técnica (Flyer 41)</span>
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400" id="osiptelIcon"></i>
+              </div>
+              <div class="text-xl font-black text-emerald-400 mt-1" id="scoreOsiptel">92 / 100 (OK)</div>
+              <div class="w-full bg-[#1E2433] h-1.5 rounded-full mt-2 overflow-hidden">
+                <div id="barOsiptel" class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 92%"></div>
+              </div>
+              <span class="text-[10px] text-slate-400 mt-1 block font-medium" id="labelOsiptel">SOT Mtto emitido según norma</span>
+            </div>
+          </div>
+
+          <!-- DETAILED AI OUTPUT PANELS -->
+          <div class="space-y-3">
+
+            <!-- HITSS BACKOFFICE AUTO-TEMPLATE (THE REAL DEAL) -->
+            <div class="bg-[#151922] border border-sky-900/50 rounded-xl p-4 bg-gradient-to-b from-sky-950/20 to-transparent space-y-3">
+              
+              <!-- AICC WRAP-UP FAST BAR -->
+              <div class="bg-[#0D111A] border border-[#232C40] rounded-lg p-2.5 flex items-center justify-between text-xs">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/30">Tipificación Huawei AICC</span>
+                  <span class="text-slate-300 font-mono text-[11px]" id="aiccTipificationText">Caso: CAS-982280-26 | Cliente: Fernando Alarcón</span>
+                </div>
+                <button onclick="copyAiccTipification()" class="bg-[#1C2333] hover:bg-[#283248] border border-[#344059] text-slate-200 text-[10px] font-bold px-2.5 py-1 rounded flex items-center gap-1 transition">
+                  <i data-lucide="copy" class="w-3 h-3 text-amber-400"></i>
+                  <span>Copiar para AICC</span>
+                </button>
+              </div>
+
+              <!-- SIAC UNICO & HELIX FULL TEMPLATE -->
+              <div>
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                  <div class="flex items-center gap-2 text-sky-400 text-xs font-bold uppercase tracking-wider">
+                    <i data-lucide="clipboard-check" class="w-4 h-4"></i>
+                    Plantilla Técnica para SIAC Único & BMC Helix
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <button onclick="copyHitssTemplate('SIAC Único')" class="bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 shadow transition active:scale-95">
+                      <i data-lucide="copy" class="w-3 h-3"></i>
+                      <span>Copiar para SIAC Único</span>
+                    </button>
+                    <button onclick="copyHitssTemplate('BMC Helix')" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 shadow transition active:scale-95">
+                      <i data-lucide="copy" class="w-3 h-3"></i>
+                      <span>Copiar para Helix</span>
+                    </button>
+                  </div>
+                </div>
+                <div class="bg-[#0C0F17] border border-[#1E2538] rounded-lg p-3 text-xs font-mono text-emerald-300 whitespace-pre-wrap leading-relaxed select-all" id="hitssTemplateBox">
+                  <!-- Template content will appear here -->
+                </div>
+              </div>
+
+            </div>
+
+            <!-- CALIDAD & FORMACIÓN PEDAGOGICAL FEEDBACK -->
+            <div class="bg-[#151922] border border-purple-900/40 rounded-xl p-3.5 bg-gradient-to-b from-purple-950/15 to-transparent">
+              <div class="flex items-center justify-between mb-1.5">
+                <div class="flex items-center gap-2 text-purple-400 text-xs font-bold uppercase tracking-wider">
+                  <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                  Diagnóstico para el Área de Calidad y Formación
+                </div>
+                <span class="text-[10px] font-mono bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded border border-purple-500/30">Insight Pedagógico</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed" id="trainingFeedback">
+                <!-- Training feedback dynamic -->
+              </p>
+            </div>
+
+            <!-- RETENTION & REGULATORY SUMMARY -->
+            <div class="bg-[#151922] border border-[#232938] rounded-xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+              <div class="flex items-center gap-2.5">
+                <div class="w-7 h-7 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold">
+                  <i data-lucide="shield-alert" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <span class="font-bold text-white block">Cumplimiento Regulatorio OSIPTEL:</span>
+                  <span class="text-slate-300 text-[11px]" id="osiptelDetails">SOT 90888521 generado dentro del plazo legal. Sin omisión de reclamo.</span>
+                </div>
+              </div>
+              <div class="bg-[#10141F] border border-[#232C3E] px-3 py-1.5 rounded-lg text-emerald-400 font-medium text-[11px] flex items-center gap-1.5">
+                <i data-lucide="gift" class="w-3.5 h-3.5"></i>
+                <span id="retentionShort">Oferta: 30% dscto x 6 meses + Visita técnica prioritaria</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: PORTAL DE CALIDAD Y FORMACIÓN (100%) -->
+    <!-- ========================================== -->
+    <div id="content-dashboard" class="hidden space-y-6">
+
+      <!-- KPI METRICS SUMMARY -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-[#151922] border border-[#232938] rounded-2xl p-5 shadow-lg">
+          <div class="flex items-center justify-between text-slate-400 text-xs">
+            <span>Auditoría de Llamadas de 15m a 1h</span>
+            <span class="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400"><i data-lucide="check-circle" class="w-4 h-4"></i></span>
+          </div>
+          <div class="text-3xl font-extrabold text-white mt-2">100%</div>
+          <div class="flex items-center gap-1.5 text-xs text-emerald-400 mt-2">
+            <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
+            <span>vs. 0.8% auditado manualmente por Calidad</span>
+          </div>
+        </div>
+
+        <div class="bg-[#151922] border border-[#232938] rounded-2xl p-5 shadow-lg">
+          <div class="flex items-center justify-between text-slate-400 text-xs">
+            <span>Horas-Hombre Ahorradas en Formación</span>
+            <span class="p-1.5 rounded-lg bg-sky-500/10 text-sky-400"><i data-lucide="clock" class="w-4 h-4"></i></span>
+          </div>
+          <div class="text-3xl font-extrabold text-sky-400 mt-2">+5,300 h</div>
+          <div class="flex items-center gap-1.5 text-xs text-sky-300 mt-2">
+            <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+            <span>Mes/operación al eliminar escucha manual</span>
+          </div>
+        </div>
+
+        <div class="bg-[#151922] border border-[#232938] rounded-2xl p-5 shadow-lg">
+          <div class="flex items-center justify-between text-slate-400 text-xs">
+            <span>Tiempo ACW (Llenado de Plantillas)</span>
+            <span class="p-1.5 rounded-lg bg-amber-500/10 text-amber-400"><i data-lucide="file-check" class="w-4 h-4"></i></span>
+          </div>
+          <div class="text-3xl font-extrabold text-amber-400 mt-2">-4 min/call</div>
+          <div class="flex items-center gap-1.5 text-xs text-amber-300 mt-2">
+            <i data-lucide="trending-down" class="w-3.5 h-3.5"></i>
+            <span>Autocompletado instantáneo en Backoffice Hitss</span>
+          </div>
+        </div>
+
+        <div class="bg-[#151922] border border-[#232938] rounded-2xl p-5 shadow-lg">
+          <div class="flex items-center justify-between text-slate-400 text-xs">
+            <span>Ahorro Estimado (Churn + Multas OSIPTEL)</span>
+            <span class="p-1.5 rounded-lg bg-rose-500/10 text-rose-400"><i data-lucide="dollar-sign" class="w-4 h-4"></i></span>
+          </div>
+          <div class="text-3xl font-extrabold text-rose-400 mt-2">$1.35M</div>
+          <div class="flex items-center gap-1.5 text-xs text-rose-300 mt-2">
+            <i data-lucide="shield" class="w-3.5 h-3.5"></i>
+            <span>Cero sanciones por omisión de SOT o reclamos</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHARTS SECTION -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- CHART 1: FALLAS TÉCNICAS MÁS FRECUENTES DETECTADAS POR MAAS -->
+        <div class="bg-[#151922] border border-[#232938] rounded-2xl p-5 shadow-lg">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <i data-lucide="bar-chart-3" class="w-4 h-4 text-huawei-red"></i>
+              Temas de Capacitación Detectados para Formación
+            </h3>
+            <span class="text-xs text-slate-400 font-mono">Últimos 30 días</span>
+          </div>
+          <div class="h-64 flex items-center justify-center">
+            <canvas id="trainingChart"></canvas>
+          </div>
+        </div>
+
+        <!-- CHART 2: MOTIVOS DE LLAMADAS N2 -->
+        <div class="bg-[#151922] border border-[#232938] rounded-2xl p-5 shadow-lg">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <i data-lucide="pie-chart" class="w-4 h-4 text-sky-400"></i>
+              Distribución de Casos en Soporte N2 Claro (HFC / FTTH)
+            </h3>
+            <span class="text-xs text-slate-400 font-mono">80,000 llamadas auditadas</span>
+          </div>
+          <div class="h-64 flex items-center justify-center">
+            <canvas id="n2CasesChart"></canvas>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: ARQUITECTURA TÉCNICA HUAWEI CLOUD -->
+    <!-- ========================================== -->
+    <div id="content-architecture" class="hidden space-y-6">
+      
+      <div class="bg-[#151922] border border-[#232938] rounded-2xl p-6 shadow-xl space-y-6">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-huawei-red">Arquitectura de Solución Cloud-Native</span>
+          <h2 class="text-xl font-extrabold text-white mt-1">Integración Nativa: Huawei AICC + Huawei Cloud MaaS</h2>
+          <p class="text-xs text-slate-400 mt-1">Cómo se conectan la telefonía de Contact Center de Huawei con la inferencia en ModelArts Studio para Backoffice N2.</p>
+        </div>
+
+        <!-- ARCHITECTURE STEPS -->
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-3.5 text-xs">
+          
+          <div class="bg-[#11141C] border border-[#222A3A] rounded-xl p-4 space-y-2 relative">
+            <div class="w-8 h-8 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold">1</div>
+            <h4 class="font-bold text-white text-sm">Huawei AICC Telephony</h4>
+            <p class="text-slate-400">Las llamadas extensas de N2 (15 a 60 min) grabadas en la PBX de <strong>Huawei AICC</strong> se envían directamente a almacenamiento en la nube.</p>
+            <div class="mt-2 text-[10px] font-mono text-sky-300 bg-sky-950/40 p-1.5 rounded">Service: Huawei AICC</div>
+          </div>
+
+          <div class="bg-[#11141C] border border-[#222A3A] rounded-xl p-4 space-y-2 relative">
+            <div class="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold">2</div>
+            <h4 class="font-bold text-white text-sm">OBS + FunctionGraph</h4>
+            <p class="text-slate-400">Trigger serverless se activa inmediatamente al depositarse el audio en <strong>Huawei Cloud OBS</strong>, orquestando el pipeline sin servidores ociosos.</p>
+            <div class="mt-2 text-[10px] font-mono text-purple-300 bg-purple-950/40 p-1.5 rounded">Service: OBS + FunctionGraph</div>
+          </div>
+
+          <div class="bg-[#11141C] border border-huawei-red/50 rounded-xl p-4 space-y-2 relative shadow-lg shadow-huawei-red/10">
+            <div class="w-8 h-8 rounded-lg bg-huawei-red/20 text-rose-400 flex items-center justify-center font-bold">3</div>
+            <h4 class="font-bold text-white text-sm">ModelArts MaaS Core</h4>
+            <p class="text-slate-400">LLM SOTA (Qwen-2.5-72B / Pangu NLP) en clúster <strong>Ascend 910B NPU</strong> procesa el contexto largo, audita descartes y extrae el SOT.</p>
+            <div class="mt-2 text-[10px] font-mono text-rose-300 bg-rose-950/40 p-1.5 rounded">MaaS / ModelArts Studio</div>
+          </div>
+
+          <div class="bg-[#11141C] border border-[#222A3A] rounded-xl p-4 space-y-2 relative">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">4</div>
+            <h4 class="font-bold text-white text-sm">ModelArts Guard</h4>
+            <p class="text-slate-400">Enmascara en tiempo real DNI, números de servicio y cuentas bancarias, validando además el cumplimiento de la norma OSIPTEL.</p>
+            <div class="mt-2 text-[10px] font-mono text-emerald-300 bg-emerald-950/40 p-1.5 rounded">Security: ModelArts Guard</div>
+          </div>
+
+          <div class="bg-[#11141C] border border-[#222A3A] rounded-xl p-4 space-y-2 relative">
+            <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">5</div>
+            <h4 class="font-bold text-white text-sm">Backoffice WorkStation</h4>
+            <p class="text-slate-400">Inyecta la <strong>Plantilla Oficial Hitss</strong> en la pantalla del asesor y sincroniza los scores de calidad con el portal de Formación.</p>
+            <div class="mt-2 text-[10px] font-mono text-amber-300 bg-amber-950/40 p-1.5 rounded">Integration: Hitss Suite & SGA</div>
+          </div>
+
+        </div>
+
+        <!-- TECH STACK TABLE -->
+        <div class="mt-6 border border-[#232938] rounded-xl overflow-hidden text-xs">
+          <table class="w-full text-left">
+            <thead class="bg-[#191F2B] text-slate-300 uppercase font-mono text-[11px] border-b border-[#232938]">
+              <tr>
+                <th class="py-3 px-4">Componente de Solución</th>
+                <th class="py-3 px-4">Servicio Huawei</th>
+                <th class="py-3 px-4">Rol en la Operación Hitss</th>
+                <th class="py-3 px-4">Impacto Operativo</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#1F2635] text-slate-300">
+              <tr>
+                <td class="py-3 px-4 font-semibold text-white">Telefonía de Contact Center</td>
+                <td class="py-3 px-4 text-sky-400 font-mono">Huawei AICC</td>
+                <td class="py-3 px-4">Gestión de llamadas de soporte técnico N2 y grabación</td>
+                <td class="py-3 px-4 text-slate-400">Integración nativa sin gateways de terceros</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-semibold text-white">Inferencia de IA Generativa</td>
+                <td class="py-3 px-4 text-rose-400 font-mono">ModelArts Studio (MaaS)</td>
+                <td class="py-3 px-4">Auditoría de llamadas de 15m a 1h y llenado de plantilla Hitss</td>
+                <td class="py-3 px-4 text-slate-400">Pago por token, sin servidores GPU ociosos</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-semibold text-white">Hardware Acelerador NPU</td>
+                <td class="py-3 px-4 text-purple-400 font-mono">Ascend 910B NPU Clusters</td>
+                <td class="py-3 px-4">Cómputo ultra-rápido de contextos largos (llamadas de 45+ min)</td>
+                <td class="py-3 px-4 text-slate-400">Soberanía de hardware y latencias < 300 ms</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-semibold text-white">Seguridad y Privacidad</td>
+                <td class="py-3 px-4 text-emerald-400 font-mono">ModelArts Guard</td>
+                <td class="py-3 px-4">Mascara datos personales (DNI, teléfonos) y valida reglas OSIPTEL</td>
+                <td class="py-3 px-4 text-slate-400">Cumplimiento estricto de Ley de Protección de Datos</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-semibold text-white">Almacenamiento Seguro</td>
+                <td class="py-3 px-4 text-amber-400 font-mono">Huawei Cloud OBS</td>
+                <td class="py-3 px-4">Repositorio de audios con cifrado KMS en reposo</td>
+                <td class="py-3 px-4 text-slate-400">Durabilidad de 11 nueves (99.999999999%)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-[#1C2230] bg-[#0E1118] px-6 py-3 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between">
+    <span>TelcoPulse MaaS &copy; 2026 | Desarrollado para la <strong>Huawei Cloud Peru MaaS Hackathon</strong></span>
+    <span class="mt-1 sm:mt-0">Sede Blue Tower, Piso 2 | Equipo: <strong class="text-slate-300">CloudPulse Perú</strong> (Drey Aymituma, Hector Poma, Gean Quinto)</span>
+  </footer>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // CASES DATABASE BASED ON REAL HITSS N2 CALLS
+    const CASES = {
+      case1: {
+        customer: "Fernando Alarcón (Tel: 982280035 - Claro Hogar 300Mbps HFC)",
+        meta: "Huawei AICC ID: 7b0ab79d-927f-4b64-82d4-04021b7a394a / 1789482206 | Duración: 38m 45s | Asesor: Backoffice Hitss N2",
+        badge: "🔴 N2 Crítica (38 min)",
+        badgeClass: "bg-rose-500/20 text-rose-300 border-rose-500/30",
+        aiccWrapUp: "Caso: CAS-982280-26 | Cliente: Fernando Alarcón | Tipificación: INT_HFC_LENTITUD_UPSTREAM",
+        sentiment: -88,
+        sentimentLabel: "Frustración Extrema (Llamada de 38 min)",
+        sentimentColor: "text-rose-400",
+        sentimentBar: "bg-rose-500",
+        sentimentWidth: "88%",
+        churn: 94,
+        churnLabel: "Riesgo Crítico: Amenazó con portar a Entel",
+        churnColor: "text-rose-400",
+        churnBar: "bg-rose-500",
+        churnWidth: "94%",
+        osiptel: "92 / 100 (OK)",
+        osiptelLabel: "SOT Mtto emitido según norma",
+        osiptelColor: "text-emerald-400",
+        osiptelBar: "bg-emerald-500",
+        osiptelWidth: "92%",
+        osiptelDetails: "✅ SOT 90888521 generado dentro del plazo legal. Asesor evitó penalización OSIPTEL al sustentar niveles fuera de rango.",
+        retentionShort: "Oferta: 30% dscto x 6 meses + Visita técnica prioritaria en 4h",
+        trainingFeedback: "💡 <strong>Feedback para Formación:</strong> El asesor aplicó correctamente la matriz técnica del <strong>Flyer N° 41</strong> al detectar Potencia Upstream en 54.2 dBmV (> 52.9 dBmV) y emitir SOT de mantenimiento directo. Sin embargo, se recomienda capacitar en técnicas de empatía y desescalamiento en llamadas que superen los 25 minutos.",
+        hitssTemplate: `BACKOFFICE HITSS
+TELEFONO: 982280035
+PROBLEMA DETECTADO: INT - LENTITUD E INTERMITENCIA EN HFC
+DESCARTES: Se valida Schaman sin alertas masivas en nodo. Se valida Incógnito provisionado con niveles Upstream fuera de rango (54.2 dBmV > 52.9 dBmV Flyer N° 41). Se valida TR-069 con saturación en canal WiFi 2.4GHz y 18 equipos conectados. Se realiza reinicio físico y aprovisionamiento sin recuperación de niveles. Se genera SOT de mtto por niveles alterados.
+SOLUCION: Se genera SOT de mtto para visita técnica
+SOT / REMEDY: 90888521
+ID DE LLAMADA: 7b0ab79d-927f-4b64-82d4-04021b7a394a / 1789482206-2365852`,
+        transcript: [
+          { speaker: "Asesor N2 (00:03)", text: "Buenas tardes, soporte técnico de segundo nivel de Claro, le saluda Drey de Backoffice, ¿con quién tengo el gusto?" },
+          { speaker: "Cliente (00:10)", text: "Buenas tardes Drey. Habla Fernando Alarcón. Llevo más de 30 minutos esperando que me pasen con alguien que sepa. Mi internet HFC se cae a cada rato y la velocidad no llega ni a 10 megas." },
+          { speaker: "Asesor N2 (00:25)", text: "Comprendo su malestar señor Alarcón, permítame validar en Incógnito su aprovisionamiento... Veo que su módem ARRIS está online, pero la potencia de Upstream marca 54.2 dBmV, lo cual está fuera del rango permitido por nuestra norma técnica Flyer 41." },
+          { speaker: "Cliente (00:45)", text: "¡Siempre me dicen tecnicismos! Si esto no se soluciona hoy, mañana mismo doy de baja el servicio y me paso a Entel con mis líneas móviles." },
+          { speaker: "Asesor N2 (01:15)", text: "Lo entiendo perfectamente señor Alarcón. Acabo de revisar también Schaman y no hay caída masiva en su zona. Como el nivel de señal coaxial está alterado en el poste, en este momento estoy emitiendo la orden de visita técnica SOT 90888521 con prioridad." },
+          { speaker: "Cliente (01:40)", text: "De acuerdo Drey, gracias por no darme más vueltas y generar el técnico de una vez." }
+        ]
+      },
+      case2: {
+        customer: "Dra. Cecilia Barrenechea (Tel: 922505809 - Fibra Óptica 500Mbps)",
+        meta: "Huawei AICC ID: 1789492975-3092886 | Duración: 24m 10s | Asesor: Backoffice Hitss N2",
+        badge: "🟡 Soporte FTTH / Extensores (24m)",
+        badgeClass: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+        aiccWrapUp: "Caso: CAS-922505-26 | Cliente: Cecilia Barrenechea | Tipificación: INT_FTTH_COBERTURA_PLUME",
+        sentiment: -40,
+        sentimentLabel: "Inconformidad Moderada",
+        sentimentColor: "text-amber-400",
+        sentimentBar: "bg-amber-500",
+        sentimentWidth: "55%",
+        churn: 58,
+        churnLabel: "Riesgo Moderado: Duda de cobertura",
+        churnColor: "text-amber-400",
+        churnBar: "bg-amber-500",
+        churnWidth: "58%",
+        osiptel: "96 / 100 (ÓPTIMO)",
+        osiptelLabel: "Protocolo de atención cumplido",
+        osiptelColor: "text-emerald-400",
+        osiptelBar: "bg-emerald-500",
+        osiptelWidth: "96%",
+        osiptelDetails: "✅ Solución en primer contacto (FCR). Sin reclamos regulatorios.",
+        retentionShort: "Oferta: Repetidor Claro WiFi 6 con 50% de descuento",
+        trainingFeedback: "💡 <strong>Feedback para Formación:</strong> Excelente labor pedagógica del asesor explicando a la cliente la interferencia generada por repetidores de terceros no homologados. Caso ejemplar para incluir en el material de inducción de nuevos ingresos.",
+        hitssTemplate: `BACKOFFICE HITSS
+TELEFONO: 922505809
+PROBLEMA DETECTADO: INT - PROBLEMA DE COBERTURA EN SEGUNDO PISO
+DESCARTES: Se valida consumo en Tracer sin flags alarmados. Se valida Schaman sin alertas. Se valida Dashboard OK con 25 equipos conectados. Se valida cliente Plume con 2 extensores de terceros desconectados y generando bucle. Se educa a cliente sobre repetidores no homologados y congestión de canal.
+SOLUCION: Se educa a cliente para adquirir repetidor WiFi 6 homologado por Claro
+SOT / REMEDY: N/A (Resuelto en primer contacto)
+ID DE LLAMADA: 1789492975-3092886`,
+        transcript: [
+          { speaker: "Asesor N2 (00:04)", text: "Soporte Técnico Especializado Claro, le atiende Drey de Backoffice Hitss, ¿en qué le puedo colaborar?" },
+          { speaker: "Cliente (00:12)", text: "Hola Drey, tengo fibra óptica de 500 megas pero en las habitaciones del segundo piso la señal se corta y las cámaras de seguridad se desconectan." },
+          { speaker: "Asesor N2 (00:26)", text: "Permítame revisar en nuestro Dashboard y en la plataforma Plume... Veo que la ONT Huawei tiene 25 dispositivos vinculados y detecto 2 extensores WiFi genéricos conectados por cable que están generando un bucle de red." },
+          { speaker: "Cliente (00:48)", text: "Ah, sí, compré dos repetidores en una tienda para amplificar la señal..." },
+          { speaker: "Asesor N2 (01:05)", text: "Comprendo señora Barrenechea. Los repetidores no homologados dividen el ancho de banda y crean colisión de IPs. Le aconsejo apagarlos temporalmente y podemos coordinar la entrega de un repetidor Mesh WiFi 6 homologado por Claro." }
+        ]
+      },
+      case3: {
+        customer: "Raúl Benavides (Tel: 969117010 - Plan Claro Hogar 200Mbps)",
+        meta: "Huawei AICC ID: 1789504734-338240 | Duración: 0m 48s (Llamada Saliente Primer Toque) | Asesor: Backoffice Hitss N2",
+        badge: "🔵 Primer Toque (Ciclo 2x3)",
+        badgeClass: "bg-blue-500/20 text-blue-300 border-blue-500/30",
+        aiccWrapUp: "Caso: CAS-969117-26 | Cliente: Raúl Benavides | Tipificación: CICLO_1_NO_CONTESTA_BUZON",
+        sentiment: 0,
+        sentimentLabel: "Sin Contacto (Buzón de Voz)",
+        sentimentColor: "text-slate-400",
+        sentimentBar: "bg-slate-500",
+        sentimentWidth: "0%",
+        churn: 35,
+        churnLabel: "Riesgo Latente: Intermitencia reportada",
+        churnColor: "text-slate-400",
+        churnBar: "bg-slate-500",
+        churnWidth: "35%",
+        osiptel: "100% CUMPLE",
+        osiptelLabel: "Protocolo de Ciclo de Llamadas",
+        osiptelColor: "text-emerald-400",
+        osiptelBar: "bg-emerald-500",
+        osiptelWidth: "100%",
+        osiptelDetails: "✅ Registro automático de 1er intento de contacto conforme a regla operativa de Claro (3 intentos c/2h x 2 días).",
+        retentionShort: "Programación: 2do intento programado en marcador robot para 2 horas",
+        trainingFeedback: "💡 <strong>Feedback para Formación:</strong> Asesor cumplió la regla de oro de Primer Toque: verificación previa de Incógnito y Schaman antes de disparar el ciclo, evitando descartes ciegos.",
+        hitssTemplate: `BACKOFFICE HITSS
+TELEFONO: 969117010
+PROBLEMA DETECTADO: INT - BAJA VELOCIDAD VIA CABLEADO Y WIFI (LENTITUD)
+DESCARTES: Se valida consumo en Tracer y sin flags alarmados. Se valida provisión y online en Incógnito. Se valida Schaman sin alertas masivas en nodo. Se valida cliente Plume activo. 1er intento de contacto: Cliente no contesta llamada. Se envía mensaje automático por LiveChat y se deja mensaje en buzón de voz (1er ciclo 2x3).
+SOLUCION: Caso pasa a cola de ciclo para 2do intento en 2 horas
+SOT / REMEDY: N/A (En gestión de ciclo de llamadas)
+ID DE LLAMADA: 1789504734-338240`,
+        transcript: [
+          { speaker: "Sistema AICC (00:02)", text: "Marcando al 969117010... Timbrando..." },
+          { speaker: "Operador Móvil (00:25)", text: "Tu llamada está siendo transferida al buzón de voz. Deja tu mensaje después del tono..." },
+          { speaker: "Asesor N2 (00:32)", text: "Estimado señor Raúl Benavides, le saluda Drey de soporte técnico de Claro. Le llamamos por su reporte de lentitud en su servicio de internet. Le dejamos este mensaje y le volveremos a contactar en el transcurso del día. También puede respondernos por WhatsApp." },
+          { speaker: "Sistema AICC (00:48)", text: "Llamada finalizada por el asesor." }
+        ]
+      }
+    };
+
+    // GENERATE WAVEFORM
+    function initWaveform() {
+      const container = document.getElementById('waveform');
+      container.innerHTML = '';
+      for (let i = 0; i < 48; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'w-1 bg-slate-600 rounded-full waveform-bar';
+        const height = Math.floor(Math.random() * 22) + 6;
+        bar.style.height = `${height}px`;
+        container.appendChild(bar);
+      }
+    }
+
+    let isPlaying = false;
+    let waveInterval;
+
+    function togglePlayAudio() {
+      isPlaying = !isPlaying;
+      const icon = document.getElementById('playIcon');
+      if (isPlaying) {
+        icon.setAttribute('data-lucide', 'pause');
+        waveInterval = setInterval(() => {
+          document.querySelectorAll('.waveform-bar').forEach(b => {
+            b.style.height = `${Math.floor(Math.random() * 26) + 4}px`;
+            b.classList.remove('bg-slate-600');
+            b.classList.add('bg-huawei-red');
+          });
+        }, 120);
+      } else {
+        icon.setAttribute('data-lucide', 'play');
+        clearInterval(waveInterval);
+        document.querySelectorAll('.waveform-bar').forEach(b => {
+          b.classList.remove('bg-huawei-red');
+          b.classList.add('bg-slate-600');
+        });
+      }
+      lucide.createIcons();
+    }
+
+    // LOAD CASE
+    function loadCase() {
+      const selected = document.getElementById('caseSelector').value;
+      const data = CASES[selected];
+
+      document.getElementById('callCustomerName').innerText = `Cliente: ${data.customer}`;
+      document.getElementById('callMeta').innerText = data.meta;
+      
+      const badge = document.getElementById('callBadge');
+      badge.innerText = data.badge;
+      badge.className = `px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border ${data.badgeClass}`;
+
+      // Populate Transcript
+      const tBox = document.getElementById('transcriptBox');
+      tBox.innerHTML = '';
+      data.transcript.forEach(t => {
+        const row = document.createElement('div');
+        const isClient = t.speaker.startsWith('Cliente');
+        row.className = isClient ? 'bg-[#151A26] border-l-2 border-huawei-red p-2 rounded' : 'bg-[#11151E] border-l-2 border-sky-500 p-2 rounded';
+        row.innerHTML = `<span class="font-bold ${isClient ? 'text-rose-300' : 'text-sky-300'}">${t.speaker}:</span> <span class="text-slate-300">${t.text}</span>`;
+        tBox.appendChild(row);
+      });
+
+      // Update AI scores
+      document.getElementById('scoreSentiment').innerText = (data.sentiment > 0 ? `+${data.sentiment}%` : `${data.sentiment}%`);
+      document.getElementById('scoreSentiment').className = `text-xl font-black mt-1 ${data.sentimentColor}`;
+      document.getElementById('barSentiment').className = `${data.sentimentBar} h-full rounded-full transition-all duration-500`;
+      document.getElementById('barSentiment').style.width = data.sentimentWidth;
+      document.getElementById('labelSentiment').innerText = data.sentimentLabel;
+
+      document.getElementById('scoreChurn').innerText = `${data.churn}%`;
+      document.getElementById('scoreChurn').className = `text-xl font-black mt-1 ${data.churnColor}`;
+      document.getElementById('barChurn').className = `${data.churnBar} h-full rounded-full transition-all duration-500`;
+      document.getElementById('barChurn').style.width = data.churnWidth;
+      document.getElementById('labelChurn').innerText = data.churnLabel;
+
+      document.getElementById('scoreOsiptel').innerText = data.osiptel;
+      document.getElementById('scoreOsiptel').className = `text-xl font-black mt-1 ${data.osiptelColor}`;
+      document.getElementById('barOsiptel').className = `${data.osiptelBar} h-full rounded-full transition-all duration-500`;
+      document.getElementById('barOsiptel').style.width = data.osiptelWidth;
+      document.getElementById('labelOsiptel').innerText = data.osiptelLabel;
+
+      // Update Hitss template box
+      document.getElementById('aiccTipificationText').innerText = data.aiccWrapUp;
+      document.getElementById('hitssTemplateBox').innerText = data.hitssTemplate;
+      document.getElementById('trainingFeedback').innerHTML = data.trainingFeedback;
+      document.getElementById('osiptelDetails').innerText = data.osiptelDetails;
+      document.getElementById('retentionShort').innerText = data.retentionShort;
+
+      lucide.createIcons();
+    }
+
+    // COPY HITSS TEMPLATE (SIAC UNICO / HELIX)
+    function copyHitssTemplate(system) {
+      const selected = document.getElementById('caseSelector').value;
+      const text = CASES[selected].hitssTemplate;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast(`¡Plantilla copiada para ${system}!`);
+      });
+    }
+
+    // COPY AICC FAST WRAP-UP
+    function copyAiccTipification() {
+      const selected = document.getElementById('caseSelector').value;
+      const text = CASES[selected].aiccWrapUp;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('¡Tipificación rápida copiada para Huawei AICC!');
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').innerText = msg;
+      toast.classList.remove('hidden');
+      toast.classList.add('toast-animate');
+      setTimeout(() => {
+        toast.classList.remove('toast-animate');
+        toast.classList.add('hidden');
+      }, 2500);
+    }
+
+    // SIMULATE AUDIT RUN
+    function runAuditAnalysis() {
+      const btn = document.getElementById('btnAnalyze');
+      btn.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin"></i><span>Procesando AICC en MaaS...</span>`;
+      btn.disabled = true;
+      lucide.createIcons();
+
+      const banner = document.getElementById('maasStatusBanner');
+      banner.classList.add('pulse-glow');
+
+      setTimeout(() => {
+        btn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i><span>¡Plantilla Hitss Generada!</span>`;
+        btn.disabled = false;
+        banner.classList.remove('pulse-glow');
+        lucide.createIcons();
+      }, 700);
+    }
+
+    // SWITCH TABS
+    function switchTab(tab) {
+      ['audit', 'dashboard', 'architecture'].forEach(t => {
+        document.getElementById(`content-${t}`).classList.add('hidden');
+        const b = document.getElementById(`tab-${t}`);
+        b.classList.remove('border-huawei-red', 'text-white');
+        b.classList.add('border-transparent', 'text-slate-400');
+      });
+
+      document.getElementById(`content-${tab}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`tab-${tab}`);
+      activeBtn.classList.remove('border-transparent', 'text-slate-400');
+      activeBtn.classList.add('border-huawei-red', 'text-white');
+
+      if (tab === 'dashboard') {
+        initCharts();
+      }
+      lucide.createIcons();
+    }
+
+    // CHARTS INITIALIZATION
+    let chart1, chart2;
+    function initCharts() {
+      if (chart1) return; // avoid reinit
+
+      // Training needs chart
+      const ctx1 = document.getElementById('trainingChart').getContext('2d');
+      chart1 = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+          labels: ['DOCSIS 3.1 Gigabit (Flyer 41)', 'Repetidores de Terceros / Plume', 'Dying Gasp vs Falla Lógica', 'Manejo de Reclamos OSIPTEL', 'Canales Saturados TR-069'],
+          datasets: [{
+            label: 'Casos que requieren refuerzo pedagógico',
+            data: [142, 118, 85, 64, 98],
+            backgroundColor: '#CF0A2C',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            x: { ticks: { color: '#94A3B8', font: { size: 10 } }, grid: { display: false } },
+            y: { ticks: { color: '#94A3B8', font: { size: 10 } }, grid: { color: '#1E2433' } }
+          }
+        }
+      });
+
+      // N2 Cases Distribution
+      const ctx2 = document.getElementById('n2CasesChart').getContext('2d');
+      chart2 = new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+          labels: ['Intermitencia / Niveles HFC (Flyer 41)', 'Problemas de Cobertura / WiFi', 'Sin Servicio / Corte Óptico', 'Consultas de Configuración / ONT'],
+          datasets: [{
+            data: [42, 28, 18, 12],
+            backgroundColor: ['#3B82F6', '#8B5CF6', '#EF4444', '#10B981'],
+            borderColor: '#151922',
+            borderWidth: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#CBD5E1', font: { size: 11 } }
+            }
+          }
+        }
+      });
+    }
+
+    // ON LOAD
+    window.onload = () => {
+      initWaveform();
+      loadCase();
+      lucide.createIcons();
+    };
+  </script>
+</body>
+</html>
