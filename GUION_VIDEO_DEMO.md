@@ -1,5 +1,6 @@
-# 🎬 Guion de Grabación del Video Demo: TelcoPulse MaaS
+# 🎬 Guion de Grabación del Video Demo: AICC BO Assistant
 **Presentador:** Drey Enmanuel Aymituma Julca (Líder del equipo CloudPulse Perú / Backoffice N2 Global Hitss)  
+**Proyecto:** AICC BO Assistant (Powered by Huawei Cloud MaaS)  
 **Duración objetivo:** 1 minuto con 45 segundos  
 **Herramientas para grabar:** Presiona `Windows + Alt + R` (grabadora de Windows) o usa OBS Studio / Clipchamp.
 
@@ -15,21 +16,21 @@
 ## 🎙️ Guion Segundo a Segundo
 
 ### [0:00 - 0:25] Introducción: La Realidad de la Operación en Global Hitss
-*(Muestra la pantalla de inicio del dashboard de TelcoPulse MaaS)*
+*(Muestra la pantalla de inicio del dashboard de AICC BO Assistant)*
 > **Drey (Tú):**  
 > "Buenas tardes al jurado de Huawei Cloud.  
 > Mi nombre es Drey Aymituma, y trabajo en Global Hitss en el área de Backoffice de Soporte Técnico N2 para Claro.  
 > En nuestra operación con **Huawei AICC**, nos dividimos en **Primer Toque** (casos nuevos y ciclo de llamadas 2x3) y **Colas de Marcador Automático**. Nuestras llamadas técnicas suelen durar entre 15 minutos y más de una hora por descartes complejos en Incógnito, Schaman y TR-069.  
 > Esto genera un drama operativo diario: **el tiempo de pausa está hiper-auditado a un máximo de 3 minutos**. Si te pasas, supervisión vocea por sala para despausarse; pero si te despausas bajo presión, el robot de AICC te dispara una llamada 'back-to-back' de inmediato y tu caso anterior se queda sin tipificar. Esto provoca que los asesores reprueben la estricta **auditoría horaria de tipificaciones de AICC** y que queden pendientes las plantillas para **SIAC Único y BMC Helix**.  
 > Y al mismo tiempo, **Calidad y Formación** apenas pueden auditar menos del 1% porque les toma una hora escuchar un solo audio.  
-> Para resolverlo, desarrollamos **TelcoPulse MaaS**."
+> Para resolverlo, desarrollamos **AICC BO Assistant**."
 
 ---
 
 ### [0:25 - 0:45] La Solución: Integración Nativa Huawei AICC + MaaS
 *(Señala la cabecera con 'Huawei AICC Telephony' y 'Ascend 910B ModelArts MaaS')*
 > **Drey (Tú):**  
-> "TelcoPulse aprovecha la integración nativa entre **Huawei AICC** y **Huawei Cloud ModelArts Studio (MaaS)**.  
+> "AICC BO Assistant aprovecha la integración nativa entre **Huawei AICC** y **Huawei Cloud ModelArts Studio (MaaS)**.  
 > Mientras el asesor habla con el cliente, el modelo en **Ascend 910B NPU** procesa el audio en vivo. Al colgar la llamada, todo queda resuelto en 5 segundos con blindaje de **ModelArts Guard**."
 
 ---

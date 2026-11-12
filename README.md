@@ -1,4 +1,4 @@
-# 🚀 TelcoPulse MaaS — Huawei Cloud Peru Hackathon 2026
+# 🚀 AICC BO Assistant — Huawei Cloud Peru Hackathon 2026
 
 <div align="center">
 
@@ -51,9 +51,9 @@ A diferencia de un call center de ventas con llamadas cortas de 2 o 3 minutos, e
 
 ---
 
-## 💡 La Solución: TelcoPulse MaaS
+## 💡 La Solución: AICC BO Assistant
 
-TelcoPulse MaaS une la telefonía **Huawei AICC** con la inteligencia artificial de **Huawei Cloud ModelArts Studio (MaaS)** para resolver este drama operativo en tiempo real:
+**AICC BO Assistant** une la telefonía **Huawei AICC** con la inteligencia artificial de **Huawei Cloud ModelArts Studio (MaaS)** para resolver este drama operativo en tiempo real:
 
 ```mermaid
 flowchart LR
@@ -83,7 +83,7 @@ flowchart LR
 
 ## 📊 Impacto Operativo y Financiero (Métricas de Negocio)
 
-| Métrica Operativa | Situación Tradicional (Hoy) | Con TelcoPulse MaaS |
+| Métrica Operativa | Situación Tradicional (Hoy) | Con AICC BO Assistant |
 | :--- | :--- | :--- |
 | **Cobertura de Auditoría Calidad/Formación** | `< 1.0%` (muestreo manual ciego) | **`100%` de llamadas auditadas** |
 | **Tiempo de Redacción ACW (SIAC / Helix)** | `3 a 5 minutos` por llamada | **`15 segundos` (Autocompletado)** |

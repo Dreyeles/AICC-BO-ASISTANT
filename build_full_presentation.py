@@ -30,14 +30,14 @@ def build_presentation():
     tf.word_wrap = True
     
     p = tf.paragraphs[0]
-    p.text = "TelcoPulse MaaS"
+    p.text = "AICC BO Assistant"
     p.font.name = "Arial"
     p.font.size = Pt(44)
     p.font.bold = True
     p.font.color.rgb = COLOR_RED
     
     p2 = tf.add_paragraph()
-    p2.text = "Auditoría Universal con Huawei AICC y Generación de Plantillas N2 con Huawei Cloud MaaS"
+    p2.text = "Copiloto Inteligente para Backoffice N2 impulsado por Huawei Cloud MaaS"
     p2.font.name = "Arial"
     p2.font.size = Pt(18)
     p2.font.color.rgb = COLOR_WHITE
@@ -87,7 +87,7 @@ def build_presentation():
             t = sh.table
             
             # Row 0: Nombre del proyecto
-            t.cell(0, 1).text = "TelcoPulse MaaS: Integración Nativa Huawei AICC & ModelArts MaaS para Backoffice N2"
+            t.cell(0, 1).text = "AICC BO Assistant: Copiloto Inteligente para Backoffice N2 con Huawei Cloud MaaS"
             # Row 1: Nombre del equipo
             t.cell(1, 1).text = "CloudPulse Perú | Integrantes: Drey Enmanuel Aymituma Julca (Líder), Hector Armando Poma Hernandez, Gean Franco Quinto Zapana"
             # Row 2: Tecnologías
@@ -98,13 +98,13 @@ def build_presentation():
             t.cell(4, 1).text = "Global Hitss / Claro Perú (Backoffice N2, Operaciones HFC/FTTH, SIAC Único, Helix y Calidad/Formación)"
             # Row 5: Descripción
             desc = (
-                "TelcoPulse MaaS resuelve el drama operativo diario del Backoffice N2 en Global Hitss / Claro. "
+                "AICC BO Assistant resuelve el drama operativo diario del Backoffice N2 en Global Hitss / Claro. "
                 "La operación se divide en 'Primer Toque' y 'Colas de Llamadas' (donde un marcador robot de Huawei AICC distribuye llamadas continuas). "
                 "El conflicto crítico radica en que el tiempo de pausa está hiper-auditado: al superar 3 minutos, supervisión vocea para despausarse. "
                 "Si el asesor se despausa, el robot de AICC le dispara inmediatamente otra llamada 'back-to-back', dejando el caso anterior sin tipificar, "
                 "lo que provoca sanciones en la estricta auditoría horaria de tipificaciones de AICC y omisiones en SIAC Único y Helix. "
-                "Con TelcoPulse MaaS, mientras el asesor habla, la IA escucha y analiza en tiempo real: al colgar, autocompleta la tipificación en AICC "
-                "en 5 segundos (aprobando la auditoría horaria) y deja lista la plantilla técnica completa para SIAC Único y Helix. "
+                "Con AICC BO Assistant, mientras el asesor habla, la IA en Huawei Cloud MaaS escucha y analiza en tiempo real: al colgar, autocompleta "
+                "la tipificación en AICC en 5 segundos (aprobando la auditoría horaria) y deja lista la plantilla técnica completa para SIAC Único y Helix. "
                 "El asesor se despausa al instante sin estrés, Calidad y Formación tienen 100% de auditoría y se erradica el tiempo muerto."
             )
             t.cell(5, 1).text = desc
@@ -148,7 +148,7 @@ def build_presentation():
     p.space_before = Pt(4)
 
     p = tf3.add_paragraph()
-    p.text = "NUESTRA SOLUCIÓN: TelcoPulse MaaS procesa en vivo durante la llamada. Al colgar, autocompleta AICC en 5 seg y deja listas las plantillas para SIAC y Helix. ¡Cero pausas, cero llamadas perdidas!"
+    p.text = "NUESTRA SOLUCIÓN: AICC BO Assistant procesa en vivo durante la llamada con Huawei Cloud MaaS. Al colgar, autocompleta AICC en 5 seg y deja listas las plantillas para SIAC y Helix. ¡Cero pausas, cero llamadas perdidas!"
     p.font.bold = True
     p.font.size = Pt(13)
     p.font.color.rgb = COLOR_BLUE
@@ -207,7 +207,7 @@ def build_presentation():
         ("La Trampa de la Pausa de 3 Minutos y el Marcador AICC:", "El tiempo en pausa está estrictamente limitado a 3 minutos; al pasarse, supervisión vocea para despausar. Si el asesor se despausa, el robot de AICC le dispara una nueva llamada de inmediato sin darle tiempo de redactar."),
         ("El Riesgo de la Auditoría Horaria de AICC:", "Las tipificaciones en Huawei AICC se auditan cada hora. Si cae una llamada back-to-back y el caso anterior queda sin tipificar, el asesor es sancionado en la auditoría horaria y se retrasan los registros en SIAC Único y Helix."),
         ("El Cuello de Botella en Calidad y Formación:", "Llamadas de 15 a 60 minutos son imposibles de auditar manualmente. Calidad audita < 1%, dejando a oscuras las necesidades de capacitación de los asesores."),
-        ("Solución TelcoPulse MaaS (Cero Pausa en AICC):", "MaaS escucha en vivo: al colgar, llena AICC en 5 segundos (100% aprobado en auditoría horaria) y deja lista la plantilla técnica completa para SIAC Único y Helix en 1 clic."),
+        ("Solución AICC BO Assistant (Cero Pausa en AICC):", "MaaS escucha en vivo: al colgar, llena AICC en 5 segundos (100% aprobado en auditoría horaria) y deja lista la plantilla técnica completa para SIAC Único y Helix en 1 clic."),
         ("Impacto Directo:", "Eliminación del estrés por voceo de pausas, cero llamadas sin tipificar y auditoría automática universal al 100%.")
     ])
 
@@ -432,7 +432,7 @@ def build_presentation():
 
     # Save to the presentation file
     prs.save('Huawei Cloud Peru MaaS Hackathon Template External.pptx')
-    prs.save('TelcoPulse_MaaS_Hackathon_Final.pptx')
+    prs.save('AICC_BO_Assistant_Hackathon_Final.pptx')
     print("Presentation successfully updated and saved!")
 
 if __name__ == '__main__':
