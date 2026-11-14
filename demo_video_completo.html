@@ -589,13 +589,25 @@
         
         if (this.timerInterval) clearInterval(this.timerInterval);
         this.timerInterval = setInterval(() => {
-          this.currentTime += 0.5;
+          this.currentTime += 0.1;
           this.updateTimeline();
           this.checkCues();
+
+          // Transmitir tiempo de llamada en tiempo real a AICC para el teleprompter
+          if (this.currentTime >= 4 && this.currentTime <= 101) {
+            const call = document.getElementById('audioLlamadaMaster');
+            const elapsed = (call && !call.paused && call.currentTime > 0) ? call.currentTime : (this.currentTime - 4);
+            Director.postToFrame('frameAICC', {
+              action: 'SYNC_TIME',
+              time: Math.max(0, elapsed),
+              duration: 98.8
+            });
+          }
+
           if (this.currentTime >= this.totalDuration) {
             this.pause();
           }
-        }, 500);
+        }, 100);
       },
 
       pause() {

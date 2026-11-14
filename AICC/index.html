@@ -1244,6 +1244,58 @@
     .bubble-text {
       color: #f1f5f9;
       font-size: 11.5px;
+      word-break: break-word;
+    }
+
+    .typing-cursor {
+      display: inline-block;
+      color: #38bdf8;
+      font-weight: bold;
+      animation: blinkCursor 0.6s infinite;
+      margin-left: 2px;
+    }
+
+    @keyframes blinkCursor {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .live-asr-bar {
+      background: #090e18;
+      border-bottom: 1px solid #1e293b;
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 10.5px;
+      color: #38bdf8;
+      font-weight: 600;
+    }
+
+    .live-wave-animation {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 14px;
+    }
+
+    .wave-bar {
+      width: 3px;
+      height: 6px;
+      background: #38bdf8;
+      border-radius: 2px;
+      animation: wavePulse 0.9s infinite ease-in-out;
+    }
+
+    .wave-bar:nth-child(1) { animation-delay: 0.1s; }
+    .wave-bar:nth-child(2) { animation-delay: 0.3s; }
+    .wave-bar:nth-child(3) { animation-delay: 0.5s; }
+    .wave-bar:nth-child(4) { animation-delay: 0.2s; }
+    .wave-bar:nth-child(5) { animation-delay: 0.4s; }
+
+    @keyframes wavePulse {
+      0%, 100% { height: 4px; background: #38bdf8; }
+      50% { height: 14px; background: #10b981; }
     }
 
     /* Real-Time Descartes Checklist */
@@ -1956,6 +2008,19 @@
       </div>
     </div>
 
+    <!-- Live Real-Time ASR Soundwave & Status Bar -->
+    <div class="live-asr-bar">
+      <div class="live-wave-animation">
+        <span class="wave-bar"></span>
+        <span class="wave-bar"></span>
+        <span class="wave-bar"></span>
+        <span class="wave-bar"></span>
+        <span class="wave-bar"></span>
+      </div>
+      <span id="liveAsrStatusText">🟢 ASR: Transcribiendo audio en tiempo real</span>
+      <span style="font-family: monospace; font-size: 10px; color: #10b981;">Ascend 910B (32ms)</span>
+    </div>
+
     <!-- Live Transcript Chat Stream -->
     <div class="teleprompter-stream" id="teleprompterStream">
       <!-- Bubbles will be injected dynamically or highlighted -->
@@ -2217,56 +2282,87 @@
       },
 
       handleAudioTimeUpdate(currTime, totalDuration) {
-        // Update timer
+        // Update timers
         const m = String(Math.floor(currTime / 60)).padStart(2, '0');
         const s = String(Math.floor(currTime % 60)).padStart(2, '0');
-        document.getElementById('audioCurrentTime').innerText = `${m}:${s}`;
-        document.getElementById('callDurationTimer').innerText = `${m}:${s}`;
+        const timeEl = document.getElementById('audioCurrentTime');
+        if (timeEl) timeEl.innerText = `${m}:${s}`;
+        const timerEl = document.getElementById('callDurationTimer');
+        if (timerEl) timerEl.innerText = `${m}:${s}`;
 
-        const pct = (currTime / totalDuration) * 100;
-        document.getElementById('audioProgressFill').style.width = `${pct}%`;
+        const pct = Math.min(100, (currTime / totalDuration) * 100);
+        const progEl = document.getElementById('audioProgressFill');
+        if (progEl) progEl.style.width = `${pct}%`;
 
-        // Check dialogue turns
-        DIALOGO_AICC.forEach((turn, idx) => {
-          if (currTime >= turn.tInicio && currTime <= turn.tFin) {
-            if (this.currentTurnIdx !== idx) {
-              this.currentTurnIdx = idx;
-              this.renderBubble(turn, idx);
-            }
-          }
-        });
-      },
-
-      renderBubble(turn, idx) {
         const emptyNotice = document.getElementById('streamEmptyNotice');
         if (emptyNotice) emptyNotice.style.display = 'none';
 
         const stream = document.getElementById('teleprompterStream');
-        let bubble = document.getElementById(`bubble-turn-${idx}`);
+        if (!stream) return;
 
-        if (!bubble) {
-          bubble = document.createElement('div');
-          bubble.id = `bubble-turn-${idx}`;
-          bubble.className = `transcript-bubble ${turn.hablante}`;
-          bubble.innerHTML = `
-            <div class="bubble-speaker-header">
-              <span class="${turn.hablante === 'asesor' ? 'speaker-asesor-name' : 'speaker-cliente-name'}">
-                ${turn.avatar} ${turn.nombre}
-              </span>
-              <span style="font-size: 9.5px; opacity: 0.7;">${String(Math.floor(turn.tInicio/60)).padStart(2,'0')}:${String(Math.floor(turn.tInicio%60)).padStart(2,'0')}</span>
-            </div>
-            <div class="bubble-text">${turn.texto}</div>
-          `;
-          stream.appendChild(bubble);
-        }
+        // Process every dialogue turn
+        DIALOGO_AICC.forEach((turn, idx) => {
+          let bubble = document.getElementById(`bubble-turn-${idx}`);
 
-        document.querySelectorAll('.transcript-bubble').forEach(b => b.classList.remove('active-speech'));
-        bubble.classList.add('active-speech');
-        stream.scrollTop = stream.scrollHeight;
+          // If turn hasn't started yet
+          if (currTime < turn.tInicio) {
+            if (bubble) bubble.style.display = 'none';
+            return;
+          }
 
-        // Activate Descarte Chip
-        if (turn.descarteId) this.activateChip(turn.descarteId);
-        if (turn.descarteExtraId) this.activateChip(turn.descarteExtraId);
+          // If bubble doesn't exist, create it with empty text container
+          if (!bubble) {
+            bubble = document.createElement('div');
+            bubble.id = `bubble-turn-${idx}`;
+            bubble.className = `transcript-bubble ${turn.hablante}`;
+            bubble.innerHTML = `
+              <div class="bubble-speaker-header">
+                <span class="${turn.hablante === 'asesor' ? 'speaker-asesor-name' : 'speaker-cliente-name'}">
+                  ${turn.avatar} ${turn.nombre}
+                </span>
+                <span style="font-size: 9.5px; opacity: 0.7;">${String(Math.floor(turn.tInicio / 60)).padStart(2, '0')}:${String(Math.floor(turn.tInicio % 60)).padStart(2, '0')}</span>
+              </div>
+              <div class="bubble-text" id="bubble-text-${idx}"></div>
+            `;
+            stream.appendChild(bubble);
+          }
+
+          bubble.style.display = 'block';
+          const textEl = document.getElementById(`bubble-text-${idx}`);
+
+          // CASE 1: Turn is actively speaking RIGHT NOW
+          if (currTime >= turn.tInicio && currTime <= turn.tFin) {
+            bubble.classList.add('active-speech');
+
+            // Calculate exact characters to reveal according to elapsed speech time
+            const elapsed = currTime - turn.tInicio;
+            const progress = Math.min(1, Math.max(0, elapsed / turn.duracion));
+            const charCount = Math.max(1, Math.floor(progress * turn.texto.length));
+            const typedText = turn.texto.substring(0, charCount);
+
+            if (textEl) {
+              textEl.innerHTML = `${typedText}<span class="typing-cursor">▌</span>`;
+            }
+
+            // Smoothly auto-scroll to the bottom of the stream
+            stream.scrollTop = stream.scrollHeight;
+
+            // Activate descarte badges at 25% progress
+            if (progress >= 0.25) {
+              if (turn.descarteId) this.activateChip(turn.descarteId);
+              if (turn.descarteExtraId) this.activateChip(turn.descarteExtraId);
+            }
+          }
+          // CASE 2: Turn has completed
+          else if (currTime > turn.tFin) {
+            bubble.classList.remove('active-speech');
+            if (textEl) {
+              textEl.innerHTML = turn.texto; // Complete text without cursor
+            }
+            if (turn.descarteId) this.activateChip(turn.descarteId);
+            if (turn.descarteExtraId) this.activateChip(turn.descarteExtraId);
+          }
+        });
       },
 
       activateChip(chipId) {
@@ -2286,31 +2382,41 @@
       startFullLiveCallDemo() {
         this.resetDemo();
         const drawer = document.getElementById('aiccTeleprompterDrawer');
-        drawer.style.display = 'flex';
-        drawer.classList.remove('minimized');
+        if (drawer) {
+          drawer.style.display = 'flex';
+          drawer.classList.remove('minimized');
+        }
+        document.getElementById('teleprompterStatusBadge').innerText = '● EN LLAMADA';
 
         const audio = document.getElementById('audioLlamada');
-        audio.currentTime = 0;
-        audio.play().then(() => {
-          document.getElementById('btnPlayPauseCall').innerText = '⏸';
-          document.getElementById('teleprompterStatusBadge').innerText = '● EN LLAMADA';
-        }).catch(err => {
-          console.warn("Auto-play blocked, running simulation timer", err);
-          this.runFallbackTimerSimulation();
-        });
+        if (audio) {
+          audio.currentTime = 0;
+          audio.play().then(() => {
+            document.getElementById('btnPlayPauseCall').innerText = '⏸';
+          }).catch(err => {
+            console.warn("Audio play blocked, running simulated clock:", err);
+          });
+        }
+
+        // Guaranteed heartbeat clock driving live typing smoothly
+        if (this.teleprompterInterval) clearInterval(this.teleprompterInterval);
+        let simClock = 0;
+        this.teleprompterInterval = setInterval(() => {
+          if (audio && !audio.paused && audio.currentTime > 0) {
+            simClock = audio.currentTime;
+          } else {
+            simClock += 0.2;
+          }
+          this.handleAudioTimeUpdate(simClock, 98.8);
+          if (simClock >= 98.8) {
+            clearInterval(this.teleprompterInterval);
+            this.onCallAudioFinished();
+          }
+        }, 150);
       },
 
       runFallbackTimerSimulation() {
-        let simTime = 0;
-        const total = 98.8;
-        const interval = setInterval(() => {
-          simTime += 0.5;
-          this.handleAudioTimeUpdate(simTime, total);
-          if (simTime >= total) {
-            clearInterval(interval);
-            this.onCallAudioFinished();
-          }
-        }, 500);
+        // Obsoleto: cubierto por el nuevo heartbeat clock unificado
       },
 
       togglePlayCallAudio() {
