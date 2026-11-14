@@ -318,8 +318,8 @@
 <body>
 
   <!-- AUDIO ELEMENTS -->
-  <audio id="audioRing" src="AICC/telefono_ring.wav" preload="auto"></audio>
-  <audio id="audioLlamadaMaster" src="AICC/llamada_drey_magdalena.mp3" preload="auto"></audio>
+  <audio id="audioRing" src="telefono_ring.wav" preload="auto"></audio>
+  <audio id="audioLlamadaMaster" src="llamada_drey_magdalena.mp3" preload="auto"></audio>
 
   <!-- TOP MASTER DIRECTOR BAR -->
   <header class="master-header">
@@ -400,16 +400,16 @@
   <main class="viewport-theater">
     
     <!-- IFRAME 1: HUAWEI AICC -->
-    <iframe id="frameAICC" class="viewport-frame active" src="AICC/index.html"></iframe>
+    <iframe id="frameAICC" class="viewport-frame active" src="AICC/index.html" allow="autoplay"></iframe>
 
     <!-- IFRAME 2: SIAC ÚNICO -->
-    <iframe id="frameSIAC" class="viewport-frame" src="siac unico/index.html"></iframe>
+    <iframe id="frameSIAC" class="viewport-frame" src="siac unico/index.html" allow="autoplay"></iframe>
 
     <!-- IFRAME 3: BMC HELIX -->
-    <iframe id="frameHelix" class="viewport-frame" src="bmc helix/index.html"></iframe>
+    <iframe id="frameHelix" class="viewport-frame" src="bmc helix/index.html" allow="autoplay"></iframe>
 
     <!-- IFRAME 4: PORTAL DE CALIDAD -->
-    <iframe id="frameCalidad" class="viewport-frame" src="index.html"></iframe>
+    <iframe id="frameCalidad" class="viewport-frame" src="index.html" allow="autoplay"></iframe>
 
     <!-- FLOATING SPOTLIGHT BANNER -->
     <div class="spotlight-banner-overlay" id="spotlightBanner">
@@ -477,6 +477,7 @@
           banner: "🎙️ Diarización en Vivo: Asesor (Drey) vs Cliente (Magdalena)",
           action: () => {
             Director.stopRing();
+            Director.playCallAudio();
             Director.postToFrame('frameAICC', { action: 'START_CALL_DEMO' });
           }
         },
@@ -511,6 +512,7 @@
           text: "📴 [01:40] Drey cuelga la llamada. En apenas 5 segundos, AICC se autotipifica y guarda con éxito.",
           banner: "💾 AICC Autotipificado en 5 segundos (Protección Anti-Pausa Aprobada)",
           action: () => {
+            Director.stopCallAudio();
             Director.postToFrame('frameAICC', { action: 'HANGUP_CALL' });
           }
         },
@@ -601,11 +603,16 @@
         document.getElementById('btnPlayMaster').innerHTML = '<span>▶️ Continuar Video Demo</span>';
         if (this.timerInterval) clearInterval(this.timerInterval);
         this.stopRing();
+        this.stopCallAudio();
       },
 
       restart() {
         this.pause();
         this.currentTime = 0;
+        this.stopRing();
+        this.stopCallAudio();
+        const call = document.getElementById('audioLlamadaMaster');
+        if (call) call.currentTime = 0;
         this.updateTimeline();
         this.postToFrame('frameAICC', { action: 'RESET_DEMO' });
         this.postToFrame('frameSIAC', { action: 'RESET_VIEW' });
@@ -638,6 +645,18 @@
         const clickX = e.clientX - rect.left;
         const ratio = Math.max(0, Math.min(1, clickX / rect.width));
         this.currentTime = ratio * this.totalDuration;
+        
+        // Sync master call audio if seeking within call range (4s - 100s)
+        const call = document.getElementById('audioLlamadaMaster');
+        if (call) {
+          if (this.currentTime >= 4 && this.currentTime <= 100) {
+            call.currentTime = this.currentTime - 4;
+            if (this.isPlaying && call.paused) call.play().catch(() => {});
+          } else {
+            call.pause();
+          }
+        }
+        
         this.updateTimeline();
         this.checkCues(true);
       },
@@ -733,12 +752,43 @@
         }
       },
 
+      playCallAudio() {
+        const audio = document.getElementById('audioLlamadaMaster');
+        if (audio) {
+          audio.currentTime = 0;
+          const playPromise = audio.play();
+          if (playPromise !== undefined) {
+            playPromise.then(() => {
+              console.log("Audio de llamada iniciado en Director con éxito");
+            }).catch(err => {
+              console.warn("Call audio play error:", err);
+            });
+          }
+          audio.ontimeupdate = () => {
+            Director.postToFrame('frameAICC', {
+              action: 'SYNC_TIME',
+              time: audio.currentTime,
+              duration: audio.duration || 98.8
+            });
+          };
+        }
+      },
+
+      stopCallAudio() {
+        const audio = document.getElementById('audioLlamadaMaster');
+        if (audio) {
+          audio.pause();
+        }
+      },
+
       toggleMute() {
         const btn = document.getElementById('btnMuteMaster');
         const ring = document.getElementById('audioRing');
-        ring.muted = !ring.muted;
-        btn.innerText = ring.muted ? '🔇' : '🔊';
-        this.postToFrame('frameAICC', { action: 'MUTE_TOGGLE' });
+        const call = document.getElementById('audioLlamadaMaster');
+        const isMuted = !call.muted;
+        call.muted = isMuted;
+        ring.muted = isMuted;
+        btn.innerText = isMuted ? '🔇' : '🔊';
       },
 
       toggleFullscreen() {
@@ -758,3 +808,4 @@
 
 </body>
 </html>
+

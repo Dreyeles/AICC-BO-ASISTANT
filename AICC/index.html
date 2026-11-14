@@ -2722,10 +2722,18 @@ SOLUCION: CONFIGURACION REMOTA EXITOSA`;
     window.addEventListener('message', (e) => {
       if (!e.data) return;
       if (e.data.action === 'START_CALL_DEMO') {
-        AICC.startFullLiveCallDemo();
-      } else if (e.data && e.data.action === 'HANGUP_CALL') {
+        AICC.resetDemo();
+        const drawer = document.getElementById('aiccTeleprompterDrawer');
+        if (drawer) {
+          drawer.style.display = 'flex';
+          drawer.classList.remove('minimized');
+        }
+        document.getElementById('teleprompterStatusBadge').innerText = '● EN LLAMADA';
+      } else if (e.data.action === 'SYNC_TIME') {
+        AICC.handleAudioTimeUpdate(e.data.time, e.data.duration || 98.8);
+      } else if (e.data.action === 'HANGUP_CALL') {
         AICC.hangupCallAndSync();
-      } else if (e.data && e.data.action === 'RESET_DEMO') {
+      } else if (e.data.action === 'RESET_DEMO') {
         AICC.resetDemo();
       }
     });
