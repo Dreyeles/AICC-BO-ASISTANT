@@ -1,5 +1,5 @@
 # 🎬 Guion de Grabación del Video Demo: AICC BO Assistant
-**Presentador:** Drey Enmanuel Aymituma Julca (Líder del equipo CloudPulse Perú / Backoffice N2 Global Hitss)  
+**Presentador:** Drey Enmanuel Aymituma Julca (Líder del equipo Los Ejecutores / Backoffice N2 Global Hitss)  
 **Proyecto:** AICC BO Assistant (Powered by Huawei Cloud MaaS)  
 **Duración objetivo:** 1 minuto con 45 segundos  
 **Herramientas para grabar:** Presiona `Windows + Alt + R` (grabadora de Windows) o usa OBS Studio / Clipchamp.
@@ -57,11 +57,11 @@
 *(Muestra los gráficos de temas de capacitación y distribución de casos N2)*
 > **Drey (Tú):**  
 > "En el portal de supervisión, Calidad y Formación pasan de una muestra ciega del 0.8% a una **cobertura universal del 100%**, ahorrando más de **5,300 horas-hombre al mes** en escuchas manuales y proyectando un beneficio de más de **1.3 millones de dólares anuales** en retención y prevención de multas.  
-> Somos el equipo **CloudPulse Perú**, conformado por Hector Poma, Gean Quinto y quien les habla, Drey Aymituma. ¡Muchas gracias!"
+> Somos el equipo **Los Ejecutores**, conformado por Hector Poma, Gean Franco Quinto y quien les habla, Drey Aymituma. ¡Muchas gracias!"
 
 ---
 
 ## 💡 Recomendaciones para la Grabación
 - Habla con naturalidad: tú conoces este trabajo mejor que nadie porque lo vives a diario en Hitss.
-- Al mostrar el botón "Copiar para SGA / Remedy", dale clic para que se vea el toast verde de confirmación.
+- Al mostrar los botones "Copiar para SIAC Único" o "Copiar para Helix", dale clic para que se vea el toast verde de confirmación.
 - Al terminar, guarda el video en `.mp4` y súbelo junto con la presentación al enlace de Drive.

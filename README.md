@@ -13,7 +13,7 @@
 
 ---
 
-## 👥 Equipo: CloudPulse Perú
+## 👥 Equipo: Los Ejecutores
 
 * **Drey Enmanuel Aymituma Julca (Líder de Proyecto & Backoffice N2 Architect)**  
   *Especialista en Backoffice Soporte Técnico N2 en Global Hitss. Creador de la arquitectura de integración con Huawei Cloud, lógica operativa y diseño de solución.*
@@ -23,7 +23,7 @@
   *Desarrollo del dashboard operativo en tiempo real, integración con telefonía Huawei AICC y conectividad con sistemas transaccionales (SIAC Único y BMC Helix).*
 
 * **Evento:** Huawei Cloud Peru MaaS Hackathon 2026 — Sede Blue Tower, Piso 2  
-* **Fecha:** Jueves, 12 de Noviembre de 2026 — 09:00 a. m.
+* **Fecha:** Noviembre de 2026
 
 ---
 
@@ -119,5 +119,5 @@ flowchart LR
 ---
 
 <div align="center">
-Desarrollado con orgullo para la <strong>Huawei Cloud Peru MaaS Hackathon 2026</strong> por el equipo <strong>CloudPulse Perú</strong>.
+Desarrollado con orgullo para la <strong>Huawei Cloud Peru MaaS Hackathon 2026</strong> por el equipo <strong>Los Ejecutores</strong>.
 </div>

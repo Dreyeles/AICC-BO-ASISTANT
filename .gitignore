@@ -1,3 +1,8 @@
+# Python
+__pycache__/
+*.py[cod]
+test_voice.mp3
+
 # Backups
 *_BACKUP.pptx
 

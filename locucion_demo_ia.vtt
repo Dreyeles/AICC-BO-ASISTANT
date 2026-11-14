@@ -1,0 +1,88 @@
+1
+00:00:00,100 --> 00:00:04,112
+Buenas tardes al jurado calificador de Huawei Cloud.
+
+2
+00:00:04,062 --> 00:00:11,277
+Mi nombre es Drey Aymituma, y junto a mi equipo Los Ejecutores, presentamos AICC BO Assistant.
+
+3
+00:00:11,277 --> 00:00:33,165
+En nuestra operación diaria en el Backoffice de soporte técnico de segundo nivel para Claro, atendida sobre la telefonía Huawei AICC, nos dividimos en dos grupos: Primer Toque, que asigna casos e inicia el ciclo de llamadas, y las Colas de Marcador Automático, donde el robot de AICC nos transfiere llamadas continuas.
+
+4
+00:00:33,165 --> 00:00:45,720
+Nuestras llamadas técnicas no duran tres minutos: suelen durar entre quince minutos y más de una hora debido a descartes complejos en Incógnito, Schaman y TR-069.
+
+5
+00:00:45,720 --> 00:00:53,614
+Esto genera un drama operativo crítico: el tiempo de pausa está hiper-auditado a un máximo de tres minutos.
+
+6
+00:00:53,614 --> 00:01:06,576
+Si te pasas, supervisión vocea para despausar; pero si te despausas bajo presión, el robot de AICC te lanza otra llamada de inmediato, dejando el caso anterior sin tipificar.
+
+7
+00:01:06,576 --> 00:01:18,532
+Esto hace que los asesores reprueben la estricta auditoría horaria de llamadas de AICC y que queden pendientes las plantillas técnicas obligatorias para SIAC Único y BMC Helix.
+
+8
+00:01:18,532 --> 00:01:30,027
+Y al mismo tiempo, las áreas de Calidad y Formación apenas pueden auditar menos del uno por ciento de las llamadas, porque escuchar audios tan largos es humanamente imposible.
+
+9
+00:01:30,027 --> 00:01:45,638
+Para resolverlo, desarrollamos AICC BO Assistant, integrando de forma nativa la telefonía Huawei AICC con la inteligencia artificial de Huawei Cloud ModelArts Studio MaaS, acelerada por procesadores Ascend 910B NPU.
+
+10
+00:01:45,638 --> 00:01:51,888
+Mientras el asesor conversa con el cliente, el modelo analiza el audio en tiempo real.
+
+11
+00:01:51,888 --> 00:01:56,725
+Al colgar la llamada, ocurren cuatro acciones instantáneas:
+
+12
+00:01:56,725 --> 00:02:01,209
+Primero: Protección Anti-Pausa y Auditoría Horaria.
+
+13
+00:02:01,209 --> 00:02:12,214
+En apenas cinco segundos autocompleta la tipificación rápida de AICC, aprobando la auditoría horaria al cien por ciento y evitando cualquier llamada de atención.
+
+14
+00:02:12,214 --> 00:02:16,222
+Segundo: Generación de Plantillas Técnicas.
+
+15
+00:02:16,222 --> 00:02:32,445
+Autocompleta el diagnóstico técnico detallado con los descartes de Incógnito según la norma del Flyer 41 y el número de SOT, lista para subir a SIAC Único y a Helix con un solo clic, ahorrando cuatro minutos de trabajo post-llamada.
+
+16
+00:02:32,445 --> 00:02:36,657
+Tercero: Diagnóstico para Formación y Calidad.
+
+17
+00:02:36,657 --> 00:02:46,195
+Evalúa la adherencia al protocolo técnico al cien por ciento y genera recomendaciones pedagógicas automáticas para capacitar a los asesores.
+
+18
+00:02:46,195 --> 00:02:49,402
+Y cuarto: Retención Proactiva.
+
+19
+00:02:49,402 --> 00:02:58,369
+Detecta señales de frustración y fuga, sugiriendo la mejor oferta de retención comercial antes de que el cliente cancele su servicio.
+
+20
+00:02:58,369 --> 00:03:13,695
+En el panel de supervisión, Calidad y Formación pasan de una muestra ciega del uno por ciento a una cobertura universal del cien por ciento, ahorrando más de cinco mil trescientas horas al mes y mitigando multas regulatorias de OSIPTEL.
+
+21
+00:03:13,695 --> 00:03:22,010
+Somos el equipo Los Ejecutores, conformado por Hector Poma, Gean Franco Quinto y quien les habla, Drey Aymituma.
+
+22
+00:03:22,010 --> 00:03:24,076
+Muchas gracias.
+

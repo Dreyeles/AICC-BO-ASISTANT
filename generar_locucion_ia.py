@@ -1,0 +1,44 @@
+import asyncio
+import edge_tts
+
+VOICE = "es-PE-AlexNeural"  # Official Peruvian male neural voice
+RATE = "+0%"
+PITCH = "+0Hz"
+
+SCRIPT = """
+Buenas tardes al jurado calificador de Huawei Cloud. 
+Mi nombre es Drey Aymituma, y junto a mi equipo Los Ejecutores, presentamos AICC BO Assistant.
+
+En nuestra operación diaria en el Backoffice de soporte técnico de segundo nivel para Claro, atendida sobre la telefonía Huawei AICC, nos dividimos en dos grupos: Primer Toque, que asigna casos e inicia el ciclo de llamadas, y las Colas de Marcador Automático, donde el robot de AICC nos transfiere llamadas continuas.
+
+Nuestras llamadas técnicas no duran tres minutos: suelen durar entre quince minutos y más de una hora debido a descartes complejos en Incógnito, Schaman y TR-069. 
+
+Esto genera un drama operativo crítico: el tiempo de pausa está hiper-auditado a un máximo de tres minutos. Si te pasas, supervisión vocea para despausar; pero si te despausas bajo presión, el robot de AICC te lanza otra llamada de inmediato, dejando el caso anterior sin tipificar. Esto hace que los asesores reprueben la estricta auditoría horaria de llamadas de AICC y que queden pendientes las plantillas técnicas obligatorias para SIAC Único y BMC Helix.
+
+Y al mismo tiempo, las áreas de Calidad y Formación apenas pueden auditar menos del uno por ciento de las llamadas, porque escuchar audios tan largos es humanamente imposible.
+
+Para resolverlo, desarrollamos AICC BO Assistant, integrando de forma nativa la telefonía Huawei AICC con la inteligencia artificial de Huawei Cloud ModelArts Studio MaaS, acelerada por procesadores Ascend 910B NPU.
+
+Mientras el asesor conversa con el cliente, el modelo analiza el audio en tiempo real. Al colgar la llamada, ocurren cuatro acciones instantáneas:
+
+Primero: Protección Anti-Pausa y Auditoría Horaria. En apenas cinco segundos autocompleta la tipificación rápida de AICC, aprobando la auditoría horaria al cien por ciento y evitando cualquier llamada de atención.
+
+Segundo: Generación de Plantillas Técnicas. Autocompleta el diagnóstico técnico detallado con los descartes de Incógnito según la norma del Flyer 41 y el número de SOT, lista para subir a SIAC Único y a Helix con un solo clic, ahorrando cuatro minutos de trabajo post-llamada.
+
+Tercero: Diagnóstico para Formación y Calidad. Evalúa la adherencia al protocolo técnico al cien por ciento y genera recomendaciones pedagógicas automáticas para capacitar a los asesores.
+
+Y cuarto: Retención Proactiva. Detecta señales de frustración y fuga, sugiriendo la mejor oferta de retención comercial antes de que el cliente cancele su servicio.
+
+En el panel de supervisión, Calidad y Formación pasan de una muestra ciega del uno por ciento a una cobertura universal del cien por ciento, ahorrando más de cinco mil trescientas horas al mes y mitigando multas regulatorias de OSIPTEL.
+
+Somos el equipo Los Ejecutores, conformado por Hector Poma, Gean Franco Quinto y quien les habla, Drey Aymituma. Muchas gracias.
+""".strip()
+
+async def main():
+    print(f"Generando locución con la voz neural de IA: {VOICE}...")
+    communicate = edge_tts.Communicate(SCRIPT, VOICE, rate=RATE, pitch=PITCH)
+    await communicate.save("locucion_demo_ia.mp3")
+    print("¡Locución generada exitosamente en 'locucion_demo_ia.mp3'!")
+
+if __name__ == "__main__":
+    asyncio.run(main())

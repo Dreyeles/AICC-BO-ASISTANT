@@ -49,12 +49,12 @@ def build_presentation():
     tf_meta.word_wrap = True
     
     items = [
-        ("Equipo:", "CloudPulse Perú"),
+        ("Equipo:", "Los Ejecutores"),
         ("Líder de Proyecto:", "Drey Enmanuel Aymituma Julca (Backoffice Soporte Técnico N2 - Global Hitss)"),
         ("Integrantes:", "Hector Armando Poma Hernandez | Gean Franco Quinto Zapana"),
         ("Empresa / Ámbito:", "Global Hitss / Claro Perú - Backoffice N2 & Calidad / Formación"),
         ("Evento:", "Huawei Cloud Peru MaaS Hackathon 2026 - Sede Blue Tower"),
-        ("Fecha:", "12 de Noviembre de 2026")
+        ("Fecha:", "Noviembre de 2026")
     ]
     for i, (k, v) in enumerate(items):
         pm = tf_meta.paragraphs[0] if i == 0 else tf_meta.add_paragraph()
@@ -89,7 +89,7 @@ def build_presentation():
             # Row 0: Nombre del proyecto
             t.cell(0, 1).text = "AICC BO Assistant: Copiloto Inteligente para Backoffice N2 con Huawei Cloud MaaS"
             # Row 1: Nombre del equipo
-            t.cell(1, 1).text = "CloudPulse Perú | Integrantes: Drey Enmanuel Aymituma Julca (Líder), Hector Armando Poma Hernandez, Gean Franco Quinto Zapana"
+            t.cell(1, 1).text = "Los Ejecutores | Integrantes: Drey Enmanuel Aymituma Julca (Líder), Hector Armando Poma Hernandez, Gean Franco Quinto Zapana"
             # Row 2: Tecnologías
             t.cell(2, 1).text = "Huawei AICC (Contact Center), Huawei Cloud ModelArts Studio (MaaS), LLMs SOTA (Qwen 2.5 72B / Pangu NLP), ModelArts Guard, Ascend 910B NPU, OBS, FunctionGraph, Integración SIAC Único & Helix"
             # Row 3: Palabras clave
@@ -190,7 +190,7 @@ def build_presentation():
     # -------------------------------------------------------------
     s4 = prs.slides[3]
     set_content_box(s4, [
-        ("Equipo CloudPulse Perú:", "Profesionales de ingeniería y operaciones de Global Hitss / Claro que vivimos el dolor de la operación técnica día a día."),
+        ("Equipo Los Ejecutores:", "Profesionales de ingeniería y operaciones de Global Hitss / Claro que vivimos el dolor de la operación técnica día a día."),
         ("1. Drey Enmanuel Aymituma Julca (Líder & Backoffice N2 Architect):", "Especialista en Backoffice Soporte Técnico N2 en Global Hitss; creador de herramientas de productividad operativa y diseño de la arquitectura con Huawei Cloud."),
         ("2. Hector Armando Poma Hernandez (Ingeniero de IA & MaaS Specialist):", "Implementación de ModelArts Studio (MaaS), orquestación de modelos LLM (Qwen 2.5 72B / Pangu NLP), procesamiento de contextos largos y ModelArts Guard."),
         ("3. Gean Franco Quinto Zapana (Desarrollador Full-Stack & Integración AICC):", "Conexión del pipeline entre la telefonía Huawei AICC, buckets OBS y la estación de trabajo del asesor para inyección directa de plantillas."),
@@ -433,6 +433,7 @@ def build_presentation():
     # Save to the presentation file
     prs.save('Huawei Cloud Peru MaaS Hackathon Template External.pptx')
     prs.save('AICC_BO_Assistant_Hackathon_Final.pptx')
+    prs.save('AICC_BO_Assistant_Hackathon_Final 2.pptx')
     print("Presentation successfully updated and saved!")
 
 if __name__ == '__main__':
