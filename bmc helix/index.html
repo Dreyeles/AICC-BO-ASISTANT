@@ -1100,10 +1100,13 @@
             </tr>
 
             <!-- ROW 12: EL CASO REAL DE LA CAPTURA DE DREY -->
-            <tr style="background:#fffbe6;" onclick="HelixApp.openTicket('INC000001802027')">
+            <tr id="rowIncident1802027" style="background:#fffbe6; cursor:pointer;" onclick="HelixApp.openTicket('INC000001802027')">
               <td><input type="checkbox" checked></td>
               <td><span class="priority-badge-baja">Baja</span></td>
-              <td><span class="ticket-id-link" style="font-weight:700;">INC000001802027</span></td>
+              <td>
+                <span class="ticket-id-link" style="font-weight:700;">INC000001802027</span>
+                <span id="badgeTableSync" style="background:#e6f7ea; color:#237804; border:1px solid #b7eb8f; padding:1px 6px; border-radius:10px; font-size:9.5px; font-weight:700; margin-left:4px; display:inline-block;">⚡ Inyectado</span>
+              </td>
               <td></td>
               <td><strong style="color:#0070d2;">En curso</strong></td>
               <td>0061568299</td>
@@ -1313,7 +1316,12 @@ NOMBRE: MAGDALENA TERAN PANAIFO
             
             <!-- NUEVA NOTA BOX -->
             <div class="new-note-container" id="newNoteCard">
-              <div class="new-note-header">Nueva nota</div>
+              <div class="new-note-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Nueva nota</span>
+                <span id="aiInjectedTag" style="display: none; background: #e6f7ea; color: #237804; border: 1px solid #b7eb8f; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: bold; animation: pulseGlow 1.5s infinite;">
+                  ⚡ Plantilla MaaS Copilot Inyectada
+                </span>
+              </div>
               <textarea 
                 class="new-note-textarea" 
                 id="txtNuevaNotaHelix" 
@@ -1459,6 +1467,20 @@ ID DE LLAMADA: 179452635596748599300201995300
 
   <!-- JAVASCRIPT APP LOGIC -->
   <script>
+    const PLANTILLA_HITSS_MAAS = `BACKOFFICE HITSS
+CELULAR: 976302352
+CLIENTE: MAGDALENA TERAN PANAIFO
+CASO SIAC: 0061568299 // INC000001802027
+PROBLEMA DETECTADO: LENTITUD E INTERMITENCIA EN WIFI
+DESCARTES REALIZADOS:
+- Se valida Incógnito: módem aprovisionado y con señal online activa.
+- Se valida Schaman: sin averías masivas en zona.
+- Se valida TR-069: saturación en canal Wi-Fi, se apaga AutoSelect.
+- Se valida separación de bandas: frecuencias 2.4 GHz y 5 GHz independientes.
+- Pruebas de navegación y streaming de video exitosas con cliente en línea.
+- Cliente confirma solución inmediata conectada a red 5 GHz.
+SOLUCION: CONFIGURACION REMOTA EXITOSA (RESUELTO EN LÍNEA)`;
+
     const HelixApp = {
       currentView: 'list', // 'list' or 'detail'
       totalNotes: 5,
@@ -1478,8 +1500,8 @@ ID DE LLAMADA: 179452635596748599300201995300
           if (!e.data) return;
           if (e.data.action === 'SHOW_TICKET_AND_NOTES') {
             this.forceSyncFromAICC();
-          } else if (e.data.action === 'SHOW_TICKET_LIST') {
-            this.showListView();
+          } else if (e.data.action === 'SHOW_TICKET_LIST' || e.data.action === 'RESET_VIEW') {
+            this.resetToListView();
           }
         });
       },
@@ -1497,37 +1519,58 @@ ID DE LLAMADA: 179452635596748599300201995300
       },
 
       forceSyncFromAICC() {
+        const timeStr = new Date().toLocaleDateString('es-PE') + ' ' + new Date().toLocaleTimeString('es-PE');
         const mock = {
-          fechaDisplay: new Date().toLocaleDateString('es-PE') + ' ' + new Date().toLocaleTimeString('es-PE'),
-          plantillaHitss: `BACKOFFICE HITSS
-CELULAR: 976302352
-PROBLEMA DETECTADO: LENTITUD E INTERMITENCIA
-DESCARTES REALIZADOS: Se valida Incógnito con provisión y online
-Se valida Schaman sin alertas masivas
-Se valida TR69 con AutoSelect off
-Se valida bandas separadas 2.4G y 5G
-Pruebas de navegación y streaming exitosas
-Se llama a cliente: Magdalena Terán Panaifo
-Cliente confirma solución en línea
-SOLUCION: CONFIGURACION REMOTA EXITOSA`
+          fechaDisplay: timeStr,
+          plantillaHitss: PLANTILLA_HITSS_MAAS
         };
-        this.applySyncData(mock);
-        this.openTicket('INC000001802027');
+
+        // 1. Mostrar vista lista resaltando el caso unos instantes
+        this.showListView();
+        const row = document.getElementById('rowIncident1802027');
+        if (row) {
+          row.style.background = '#e6f7ea';
+          row.style.outline = '2px solid #52c41a';
+        }
+
+        // 2. Transición hacia el detalle del caso con animación de inyección
+        setTimeout(() => {
+          this.openTicket('INC000001802027');
+          this.applySyncData(mock);
+
+          // Inyectar en el textarea de "Nueva nota"
+          const textarea = document.getElementById('txtNuevaNotaHelix');
+          const badgeTag = document.getElementById('aiInjectedTag');
+          const newNoteCard = document.getElementById('newNoteCard');
+          if (textarea) {
+            textarea.value = mock.plantillaHitss;
+            if (newNoteCard) newNoteCard.classList.add('is-focused');
+            if (badgeTag) badgeTag.style.display = 'inline-block';
+          }
+
+          // Desplazarse al inicio del panel de actividad
+          const scrollContent = document.querySelector('.activity-scroll-content');
+          if (scrollContent) scrollContent.scrollTop = 0;
+        }, 900);
       },
 
       applySyncData(data) {
-        if (this.synced) return;
-        this.synced = true;
-
         const timeStr = data.fechaDisplay || new Date().toLocaleString('es-PE');
-        const text = data.plantillaHitss || `BACKOFFICE HITSS\nCELULAR: 976302352\nPROBLEMA: LENTITUD E INTERMITENCIA\nSOLUCION: CONFIGURACION REMOTA`;
+        const text = data.plantillaHitss || PLANTILLA_HITSS_MAAS;
 
         const feed = document.getElementById('activityFeedList');
         if (!feed) return;
 
+        // Evitar duplicados si ya existe
+        const existing = document.getElementById('syncedMaaSCard');
+        if (existing) existing.remove();
+
         const newCard = document.createElement('div');
+        newCard.id = 'syncedMaaSCard';
         newCard.className = 'feed-item-card';
         newCard.style.animation = 'feedHighlight 1.5s ease';
+        newCard.style.borderLeft = '3px solid #237804';
+        newCard.style.background = '#fafdfa';
         newCard.innerHTML = `
           <div class="feed-avatar-bubble" style="background: #e6f7ea; color: #237804; border: 1px solid #b7eb8f;">🤖</div>
           <div class="feed-content-block">
@@ -1540,21 +1583,18 @@ SOLUCION: CONFIGURACION REMOTA EXITOSA`
                 ⚡ Sincronizado en Vivo
               </span>
             </div>
-            <div class="feed-note-text-box template-box" style="border-left: 3px solid #237804; background: #f6ffed;">
-${text}
-            </div>
+            <div class="feed-note-text-box template-box" style="border-left: 3px solid #237804; background: #f6ffed; white-space: pre-wrap; font-family: monospace; font-size: 11px; line-height: 1.45;">${text}</div>
             <div class="feed-item-time">${timeStr} (Sincronizado automáticamente al colgar en Huawei AICC)</div>
           </div>
         `;
 
         feed.insertBefore(newCard, feed.firstChild);
-        this.totalNotes++;
-        document.getElementById('notesCurrentCount').innerText = this.totalNotes;
-        document.getElementById('notesTotalCount').innerText = this.totalNotes;
-      },
-
-      init() {
-        this.showListView();
+        this.totalNotes = 6;
+        const curCount = document.getElementById('notesCurrentCount');
+        const totCount = document.getElementById('notesTotalCount');
+        if (curCount) curCount.innerText = '6';
+        if (totCount) totCount.innerText = '6';
+        this.synced = true;
       },
 
       showListView() {
@@ -1563,39 +1603,68 @@ ${text}
         this.currentView = 'list';
       },
 
+      resetToListView() {
+        this.synced = false;
+        const syncCard = document.getElementById('syncedMaaSCard');
+        if (syncCard) syncCard.remove();
+        const textarea = document.getElementById('txtNuevaNotaHelix');
+        if (textarea) textarea.value = '';
+        const badgeTag = document.getElementById('aiInjectedTag');
+        if (badgeTag) badgeTag.style.display = 'none';
+        const newNoteCard = document.getElementById('newNoteCard');
+        if (newNoteCard) newNoteCard.classList.remove('is-focused');
+        const row = document.getElementById('rowIncident1802027');
+        if (row) {
+          row.style.background = '#fffbe6';
+          row.style.outline = 'none';
+        }
+        this.showListView();
+      },
+
       openTicket(ticketId) {
         document.getElementById('ticketsListView').style.display = 'none';
         document.getElementById('ticketDetailView').style.display = 'flex';
         document.getElementById('detailTicketId').innerText = ticketId;
         this.currentView = 'detail';
+
+        // Si es el caso real de Magdalena Terán INC000001802027, asegurar que la plantilla esté inyectada
+        if (ticketId === 'INC000001802027') {
+          const timeStr = new Date().toLocaleDateString('es-PE') + ' ' + new Date().toLocaleTimeString('es-PE');
+          this.applySyncData({
+            fechaDisplay: timeStr,
+            plantillaHitss: PLANTILLA_HITSS_MAAS
+          });
+          const textarea = document.getElementById('txtNuevaNotaHelix');
+          const badgeTag = document.getElementById('aiInjectedTag');
+          const newNoteCard = document.getElementById('newNoteCard');
+          if (textarea) {
+            textarea.value = PLANTILLA_HITSS_MAAS;
+            if (newNoteCard) newNoteCard.classList.add('is-focused');
+            if (badgeTag) badgeTag.style.display = 'inline-block';
+          }
+        }
       },
 
       injectMaaSTemplate() {
-        // Switch to detail view if in list view
         if (this.currentView === 'list') {
           this.openTicket('INC000001802027');
+        } else {
+          const textarea = document.getElementById('txtNuevaNotaHelix');
+          const badgeTag = document.getElementById('aiInjectedTag');
+          const newNoteCard = document.getElementById('newNoteCard');
+          if (textarea) {
+            textarea.value = PLANTILLA_HITSS_MAAS;
+            if (newNoteCard) newNoteCard.classList.add('is-focused');
+            if (badgeTag) badgeTag.style.display = 'inline-block';
+            textarea.scrollIntoView({ behavior: 'smooth' });
+          }
         }
-
-        const templateText = 
-`BACKOFFICE HITSS
-TELEFONO: 931793144
-PROBLEMA DETECTADO: INT - INTERMITENCIA EN HFC
-DESCARTES: Se valida Schaman sin alertas masivas en nodo. Se valida Incógnito provisionado con niveles Upstream fuera de rango (54.2 dBmV > 52.9 dBmV Flyer N° 41). Se valida TR-069 con saturación en canal WiFi 2.4GHz. Se genera SOT de mtto por niveles alterados.
-SOLUCION: Se genera SOT de mtto para visita técnica
-SOT / REMEDY: 90888521
-ID DE LLAMADA: 179452635596748599300201995300`;
-
-        const textarea = document.getElementById('txtNuevaNotaHelix');
-        textarea.value = templateText;
-        document.getElementById('newNoteCard').classList.add('is-focused');
-        textarea.scrollIntoView({ behavior: 'smooth' });
       },
 
       saveNewNote() {
         const textarea = document.getElementById('txtNuevaNotaHelix');
         const text = textarea.value.trim();
         if (!text) {
-          alert('Por favor escribe o pega la plantilla en la nota antes de guardar.');
           return;
         }
 
@@ -1621,22 +1690,20 @@ ID DE LLAMADA: 179452635596748599300201995300`;
               <span class="feed-item-action"> agregó una nota</span>
               <span style="font-size:10px; color:#86909c; margin-left:4px;">🔒</span>
             </div>
-            <div class="feed-note-text-box template-box">
-${text}
-            </div>
-            <div class="feed-item-time">${timeStr} (Auto-Inyectado por MaaS)</div>
+            <div class="feed-note-text-box template-box" style="white-space: pre-wrap; font-family: monospace;">${text}</div>
+            <div class="feed-item-time">${timeStr} (Guardado en BMC Helix)</div>
           </div>
         `;
 
         feed.insertBefore(newCard, feed.firstChild);
         textarea.value = '';
+        const badgeTag = document.getElementById('aiInjectedTag');
+        if (badgeTag) badgeTag.style.display = 'none';
         document.getElementById('newNoteCard').classList.remove('is-focused');
 
         this.totalNotes++;
         document.getElementById('notesCurrentCount').innerText = this.totalNotes;
         document.getElementById('notesTotalCount').innerText = this.totalNotes;
-
-        alert('¡Plantilla Backoffice Hitss guardada con éxito en la Actividad de BMC Helix!');
       },
 
       toggleFullTemplate(btnEl) {
