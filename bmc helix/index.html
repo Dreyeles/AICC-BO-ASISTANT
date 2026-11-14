@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BMC Helix ITSM - Incident Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bmc-dark: #1e2430;
+      --bmc-dark-hover: #2b3345;
+      --bmc-orange: #f15a24;
+      --bmc-blue: #0070d2;
+      --bmc-blue-hover: #005fb2;
+      --bmc-green-badge: #e6f7ea;
+      --bmc-green-text: #237804;
+      --bmc-green-border: #b7eb8f;
+      --bmc-chip-bg: #e6f7f4;
+      --bmc-chip-text: #006d75;
+      --bmc-chip-border: #87e8de;
+      --bg-light: #f4f6f9;
+      --bg-white: #ffffff;
+      --border-gray: #e5e8ec;
+      --border-light: #f0f2f5;
+      --text-main: #1d2129;
+      --text-secondary: #4e5969;
+      --text-muted: #86909c;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-light);
+      color: var(--text-main);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      font-size: 13px;
+    }
+
+    /* GLOBAL BMC HELIX NAVBAR */
+    .helix-top-navbar {
+      height: 46px;
+      background: var(--bmc-dark);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      z-index: 100;
+      flex-shrink: 0;
+    }
+
+    .navbar-left-brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .bmc-brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .bmc-logo-flame {
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .bmc-brand-text {
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.2px;
+    }
+    .bmc-brand-text span {
+      font-weight: 400;
+      color: #e4e7ed;
+      margin-left: 2px;
+    }
+
+    .bmc-itsm-tag {
+      color: var(--bmc-orange);
+      font-weight: 700;
+      font-size: 14px;
+      margin-left: 2px;
+    }
+
+    .helix-main-nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 12px;
+    }
+
+    .nav-menu-link {
+      padding: 6px 12px;
+      font-size: 12.5px;
+      color: #d1d5db;
+      text-decoration: none;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .nav-menu-link:hover, .nav-menu-link.active {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .navbar-right-tools {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .tool-icon-btn {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #d1d5db;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tool-icon-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+    }
+
+    .user-avatar-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #4b5563;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    /* VIEW CONTAINER */
+    .view-viewport {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--bg-white);
+    }
+
+    /* ================================================= */
+    /* VISTA 1: LISTA DE TICKETS (Mis tickets asignados) */
+    /* ================================================= */
+    #ticketsListView {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    /* Tickets Subheader Bar */
+    .tickets-header-bar {
+      padding: 12px 20px 8px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .tickets-title-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .tickets-main-heading {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .dropdown-view-selector {
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 13px;
+      color: #303133;
+      background: #ffffff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-state-action {
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 12px;
+      color: #606266;
+      background: #ffffff;
+      cursor: pointer;
+    }
+
+    .action-text-link {
+      color: #0070d2;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .action-text-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Filter Row Bar */
+    .tickets-filter-bar {
+      padding: 8px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fafbfc;
+      border-bottom: 1px solid var(--border-gray);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .filter-left-chips {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-filter-funnel {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #0070d2;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      margin-right: 4px;
+    }
+
+    .filter-chip-pill {
+      background: var(--bmc-chip-bg);
+      border: 1px solid var(--bmc-chip-border);
+      color: var(--bmc-chip-text);
+      border-radius: 14px;
+      padding: 3px 10px;
+      font-size: 11.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+    }
+    .chip-close-btn {
+      cursor: pointer;
+      font-size: 10px;
+      color: #006d75;
+    }
+
+    .filter-right-tools {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      color: #606266;
+    }
+
+    .table-search-input {
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 12px;
+      outline: none;
+      width: 160px;
+    }
+
+    /* Tickets Table */
+    .tickets-table-container {
+      flex: 1;
+      overflow: auto;
+    }
+
+    .helix-data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 12px;
+    }
+
+    .helix-data-table thead th {
+      background: #f7f9fa;
+      color: #4e5969;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-bottom: 1px solid #e5e8ec;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .helix-data-table tbody tr {
+      border-bottom: 1px solid #f0f2f5;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .helix-data-table tbody tr:hover {
+      background: #f0f7ff;
+    }
+
+    .helix-data-table tbody td {
+      padding: 9px 12px;
+      color: #303133;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+
+    .priority-badge-baja {
+      background: #52c41a;
+      color: #ffffff;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 10.5px;
+      font-weight: 600;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .ticket-id-link {
+      color: #0070d2;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .ticket-id-link:hover {
+      text-decoration: underline;
+    }
+
+    /* ================================================= */
+    /* VISTA 2: DETALLE DEL TICKET (INC000001802027)     */
+    /* ================================================= */
+    #ticketDetailView {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    /* Subheader Incident Toolbar */
+    .incident-top-toolbar {
+      padding: 10px 20px 8px 20px;
+      border-bottom: 1px solid var(--border-gray);
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .breadcrumb-nav-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .btn-back-to-list {
+      color: #0070d2;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      border: none;
+      background: transparent;
+      font-weight: 500;
+    }
+    .btn-back-to-list:hover {
+      text-decoration: underline;
+    }
+
+    .incident-meta-chips {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .incident-id-display {
+      font-size: 13px;
+      font-weight: 700;
+      color: #303133;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .incident-title-heading {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1d2129;
+      margin: 2px 0;
+      letter-spacing: -0.2px;
+    }
+
+    .incident-status-subline {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 11.5px;
+      color: #606266;
+      flex-wrap: wrap;
+    }
+
+    .status-select-inline {
+      border: 1px solid #dcdfe6;
+      border-radius: 3px;
+      padding: 2px 6px;
+      font-size: 11.5px;
+      color: #303133;
+      background: #ffffff;
+      outline: none;
+    }
+
+    .incident-actions-icons-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .action-icon-circle {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #4e5969;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .action-icon-circle:hover {
+      background: #f2f3f5;
+      color: #0070d2;
+    }
+
+    /* 2-COLUMN SPLIT: LEFT DETAILS (65%) vs RIGHT ACTIVITY (35%) */
+    .incident-split-container {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    /* LEFT DETAIL COLUMN */
+    .incident-left-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 24px;
+      border-right: 1px solid var(--border-gray);
+    }
+
+    .client-header-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+
+    .client-avatar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .client-icon-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #f2f3f5;
+      color: #4e5969;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .client-name-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1d2129;
+    }
+
+    /* Technical details 2-col grid */
+    .incident-fields-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px 24px;
+      font-size: 12px;
+      margin-bottom: 20px;
+    }
+
+    .field-item-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field-label {
+      color: #86909c;
+      font-size: 11px;
+    }
+
+    .field-value {
+      color: #1d2129;
+      font-weight: 500;
+    }
+
+    .description-box-content {
+      background: #f7f9fa;
+      border: 1px solid #e5e8ec;
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-size: 11.5px;
+      line-height: 1.5;
+      color: #303133;
+      white-space: pre-wrap;
+      font-family: inherit;
+    }
+
+    /* Assigned To Card */
+    .assigned-to-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      background: #fafbfc;
+      border: 1px solid #e5e8ec;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+
+    /* Bottom Subtabs */
+    .incident-bottom-tabs {
+      border-top: 1px solid var(--border-light);
+      padding-top: 14px;
+    }
+
+    .bottom-tab-buttons {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 12px;
+      font-size: 12px;
+    }
+
+    .bottom-tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #4e5969;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .badge-tab-count {
+      background: #ff7a45;
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 10px;
+    }
+
+    /* RIGHT PANEL: ACTIVIDAD (WORK INFO / PLANILLA DE TIPIFICACIÓN) */
+    .incident-right-activity-panel {
+      width: 420px;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .activity-tabs-header {
+      display: flex;
+      border-bottom: 1px solid var(--border-gray);
+      background: #fafbfc;
+    }
+
+    .activity-tab-nav {
+      flex: 1;
+      text-align: center;
+      padding: 10px 0;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #4e5969;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .activity-tab-nav.active {
+      color: #1d2129;
+      border-bottom-color: var(--bmc-orange);
+      background: #ffffff;
+    }
+
+    .activity-scroll-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* NUEVA NOTA CONTAINER */
+    .new-note-container {
+      background: #ffffff;
+      border: 1px solid #dcdfe6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .new-note-container.is-focused {
+      border-color: #0070d2;
+      box-shadow: 0 0 0 2px rgba(0, 112, 210, 0.15);
+    }
+
+    .new-note-header {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #1d2129;
+      margin-bottom: 6px;
+    }
+
+    .new-note-textarea {
+      width: 100%;
+      min-height: 85px;
+      border: none;
+      outline: none;
+      resize: vertical;
+      font-size: 12px;
+      color: #1d2129;
+      font-family: inherit;
+      line-height: 1.45;
+    }
+    .new-note-textarea::placeholder {
+      color: #8c8c8c;
+    }
+
+    .new-note-actions-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid #f0f2f5;
+      padding-top: 8px;
+      margin-top: 6px;
+    }
+
+    .note-format-tools {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #86909c;
+    }
+
+    .btn-save-note {
+      background: #0070d2;
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      padding: 5px 14px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-save-note:hover {
+      background: var(--bmc-blue-hover);
+    }
+
+    /* ACTIVITY FEED TIMELINE */
+    .feed-records-count-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #86909c;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .activity-feed-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .feed-item-card {
+      display: flex;
+      gap: 10px;
+      font-size: 11.5px;
+      line-height: 1.45;
+    }
+
+    .feed-avatar-bubble {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #9ca3af;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 11px;
+    }
+    .feed-avatar-bubble.system {
+      background: #e5e7eb;
+      color: #4b5563;
+      border-radius: 4px;
+    }
+
+    .feed-content-block {
+      flex: 1;
+    }
+
+    .feed-item-author {
+      font-weight: 600;
+      color: #1d2129;
+      display: inline;
+    }
+
+    .feed-item-action {
+      color: #4e5969;
+      display: inline;
+    }
+
+    .feed-item-time {
+      font-size: 10.5px;
+      color: #86909c;
+      margin-top: 2px;
+    }
+
+    .feed-note-text-box {
+      margin-top: 4px;
+      color: #1d2129;
+      background: #f7f9fa;
+      padding: 6px 10px;
+      border-radius: 4px;
+      border-left: 2px solid #0070d2;
+      white-space: pre-wrap;
+      font-family: inherit;
+    }
+    .feed-note-text-box.template-box {
+      border-left-color: var(--bmc-orange);
+      font-family: monospace;
+      font-size: 11px;
+      background: #fff8f5;
+    }
+
+    /* FLOATING DEMO CONTROLLER */
+    .bmc-floating-demo-bar {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e2430;
+      color: #ffffff;
+      border: 1px solid #3e4a63;
+      border-radius: 24px;
+      padding: 6px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      z-index: 5000;
+      font-size: 12px;
+    }
+
+    .bmc-controller-badge {
+      background: var(--bmc-orange);
+      color: #ffffff;
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      text-transform: uppercase;
+    }
+
+    .bmc-control-btn {
+      background: #2b3345;
+      color: #ffffff;
+      border: 1px solid #3e4a63;
+      border-radius: 12px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s;
+    }
+    .bmc-control-btn:hover {
+      background: #3e4a63;
+      border-color: #0070d2;
+    }
+    .bmc-control-btn.primary {
+      background: #0070d2;
+      border-color: #0070d2;
+    }
+    .bmc-control-btn.primary:hover {
+      background: var(--bmc-blue-hover);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- GLOBAL BMC HELIX NAVBAR -->
+  <header class="helix-top-navbar">
+    <div class="navbar-left-brand">
+      <div class="bmc-brand-logo" onclick="HelixApp.showListView()">
+        <!-- BMC Helix flame/swirl logo SVG -->
+        <div class="bmc-logo-flame">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2C6.48 2 2 6.48 2 12c0 4.1 2.47 7.62 6 9.17V17c-1.66 0-3-1.34-3-3s1.34-3 3-3h1V8h2v3h1c1.66 0 3 1.34 3 3s-1.34 3-3 3v4.17c3.53-1.55 6-5.07 6-9.17 0-5.52-4.48-10-10-10z" fill="#F15A24"/>
+          </svg>
+        </div>
+        <div class="bmc-brand-text">bmc<span>helix</span><span class="bmc-itsm-tag"> | ITSM</span></div>
+      </div>
+
+      <nav class="helix-main-nav">
+        <a class="nav-menu-link">Panel</a>
+        <a class="nav-menu-link active" onclick="HelixApp.showListView()">Consola ▾</a>
+        <a class="nav-menu-link">Calendario</a>
+        <a class="nav-menu-link">Registrador inteligente</a>
+        <a class="nav-menu-link">Crear nuevo ▾</a>
+      </nav>
+    </div>
+
+    <div class="navbar-right-tools">
+      <div class="tool-icon-btn" title="Buscar">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <div class="tool-icon-btn" title="Catálogo de servicios">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      </div>
+      <div class="tool-icon-btn" title="Mensajes">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <div class="user-avatar-circle" title="Drey E. Aymituma Julca">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+      </div>
+    </div>
+  </header>
+
+  <!-- VIEWPORT WRAPPER -->
+  <main class="view-viewport">
+
+    <!-- ================================================= -->
+    <!-- VISTA 1: LISTA DE TICKETS (Mis tickets asignados) -->
+    <!-- ================================================= -->
+    <section id="ticketsListView">
+      
+      <!-- Subheader row -->
+      <div class="tickets-header-bar">
+        <div class="tickets-title-group">
+          <h1 class="tickets-main-heading">Tickets</h1>
+          <div class="dropdown-view-selector">
+            <span>Mis tickets asignados</span>
+            <span style="font-size:10px;">▾</span>
+          </div>
+          <button class="btn-state-action">Estado</button>
+          <span class="action-text-link">Guardar como</span>
+          <span style="color:#86909c; cursor:pointer;">⋮</span>
+          <span class="action-text-link">📊 Mostrar estadísticas de ticket</span>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:12px; font-size:12px; color:#4e5969;">
+          <span>Línea de negocio ▾</span>
+          <span style="cursor:pointer;" title="Recargar">⟳</span>
+        </div>
+      </div>
+
+      <!-- Filter chips bar -->
+      <div class="tickets-filter-bar">
+        <div class="filter-left-chips">
+          <button class="btn-filter-funnel">
+            <span>Y</span>
+            <span>Filtrar</span>
+          </button>
+          <div class="filter-chip-pill">
+            <span>Estado: En curso, Asignado</span>
+            <span class="chip-close-btn">✕</span>
+          </div>
+          <div class="filter-chip-pill">
+            <span>Usuario asignado: Yo mismo</span>
+            <span class="chip-close-btn">✕</span>
+          </div>
+        </div>
+
+        <div class="filter-right-tools">
+          <span>0 de 12 seleccionadas</span>
+          <span class="action-text-link">Exportar ▾</span>
+          <input type="text" class="table-search-input" placeholder="Buscar">
+          <span class="action-text-link">Columnas visibles ▾</span>
+        </div>
+      </div>
+
+      <!-- Tickets Data Table -->
+      <div class="tickets-table-container">
+        <table class="helix-data-table">
+          <thead>
+            <tr>
+              <th style="width: 32px;"><input type="checkbox"></th>
+              <th>Prioridad ▾</th>
+              <th>Mostrar ID ▾</th>
+              <th>F...</th>
+              <th>Estado ▾</th>
+              <th>Número de ticket del proveedor ▾</th>
+              <th>Descripción ▾</th>
+              <th>Crear fecha ▾</th>
+              <th>Nombre compl... ▾</th>
+              <th>Nombre de usuario a... ▾</th>
+              <th>Resumen ▾</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr onclick="HelixApp.openTicket('INC000001803006')">
+              <td><input type="checkbox"></td>
+              <td><span class="priority-badge-baja">Baja</span></td>
+              <td><span class="ticket-id-link">INC000001803006</span></td>
+              <td></td>
+              <td>Asignado</td>
+              <td>0061569556</td>
+              <td>H55417199 // CLIENTE CL...</td>
+              <td>12 nov 2026, 21:00:23</td>
+              <td>USER BO FIJA</td>
+              <td>DREY E AYMITUMA JULCA</td>
+              <td>FALLAS TECNICAS - INTERNET - SIN SERVICIO WIFI</td>
+            </tr>
+            <tr onclick="HelixApp.openTicket('INC000001802069')">
+              <td><input type="checkbox"></td>
+              <td><span class="priority-badge-baja">Baja</span></td>
+              <td><span class="ticket-id-link">INC000001802069</span></td>
+              <td></td>
+              <td>Asignado</td>
+              <td>0061569714</td>
+              <td>H58599147 // SALAZAR TR...</td>
+              <td>12 nov 2026, 21:15:38</td>
+              <td>USER BO FIJA</td>
+              <td>DREY E AYMITUMA JULCA</td>
+              <td>FALLAS TECNICAS - INTERNET - SIN SERVICIO WIFI</td>
+            </tr>
+            <tr onclick="HelixApp.openTicket('INC000001802026')">
+              <td><input type="checkbox"></td>
+              <td><span class="priority-badge-baja">Baja</span></td>
+              <td><span class="ticket-id-link">INC000001802026</span></td>
+              <td></td>
+              <td>Asignado</td>
+              <td>0061569820</td>
+              <td>H36604809 // CLIENTE CL...</td>
+              <td>12 nov 2026, 21:35:24</td>
+              <td>USER BO FIJA</td>
+              <td>DREY E AYMITUMA JULCA</td>
+              <td>FALLAS TECNICAS - INTERNET - ENLACE LENTO - WIFI</td>
+            </tr>
+            <tr onclick="HelixApp.openTicket('INC000001801236')">
+              <td><input type="checkbox"></td>
+              <td><span class="priority-badge-baja">Baja</span></td>
+              <td><span class="ticket-id-link">INC000001801236</span></td>
+              <td></td>
+              <td>Asignado</td>
+              <td>0061569841</td>
+              <td>H34188269 // CLIENTE CL...</td>
+              <td>12 nov 2026, 21:40:17</td>
+              <td>USER BO FIJA</td>
+              <td>DREY E AYMITUMA JULCA</td>
+              <td>FALLAS TECNICAS - INTERNET - SIN SERVICIO WIFI</td>
+            </tr>
+            <tr onclick="HelixApp.openTicket('INC000001801430')">
+              <td><input type="checkbox"></td>
+              <td><span class="priority-badge-baja">Baja</span></td>
+              <td><span class="ticket-id-link">INC000001801430</span></td>
+              <td></td>
+              <td>Asignado</td>
+              <td>0061569937</td>
+              <td>H41526292 // YEVGENNIY...</td>
+              <td>12 nov 2026, 22:10:27</td>
+              <td>USER BO FIJA</td>
+              <td>DREY E AYMITUMA JULCA</td>
+              <td>FALLAS TECNICAS - INTERNET - SIN SERVICIO WIFI</td>
+            </tr>
+            <tr onclick="HelixApp.openTicket('INC000001792009')">
+              <td><input type="checkbox"></td>
+              <td><span class="priority-badge-baja">Baja</span></td>
+              <td><span class="ticket-id-link">INC000001792009</span></td>
+              <td></td>
+              <td>En curso</td>
+              <td>0061558328</td>
+              <td>H57230294 // CLIENTE CL...</td>
+              <td>11 nov 2026, 21:15:20</td>
+              <td>USER BO FIJA</td>
+              <td>DREY E AYMITUMA JULCA</td>
+              <td>FALLAS TECNICAS - INTERNET - ENLACE LENTO - WIFI</td>
+            </tr>
+            <tr onclick="HelixApp.openTicket('INC000001799424')">
+              <td><input type="checkbox"></td>
+              <td><span class="priority-badge-baja">Baja</span></td>
+              <td><span class="ticket-id-link">INC000001799424</span></td>
+              <td></td>
+              <td>En curso</td>
+              <td>0061562884</td>
+              <td>H54043286 // CLIENTE CL...</td>
+              <td>12 nov 2026, 12:40:33</td>
+              <td>USER BO FIJA</td>
+              <td>DREY E AYMITUMA JULCA</td>
+              <td>FALLAS TECNICAS - INTERNET - ENLACE LENTO - WIFI</td>
+            </tr>
+            <tr onclick="HelixApp.openTicket('INC000001800204')">
+              <td><input type="checkbox"></td>
+              <td><span class="priority-badge-baja">Baja</span></td>
+              <td><span class="ticket-id-link">INC000001800204</span></td>
+              <td></td>
+              <td>En curso</td>
+              <td>0061565471</td>
+              <td>H54583096 // IRMA VILLA...</td>
+              <td>12 nov 2026, 15:30:19</td>
+              <td>USER BO FIJA</td>
+              <td>DREY E AYMITUMA JULCA</td>
+              <td>FALLAS TECNICAS - INTERNET - SIN SERVICIO WIFI</td>
+            </tr>
+            <tr onclick="HelixApp.openTicket('INC000001801840')">
+              <td><input type="checkbox"></td>
+              <td><span class="priority-badge-baja">Baja</span></td>
+              <td><span class="ticket-id-link">INC000001801840</span></td>
+              <td></td>
+              <td>En curso</td>
+              <td>0061568048</td>
+              <td>H29663954 // LIZBETH ISA...</td>
+              <td>12 nov 2026, 18:35:38</td>
+              <td>USER BO FIJA</td>
+              <td>DREY E AYMITUMA JULCA</td>
+              <td>FALLAS TECNICAS - INTERNET - SIN SERVICIO WIFI</td>
+            </tr>
+            <tr onclick="HelixApp.openTicket('INC000001801734')">
+              <td><input type="checkbox"></td>
+              <td><span class="priority-badge-baja">Baja</span></td>
+              <td><span class="ticket-id-link">INC000001801734</span></td>
+              <td></td>
+              <td>En curso</td>
+              <td>0061567995</td>
+              <td>H56405719 // SANDRA TA...</td>
+              <td>12 nov 2026, 18:30:55</td>
+              <td>USER BO FIJA</td>
+              <td>DREY E AYMITUMA JULCA</td>
+              <td>FALLAS TECNICAS - INTERNET - ENLACE LENTO - WIFI</td>
+            </tr>
+            <tr onclick="HelixApp.openTicket('INC000001801748')">
+              <td><input type="checkbox"></td>
+              <td><span class="priority-badge-baja">Baja</span></td>
+              <td><span class="ticket-id-link">INC000001801748</span></td>
+              <td></td>
+              <td>En curso</td>
+              <td>0061568035</td>
+              <td>H52387845 // CLIENTE CL...</td>
+              <td>12 nov 2026, 18:35:38</td>
+              <td>USER BO FIJA</td>
+              <td>DREY E AYMITUMA JULCA</td>
+              <td>FALLAS TECNICAS - INTERNET - ENLACE INTERMITENTE</td>
+            </tr>
+
+            <!-- ROW 12: EL CASO REAL DE LA CAPTURA DE DREY -->
+            <tr style="background:#fffbe6;" onclick="HelixApp.openTicket('INC000001802027')">
+              <td><input type="checkbox" checked></td>
+              <td><span class="priority-badge-baja">Baja</span></td>
+              <td><span class="ticket-id-link" style="font-weight:700;">INC000001802027</span></td>
+              <td></td>
+              <td><strong style="color:#0070d2;">En curso</strong></td>
+              <td>0061568299</td>
+              <td>H48695751 // MAGDALEN...</td>
+              <td>12 nov 2026, 18:50:58</td>
+              <td>USER BO FIJA</td>
+              <td>DREY E AYMITUMA JULCA</td>
+              <td>FALLAS TECNICAS - INTERNET - ENLACE INTERMITENTE WIFI</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+    <!-- ================================================= -->
+    <!-- VISTA 2: DETALLE DEL TICKET (INC000001802027)     -->
+    <!-- ================================================= -->
+    <section id="ticketDetailView">
+      
+      <!-- Top incident toolbar header -->
+      <div class="incident-top-toolbar">
+        <div class="breadcrumb-nav-row">
+          <div class="incident-meta-chips">
+            <button class="btn-back-to-list" onclick="HelixApp.showListView()">
+              &lt; Volver a Tickets
+            </button>
+            <span style="color:#dcdfe6;">|</span>
+            <div class="incident-id-display">
+              <span id="detailTicketId">INC000001802027</span>
+            </div>
+            <span class="priority-badge-baja">Baja</span>
+          </div>
+
+          <div class="incident-actions-icons-right">
+            <div class="action-icon-circle" title="Compartir">👥</div>
+            <div class="action-icon-circle" title="Correo">✉</div>
+            <div class="action-icon-circle" title="Enviar">✈</div>
+            <div class="action-icon-circle" title="Favorito">★</div>
+            <div class="action-icon-circle" title="Imprimir">🖨</div>
+            <div class="action-icon-circle" title="Actualizar">⟳</div>
+            <div class="action-icon-circle" title="Editar">✏</div>
+            <span style="font-size:12px; color:#4e5969; cursor:pointer;">Más ▾</span>
+          </div>
+        </div>
+
+        <h2 class="incident-title-heading" id="detailTicketSummary">
+          FALLAS TECNICAS - INTERNET - ENLACE INTERMITENTE WIFI
+        </h2>
+
+        <div class="incident-status-subline">
+          <div>Fecha de creación: <span style="font-weight:500;">12/11/2026 18:50:58</span></div>
+          <div>
+            Estado: 
+            <select class="status-select-inline" id="incidentStateSelect">
+              <option value="Asignado">Asignado</option>
+              <option value="En curso" selected>En curso</option>
+              <option value="Pendiente">Pendiente</option>
+              <option value="Resuelto">Resuelto</option>
+              <option value="Cerrado">Cerrado</option>
+            </select>
+          </div>
+          <div>Incidencia grave: <span style="font-weight:500;">No ▾</span></div>
+          <div>Actualiz.: <span style="font-weight:500;">13/11/2026 10:45:41</span></div>
+        </div>
+      </div>
+
+      <!-- 2-COLUMN SPLIT CONTAINER -->
+      <div class="incident-split-container">
+        
+        <!-- LEFT 65% CONTENT -->
+        <div class="incident-left-content">
+          
+          <!-- Cliente Card -->
+          <div class="client-header-card">
+            <div class="client-avatar-row">
+              <div class="client-icon-circle">👤</div>
+              <div>
+                <span style="font-size:11px; color:#86909c; display:block;">Cliente</span>
+                <span class="client-name-title">USER BO FIJA</span>
+              </div>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="color:#0070d2; font-size:12px; cursor:pointer;">📞 +++</span>
+              <span style="color:#0070d2; font-size:12px; cursor:pointer;">Mostrar detalles &gt;</span>
+            </div>
+          </div>
+
+          <!-- Technical Classification & Description Grid -->
+          <div class="incident-fields-grid">
+            
+            <!-- Left Col -->
+            <div class="field-item-group">
+              <span class="field-label">Tipo de incidencia</span>
+              <span class="field-value">Petición de serv. por el usuario</span>
+            </div>
+
+            <div class="field-item-group">
+              <span class="field-label">Fecha de notificación</span>
+              <span class="field-value">12/11/2026 18:50:58</span>
+            </div>
+
+            <div class="field-item-group">
+              <span class="field-label">Fuente reportada</span>
+              <span class="field-value">13000</span>
+            </div>
+
+            <div class="field-item-group">
+              <span class="field-label">Categoría operacional</span>
+              <span class="field-value" style="font-size:11.5px; line-height:1.3;">
+                BO.FALLA TECNICA &gt; INTERNET - ENLACE INTERMITENTE WIFI &gt; REINICIOS CONSTANTES
+              </span>
+            </div>
+
+            <!-- Description (Full width / span 2) -->
+            <div class="field-item-group" style="grid-column: span 2;">
+              <span class="field-label">Descripción</span>
+              <div class="description-box-content">
+H48695751 // MAGDALENA TERAN PANAIFO
+*** REGISTRO TELEFÓNICO 12/11/2026 06:47:43 PM E3084592
+Descripción: SOT (ORDEN DE VISITA) SGA 1.PROBLEMA REPORTADO POR EL CLIENTE: intermitencia con el wifi 2.DIAGNÓSTICO: fallas con wifi, no presenta averia masiva 3.NOMBRE DEL QUE REPORTA: jarr 4.ID DE LLAMADA: 179452635596748599300201995300 SessionID: 6f703fad-5b7d-413d-8ad6-ba23c47ba7f5
+CELULAR: 931793144
+NOMBRE: MAGDALENA TERAN PANAIFO
+              </div>
+              <span style="font-size:11px; color:#0070d2; cursor:pointer; margin-top:2px;">Mostrar menos</span>
+            </div>
+
+            <div class="field-item-group">
+              <span class="field-label">Categoría de productos</span>
+              <span class="field-value">FIJO &gt; HFC &gt; DERIVADO A BACKOFFICE</span>
+            </div>
+
+            <div class="field-item-group">
+              <span class="field-label">Categoría de resolución</span>
+              <span class="field-value" style="color:#86909c;">Nada establecido</span>
+            </div>
+
+            <div class="field-item-group">
+              <span class="field-label">Categorización de Causa Raíz</span>
+              <span class="field-value" style="color:#86909c;">Nada establecido</span>
+            </div>
+
+            <div class="field-item-group">
+              <span class="field-label">Núm. de ticket del proveedor</span>
+              <span class="field-value">0061568299</span>
+            </div>
+
+            <div class="field-item-group">
+              <span class="field-label">Servicio</span>
+              <span class="field-value" style="color:#0070d2;">BO FIJA TECNICO</span>
+            </div>
+
+            <div class="field-item-group">
+              <span class="field-label">CI</span>
+              <span class="field-value" style="color:#0070d2;">SIAC UNICO</span>
+            </div>
+
+          </div>
+
+          <!-- Asignado a Card -->
+          <div class="assigned-to-card">
+            <div class="client-icon-circle">👤</div>
+            <div style="flex:1;">
+              <div style="display:flex; align-items:center; gap:6px;">
+                <span style="font-size:11px; color:#86909c;">Asignado a</span>
+                <span style="font-size:11px; color:#0070d2; cursor:pointer;">✏</span>
+              </div>
+              <span style="font-size:12.5px; font-weight:700; color:#1d2129;">DREY E AYMITUMA JULCA</span>
+              <span style="font-size:11.5px; color:#4e5969; display:block;">Grupo de soporte: <strong>BO FIJA</strong></span>
+            </div>
+          </div>
+
+          <!-- Bottom Tabs -->
+          <div class="incident-bottom-tabs">
+            <div class="bottom-tab-buttons">
+              <div class="bottom-tab-btn">
+                <span>Tareas</span>
+                <span class="badge-tab-count">0</span>
+              </div>
+              <div class="bottom-tab-btn">
+                <span>Elementos de configuración</span>
+                <span class="badge-tab-count">0</span>
+              </div>
+              <div class="bottom-tab-btn">
+                <span>Elementos relacionados</span>
+                <span class="badge-tab-count">0</span>
+              </div>
+              <span style="color:#0070d2; font-size:12px; cursor:pointer;">+ Agregar tarea ▾</span>
+            </div>
+            <p style="font-size:11px; color:#86909c; font-style:italic;">Aún no ha guardado ninguna tarea.</p>
+          </div>
+
+        </div>
+
+        <!-- RIGHT 35% ACTIVIDAD PANEL (WORK INFO / PLANILLA) -->
+        <div class="incident-right-activity-panel">
+          
+          <!-- Tabs bar -->
+          <div class="activity-tabs-header">
+            <div class="activity-tab-nav active">Actividad</div>
+            <div class="activity-tab-nav">Recursos</div>
+          </div>
+
+          <!-- Activity Scroll Content -->
+          <div class="activity-scroll-content">
+            
+            <!-- NUEVA NOTA BOX -->
+            <div class="new-note-container" id="newNoteCard">
+              <div class="new-note-header">Nueva nota</div>
+              <textarea 
+                class="new-note-textarea" 
+                id="txtNuevaNotaHelix" 
+                placeholder="Empiece a escribir para agregar una nota. Utilizar @ para buscar personas o activos."
+                onfocus="document.getElementById('newNoteCard').classList.add('is-focused')"
+                onblur="document.getElementById('newNoteCard').classList.remove('is-focused')"
+              ></textarea>
+
+              <div class="new-note-actions-bar">
+                <div class="note-format-tools">
+                  <span style="font-weight:700; cursor:pointer;" title="Negrita">B</span>
+                  <span style="font-style:italic; cursor:pointer;" title="Cursiva">I</span>
+                  <span style="cursor:pointer;" title="Enlace">🔗</span>
+                  <span style="cursor:pointer;" title="Adjuntar">📎</span>
+                </div>
+                <button class="btn-save-note" onclick="HelixApp.saveNewNote()">Guardar nota</button>
+              </div>
+            </div>
+
+            <!-- Activity Counter Bar -->
+            <div class="feed-records-count-bar">
+              <span>Registros desde 1 hasta <strong id="notesCurrentCount">5</strong> de <strong id="notesTotalCount">5</strong></span>
+              <span style="cursor:pointer; color:#0070d2;">Avanzado ▾</span>
+            </div>
+
+            <!-- Activity Feed Timeline Items -->
+            <div class="activity-feed-list" id="activityFeedList">
+              
+              <!-- NOTE 1 (Most recent) -->
+              <div class="feed-item-card">
+                <div class="feed-avatar-bubble">👤</div>
+                <div class="feed-content-block">
+                  <div>
+                    <span class="feed-item-author">DREY E AYMITUMA JULCA</span>
+                    <span class="feed-item-action"> agregó una nota</span>
+                    <span style="font-size:10px; color:#86909c; margin-left:4px;">🔒</span>
+                  </div>
+                  <div class="feed-note-text-box">
+sin numero en notas, se llama a numero de datos menores pero corta llamada
+                  </div>
+                  <div class="feed-item-time">13/11/2026 10:46:09</div>
+                </div>
+              </div>
+
+              <!-- NOTE 2 (THE BACKOFFICE HITSS TEMPLATE) -->
+              <div class="feed-item-card" id="hitssTemplateNoteCard">
+                <div class="feed-avatar-bubble">👤</div>
+                <div class="feed-content-block">
+                  <div>
+                    <span class="feed-item-author">DREY E AYMITUMA JULCA</span>
+                    <span class="feed-item-action"> agregó una nota</span>
+                    <span style="font-size:10px; color:#86909c; margin-left:4px;">🔒</span>
+                  </div>
+                  <div class="feed-note-text-box template-box">
+BACKOFFICE HITSS
+CELULAR: 931793144..
+<span style="color:#0070d2; cursor:pointer; font-family:sans-serif;" onclick="HelixApp.toggleFullTemplate(this)">mostrar más ▾</span>
+<div id="fullTemplateExpansion" style="display:none; margin-top:4px;">
+PROBLEMA DETECTADO: INT - INTERMITENCIA EN HFC
+DESCARTES: Se valida Schaman sin alertas masivas en nodo. Se valida Incógnito provisionado con niveles Upstream fuera de rango (54.2 dBmV > 52.9 dBmV Flyer N° 41). Se valida TR-069. Se genera SOT de mtto por niveles alterados.
+SOLUCION: Se genera SOT de mtto para visita técnica
+SOT / REMEDY: 90888521
+ID DE LLAMADA: 179452635596748599300201995300
+</div>
+                  </div>
+                  <div class="feed-item-time">13/11/2026 10:44:40</div>
+                </div>
+              </div>
+
+              <!-- EVENT 3 -->
+              <div class="feed-item-card">
+                <div class="feed-avatar-bubble system">📄</div>
+                <div class="feed-content-block">
+                  <div>
+                    <span class="feed-item-action">Estado marcado: "En curso" por </span>
+                    <span class="feed-item-author">DREY E AYMITUMA JULCA</span>
+                  </div>
+                  <div class="feed-item-time">13/11/2026 10:06:34</div>
+                </div>
+              </div>
+
+              <!-- EVENT 4 -->
+              <div class="feed-item-card">
+                <div class="feed-avatar-bubble system">📄</div>
+                <div class="feed-content-block">
+                  <div>
+                    <span class="feed-item-action">Asignado a </span>
+                    <span class="feed-item-author">DREY E AYMITUMA JULCA</span>
+                    <span class="feed-item-action"> por DREY E AYMITUMA JULCA</span>
+                  </div>
+                  <div class="feed-item-time">13/11/2026 8:06:42</div>
+                </div>
+              </div>
+
+              <!-- EVENT 5 -->
+              <div class="feed-item-card">
+                <div class="feed-avatar-bubble system">📄</div>
+                <div class="feed-content-block">
+                  <div>
+                    <span class="feed-item-action">Nuevo INC000001802027 por </span>
+                    <span class="feed-item-author">SOPORTE CLIENTES</span>
+                  </div>
+                  <div class="feed-item-time">12/11/2026 18:50:58</div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- FLOATING DEMO CONTROLLER -->
+  <div class="bmc-floating-demo-bar">
+    <span class="bmc-controller-badge">BMC Helix ITSM</span>
+    
+    <button class="bmc-control-btn" onclick="HelixApp.showListView()" title="Ver lista de tickets asignados">
+      <span>📋 Lista Tickets</span>
+    </button>
+    
+    <button class="bmc-control-btn" onclick="HelixApp.openTicket('INC000001802027')" title="Ver detalle del caso de Magdalena Terán">
+      <span>🔍 Detalle Ticket</span>
+    </button>
+
+    <button class="bmc-control-btn primary" onclick="HelixApp.injectMaaSTemplate()" title="Simula que AICC BO Assistant inyecta la plantilla Hitss en 1 clic">
+      <span>⚡ Pegar Plantilla MaaS AI</span>
+    </button>
+
+    <button class="bmc-control-btn" onclick="HelixApp.saveNewNote()" title="Guarda la nota en la Actividad">
+      <span>💾 Guardar Nota</span>
+    </button>
+  </div>
+
+  <!-- JAVASCRIPT APP LOGIC -->
+  <script>
+    const HelixApp = {
+      currentView: 'list', // 'list' or 'detail'
+      totalNotes: 5,
+
+      init() {
+        this.showListView();
+      },
+
+      showListView() {
+        document.getElementById('ticketsListView').style.display = 'flex';
+        document.getElementById('ticketDetailView').style.display = 'none';
+        this.currentView = 'list';
+      },
+
+      openTicket(ticketId) {
+        document.getElementById('ticketsListView').style.display = 'none';
+        document.getElementById('ticketDetailView').style.display = 'flex';
+        document.getElementById('detailTicketId').innerText = ticketId;
+        this.currentView = 'detail';
+      },
+
+      injectMaaSTemplate() {
+        // Switch to detail view if in list view
+        if (this.currentView === 'list') {
+          this.openTicket('INC000001802027');
+        }
+
+        const templateText = 
+`BACKOFFICE HITSS
+TELEFONO: 931793144
+PROBLEMA DETECTADO: INT - INTERMITENCIA EN HFC
+DESCARTES: Se valida Schaman sin alertas masivas en nodo. Se valida Incógnito provisionado con niveles Upstream fuera de rango (54.2 dBmV > 52.9 dBmV Flyer N° 41). Se valida TR-069 con saturación en canal WiFi 2.4GHz. Se genera SOT de mtto por niveles alterados.
+SOLUCION: Se genera SOT de mtto para visita técnica
+SOT / REMEDY: 90888521
+ID DE LLAMADA: 179452635596748599300201995300`;
+
+        const textarea = document.getElementById('txtNuevaNotaHelix');
+        textarea.value = templateText;
+        document.getElementById('newNoteCard').classList.add('is-focused');
+        textarea.scrollIntoView({ behavior: 'smooth' });
+      },
+
+      saveNewNote() {
+        const textarea = document.getElementById('txtNuevaNotaHelix');
+        const text = textarea.value.trim();
+        if (!text) {
+          alert('Por favor escribe o pega la plantilla en la nota antes de guardar.');
+          return;
+        }
+
+        // Format current timestamp
+        const now = new Date();
+        const dd = String(now.getDate()).padStart(2, '0');
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const yyyy = now.getFullYear();
+        const hh = String(now.getHours()).padStart(2, '0');
+        const min = String(now.getMinutes()).padStart(2, '0');
+        const ss = String(now.getSeconds()).padStart(2, '0');
+        const timeStr = `${dd}/${mm}/${yyyy} ${hh}:${min}:${ss}`;
+
+        // Create new feed card
+        const feed = document.getElementById('activityFeedList');
+        const newCard = document.createElement('div');
+        newCard.className = 'feed-item-card';
+        newCard.innerHTML = `
+          <div class="feed-avatar-bubble">👤</div>
+          <div class="feed-content-block">
+            <div>
+              <span class="feed-item-author">DREY E AYMITUMA JULCA</span>
+              <span class="feed-item-action"> agregó una nota</span>
+              <span style="font-size:10px; color:#86909c; margin-left:4px;">🔒</span>
+            </div>
+            <div class="feed-note-text-box template-box">
+${text}
+            </div>
+            <div class="feed-item-time">${timeStr} (Auto-Inyectado por MaaS)</div>
+          </div>
+        `;
+
+        feed.insertBefore(newCard, feed.firstChild);
+        textarea.value = '';
+        document.getElementById('newNoteCard').classList.remove('is-focused');
+
+        this.totalNotes++;
+        document.getElementById('notesCurrentCount').innerText = this.totalNotes;
+        document.getElementById('notesTotalCount').innerText = this.totalNotes;
+
+        alert('¡Plantilla Backoffice Hitss guardada con éxito en la Actividad de BMC Helix!');
+      },
+
+      toggleFullTemplate(btnEl) {
+        const full = document.getElementById('fullTemplateExpansion');
+        if (full.style.display === 'none') {
+          full.style.display = 'block';
+          btnEl.innerText = 'mostrar menos ▴';
+        } else {
+          full.style.display = 'none';
+          btnEl.innerText = 'mostrar más ▾';
+        }
+      }
+    };
+
+    window.HelixApp = HelixApp;
+    window.addEventListener('DOMContentLoaded', () => {
+      HelixApp.init();
+    });
+  </script>
+</body>
+</html>
