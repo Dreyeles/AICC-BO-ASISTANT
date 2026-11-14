@@ -1052,9 +1052,9 @@
       position: fixed;
       top: 54px;
       right: 20px;
-      width: 440px;
-      max-height: calc(100vh - 110px);
-      background: rgba(15, 20, 32, 0.96);
+      width: 450px;
+      height: 520px;
+      background: rgba(15, 20, 32, 0.97);
       backdrop-filter: blur(14px);
       border: 1px solid rgba(0, 112, 210, 0.5);
       border-radius: 12px;
@@ -1063,13 +1063,13 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      transition: height 0.25s ease;
       font-size: 11.5px;
       color: #e4e7ed;
     }
 
     .aicc-teleprompter-drawer.minimized {
-      height: 44px;
+      height: 44px !important;
       overflow: hidden;
     }
 
@@ -1185,26 +1185,24 @@
     /* Transcript Stream */
     .teleprompter-stream {
       padding: 12px;
-      max-height: 250px;
+      flex: 1;
+      min-height: 0;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
       gap: 10px;
       background: #0b0f19;
+      scroll-behavior: smooth;
+      contain: content;
     }
 
     .transcript-bubble {
       padding: 8px 11px;
       border-radius: 8px;
-      line-height: 1.4;
-      animation: fadeInBubble 0.3s ease;
+      line-height: 1.45;
       border: 1px solid transparent;
-      transition: all 0.2s;
-    }
-
-    @keyframes fadeInBubble {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
+      transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
+      contain: layout style;
     }
 
     .transcript-bubble.asesor {
@@ -1244,15 +1242,22 @@
     .bubble-text {
       color: #f1f5f9;
       font-size: 11.5px;
+      line-height: 1.45;
       word-break: break-word;
+    }
+
+    .bubble-typed-text {
+      white-space: pre-wrap;
     }
 
     .typing-cursor {
       display: inline-block;
+      width: 4px;
       color: #38bdf8;
       font-weight: bold;
       animation: blinkCursor 0.6s infinite;
       margin-left: 2px;
+      vertical-align: baseline;
     }
 
     @keyframes blinkCursor {
@@ -2295,10 +2300,6 @@
         const audio = document.getElementById('audioLlamada');
         if (!audio) return;
 
-        audio.addEventListener('timeupdate', () => {
-          this.handleAudioTimeUpdate(audio.currentTime, audio.duration || 98.8);
-        });
-
         audio.addEventListener('ended', () => {
           this.onCallAudioFinished();
         });
@@ -2346,13 +2347,14 @@
                 </span>
                 <span style="font-size: 9.5px; opacity: 0.7;">${String(Math.floor(turn.tInicio / 60)).padStart(2, '0')}:${String(Math.floor(turn.tInicio % 60)).padStart(2, '0')}</span>
               </div>
-              <div class="bubble-text" id="bubble-text-${idx}"></div>
+              <div class="bubble-text" id="bubble-text-${idx}">
+                <span class="bubble-typed-text" id="bubble-typed-${idx}"></span><span class="typing-cursor" id="cursor-${idx}" style="display:none;">▌</span>
+              </div>
             `;
             stream.appendChild(bubble);
           }
 
           bubble.style.display = 'block';
-          const textEl = document.getElementById(`bubble-text-${idx}`);
 
           const turnDuration = (turn.duracion || (turn.tFin - turn.tInicio) || 1);
           const elapsed = Math.max(0, currTime - turn.tInicio);
@@ -2362,15 +2364,24 @@
           if (currTime >= turn.tInicio && currTime <= turn.tFin) {
             bubble.classList.add('active-speech');
 
-            const charCount = Math.max(1, Math.min(turn.texto.length, Math.floor(progress * turn.texto.length)));
-            const typedText = turn.texto.substring(0, charCount);
+            const targetCharCount = Math.max(1, Math.min(turn.texto.length, Math.floor(progress * turn.texto.length)));
+            // Monotonic guarantee: never reduce characters, prevent jitter
+            turn.charCount = Math.max(turn.charCount || 0, targetCharCount);
+            const typedText = turn.texto.substring(0, turn.charCount);
 
-            if (textEl) {
-              textEl.innerHTML = `${typedText}<span class="typing-cursor">▌</span>`;
+            const typedEl = document.getElementById(`bubble-typed-${idx}`);
+            const cursorEl = document.getElementById(`cursor-${idx}`);
+            if (typedEl && typedEl.textContent !== typedText) {
+              typedEl.textContent = typedText;
+            }
+            if (cursorEl && cursorEl.style.display !== 'inline-block') {
+              cursorEl.style.display = 'inline-block';
             }
 
-            // Smoothly auto-scroll to the bottom of the stream
-            stream.scrollTop = stream.scrollHeight;
+            // Auto-scroll smoothly only if content grew near bottom
+            if (stream.scrollHeight - stream.scrollTop - stream.clientHeight < 120) {
+              stream.scrollTop = stream.scrollHeight;
+            }
 
             // Activate descarte badges at 20% progress or after 1.2s
             if (progress >= 0.20 || elapsed >= 1.2) {
@@ -2381,8 +2392,13 @@
           // CASE 2: Turn has completed
           else if (currTime > turn.tFin) {
             bubble.classList.remove('active-speech');
-            if (textEl) {
-              textEl.innerHTML = turn.texto; // Complete text without cursor
+            const typedEl = document.getElementById(`bubble-typed-${idx}`);
+            const cursorEl = document.getElementById(`cursor-${idx}`);
+            if (typedEl && typedEl.textContent !== turn.texto) {
+              typedEl.textContent = turn.texto;
+            }
+            if (cursorEl && cursorEl.style.display !== 'none') {
+              cursorEl.style.display = 'none';
             }
             if (turn.descarteId) this.activateChip(turn.descarteId);
             if (turn.descarteExtraId) this.activateChip(turn.descarteExtraId);
@@ -2436,14 +2452,14 @@
           if (audio && !audio.paused && audio.currentTime > 0) {
             simClock = audio.currentTime;
           } else {
-            simClock += 0.15;
+            simClock += 0.08;
           }
           this.handleAudioTimeUpdate(simClock, 98.8);
           if (simClock >= 98.8) {
             clearInterval(this.teleprompterInterval);
             this.onCallAudioFinished();
           }
-        }, 120);
+        }, 80);
       },
 
       pauseDemo() {
@@ -2473,14 +2489,14 @@
           if (audio && !audio.paused && audio.currentTime > 0) {
             simClock = audio.currentTime;
           } else {
-            simClock += 0.15;
+            simClock += 0.08;
           }
           this.handleAudioTimeUpdate(simClock, 98.8);
           if (simClock >= 98.8) {
             clearInterval(this.teleprompterInterval);
             this.onCallAudioFinished();
           }
-        }, 120);
+        }, 80);
       },
 
       togglePlayCallAudio() {
@@ -2708,6 +2724,7 @@ SOLUCION: CONFIGURACION REMOTA EXITOSA`;
         this.currentTime = 0;
         this.currentTurnIdx = -1;
         this.detectedChips.clear();
+        DIALOGO_AICC.forEach(t => { t.charCount = 0; });
 
         if (this.teleprompterInterval) clearInterval(this.teleprompterInterval);
         if (this.timerInterval) clearInterval(this.timerInterval);
