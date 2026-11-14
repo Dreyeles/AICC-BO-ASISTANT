@@ -1472,6 +1472,16 @@ ID DE LLAMADA: 179452635596748599300201995300
             this.checkSyncFromAICC();
           }
         });
+
+        // Control remoto desde el Master Video Showcase
+        window.addEventListener('message', (e) => {
+          if (!e.data) return;
+          if (e.data.action === 'SHOW_TICKET_AND_NOTES') {
+            this.forceSyncFromAICC();
+          } else if (e.data.action === 'SHOW_TICKET_LIST') {
+            this.showListView();
+          }
+        });
       },
 
       checkSyncFromAICC() {

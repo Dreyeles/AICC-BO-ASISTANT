@@ -1521,6 +1521,16 @@ SOLUCION: N/A`;
       }
     });
 
+    // Control remoto desde el Master Video Showcase
+    window.addEventListener('message', (e) => {
+      if (!e.data) return;
+      if (e.data.action === 'SHOW_INTERACTION_AND_NOTES') {
+        forzarSincronizacionDesdeAICC();
+      } else if (e.data.action === 'RESET_VIEW') {
+        mostrarVista('busqueda');
+      }
+    });
+
     let yaSincronizado = false;
     function verificarSincronizacionDesdeAICC() {
       try {

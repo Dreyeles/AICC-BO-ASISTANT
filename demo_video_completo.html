@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AICC BO Assistant - Video Demostración del Flujo Completo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700;800&family=Consolas&family=Tahoma&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --huawei-red: #cf0a2c;
+      --huawei-red-hover: #b00825;
+      --claro-red: #DA291C;
+      --bmc-orange: #f15a24;
+      --dark-bg: #090c13;
+      --panel-bg: #111622;
+      --border-dark: #222c3d;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    }
+
+    body {
+      background: var(--dark-bg);
+      color: var(--text-main);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      font-size: 13px;
+    }
+
+    /* TOP MASTER DIRECTOR BAR */
+    .master-header {
+      background: linear-gradient(90deg, #130a0d 0%, #151a26 40%, #0d121c 100%);
+      border-bottom: 2px solid var(--huawei-red);
+      height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 20px rgba(207, 10, 44, 0.2);
+      z-index: 100;
+    }
+
+    .master-brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .master-logo-badge {
+      background: var(--huawei-red);
+      color: #fff;
+      font-weight: 800;
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      box-shadow: 0 2px 8px rgba(207, 10, 44, 0.5);
+    }
+
+    .master-title-box h1 {
+      font-size: 15px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.2px;
+    }
+
+    .master-title-box p {
+      font-size: 10.5px;
+      color: var(--text-muted);
+    }
+
+    .master-controls-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .director-btn {
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.08);
+      color: #f1f5f9;
+    }
+
+    .director-btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+      transform: translateY(-1px);
+    }
+
+    .director-btn.btn-play-all {
+      background: linear-gradient(135deg, #e60000 0%, #ff4d4d 100%);
+      border: none;
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(230, 0, 0, 0.5);
+    }
+
+    .director-btn.btn-play-all:hover {
+      background: linear-gradient(135deg, #ff1a1a 0%, #ff6666 100%);
+      box-shadow: 0 6px 20px rgba(230, 0, 0, 0.7);
+    }
+
+    .director-btn.btn-act {
+      font-size: 11px;
+      padding: 5px 11px;
+    }
+
+    .director-btn.btn-act.active {
+      background: #0070d2;
+      border-color: #3ba0f5;
+      color: #fff;
+    }
+
+    /* TIMELINE & SUBTITLE BAR */
+    .master-subtitle-bar {
+      background: #0d121c;
+      border-bottom: 1px solid var(--border-dark);
+      padding: 6px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      font-size: 12px;
+      height: 38px;
+      flex-shrink: 0;
+    }
+
+    .subtitle-text-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #f1f5f9;
+      font-weight: 500;
+      flex: 1;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .subtitle-badge-time {
+      background: #1e293b;
+      color: #38bdf8;
+      font-family: 'Consolas', monospace;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid #334155;
+      flex-shrink: 0;
+    }
+
+    .progress-bar-container {
+      width: 240px;
+      height: 6px;
+      background: #1e293b;
+      border-radius: 3px;
+      overflow: hidden;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #cf0a2c, #ff5252);
+      width: 0%;
+      transition: width 0.15s linear;
+    }
+
+    /* SIMULATED BROWSER TABS BAR */
+    .browser-tabs-strip {
+      background: #1e1e1e;
+      height: 36px;
+      display: flex;
+      align-items: flex-end;
+      padding: 0 12px;
+      gap: 4px;
+      border-bottom: 1px solid #2d2d2d;
+      flex-shrink: 0;
+    }
+
+    .browser-tab-item {
+      background: #2d2d2d;
+      color: #aaa;
+      padding: 6px 16px;
+      border-radius: 6px 6px 0 0;
+      font-size: 11.5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 260px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: all 0.15s ease;
+      border-top: 2px solid transparent;
+    }
+
+    .browser-tab-item:hover {
+      background: #383838;
+      color: #fff;
+    }
+
+    .browser-tab-item.active {
+      background: #121620;
+      color: #fff;
+      font-weight: 600;
+      border-top-color: var(--huawei-red);
+    }
+
+    .browser-tab-item.tab-aicc.active { border-top-color: #cf0a2c; }
+    .browser-tab-item.tab-siac.active { border-top-color: #da291c; }
+    .browser-tab-item.tab-helix.active { border-top-color: #f15a24; }
+    .browser-tab-item.tab-calidad.active { border-top-color: #10b981; }
+
+    /* VIEWPORT THEATER AREA */
+    .viewport-theater {
+      flex: 1;
+      position: relative;
+      background: #000;
+      overflow: hidden;
+    }
+
+    .viewport-frame {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .viewport-frame.active {
+      display: block;
+      opacity: 1;
+    }
+
+    /* SPOTLIGHT OVERLAY */
+    .spotlight-banner-overlay {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(18, 24, 38, 0.95);
+      border: 1px solid rgba(0, 112, 210, 0.5);
+      border-radius: 30px;
+      padding: 8px 24px;
+      color: #fff;
+      font-size: 12.5px;
+      font-weight: 600;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      gap: 10px;
+      z-index: 50;
+      pointer-events: none;
+      animation: floatBanner 2.5s infinite alternate ease-in-out;
+    }
+
+    @keyframes floatBanner {
+      from { transform: translateX(-50%) translateY(0); }
+      to { transform: translateX(-50%) translateY(-4px); }
+    }
+
+    /* VICTORY MODAL */
+    .modal-victory {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(4, 7, 14, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .victory-card {
+      background: #111726;
+      border: 2px solid var(--huawei-red);
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(207, 10, 44, 0.5);
+      color: #fff;
+      animation: zoomIn 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- AUDIO ELEMENTS -->
+  <audio id="audioRing" src="AICC/telefono_ring.wav" preload="auto"></audio>
+  <audio id="audioLlamadaMaster" src="AICC/llamada_drey_magdalena.mp3" preload="auto"></audio>
+
+  <!-- TOP MASTER DIRECTOR BAR -->
+  <header class="master-header">
+    <div class="master-brand-group">
+      <span class="master-logo-badge">MaaS Studio</span>
+      <div class="master-title-box">
+        <h1>AICC BO Assistant | Demostración en Video del Flujo Completo</h1>
+        <p>Integración Multi-Sistema: Huawei AICC ➔ SIAC Único ➔ BMC Helix ➔ GaussDB & OBS</p>
+      </div>
+    </div>
+
+    <!-- DIRECTOR CONTROLS -->
+    <div class="master-controls-group">
+      <button class="director-btn btn-play-all" id="btnPlayMaster" onclick="Director.togglePlay()">
+        <span>▶️ Iniciar Video Demo Completo (98s)</span>
+      </button>
+
+      <button class="director-btn btn-act active" id="btnAct1" onclick="Director.jumpToAct(1)">
+        <span>1️⃣ AICC Telefonía</span>
+      </button>
+      <button class="director-btn btn-act" id="btnAct2" onclick="Director.jumpToAct(2)">
+        <span>2️⃣ SIAC Único</span>
+      </button>
+      <button class="director-btn btn-act" id="btnAct3" onclick="Director.jumpToAct(3)">
+        <span>3️⃣ BMC Helix</span>
+      </button>
+      <button class="director-btn btn-act" id="btnAct4" onclick="Director.jumpToAct(4)">
+        <span>4️⃣ Portal Calidad</span>
+      </button>
+
+      <button class="director-btn" id="btnMuteMaster" onclick="Director.toggleMute()" title="Silenciar / Activar audio">
+        <span>🔊</span>
+      </button>
+
+      <button class="director-btn" onclick="Director.restart()" title="Reiniciar desde el inicio">
+        <span>🔄</span>
+      </button>
+
+      <button class="director-btn" onclick="Director.toggleFullscreen()" title="Pantalla completa para grabar con Win+Alt+R">
+        <span>⛶ F11</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- SUBTITLE & TIMELINE STATUS BAR -->
+  <div class="master-subtitle-bar">
+    <div class="subtitle-text-box">
+      <span class="subtitle-badge-time" id="directorTimeDisplay">00:00 / 02:40</span>
+      <span id="directorSubtitleText">Presione "▶️ Iniciar Video Demo Completo" para reproducir la demostración intercalada automatizada.</span>
+    </div>
+
+    <div class="progress-bar-container" onclick="Director.seekTimeline(event)" title="Haz clic para adelantar o retroceder">
+      <div class="progress-bar-fill" id="directorProgressFill"></div>
+    </div>
+  </div>
+
+  <!-- BROWSER TABS STRIP -->
+  <div class="browser-tabs-strip">
+    <div class="browser-tab-item tab-aicc active" id="tabAICC" onclick="Director.switchScene('aicc')">
+      <span>🔴</span>
+      <span>Huawei AICC Telephony</span>
+    </div>
+    <div class="browser-tab-item tab-siac" id="tabSIAC" onclick="Director.switchScene('siac')">
+      <span>🔴</span>
+      <span>SIAC Único (Reclamos)</span>
+    </div>
+    <div class="browser-tab-item tab-helix" id="tabHelix" onclick="Director.switchScene('helix')">
+      <span>🟠</span>
+      <span>BMC Helix ITSM (Remedy)</span>
+    </div>
+    <div class="browser-tab-item tab-calidad" id="tabCalidad" onclick="Director.switchScene('calidad')">
+      <span>⭐</span>
+      <span>Portal Calidad & Formación</span>
+    </div>
+  </div>
+
+  <!-- VIEWPORT THEATER AREA -->
+  <main class="viewport-theater">
+    
+    <!-- IFRAME 1: HUAWEI AICC -->
+    <iframe id="frameAICC" class="viewport-frame active" src="AICC/index.html"></iframe>
+
+    <!-- IFRAME 2: SIAC ÚNICO -->
+    <iframe id="frameSIAC" class="viewport-frame" src="siac unico/index.html"></iframe>
+
+    <!-- IFRAME 3: BMC HELIX -->
+    <iframe id="frameHelix" class="viewport-frame" src="bmc helix/index.html"></iframe>
+
+    <!-- IFRAME 4: PORTAL DE CALIDAD -->
+    <iframe id="frameCalidad" class="viewport-frame" src="index.html"></iframe>
+
+    <!-- FLOATING SPOTLIGHT BANNER -->
+    <div class="spotlight-banner-overlay" id="spotlightBanner">
+      <span style="font-size: 16px;">⚡</span>
+      <span id="spotlightBannerText">Acción en Vivo</span>
+    </div>
+
+  </main>
+
+  <!-- VICTORY FINAL MODAL -->
+  <div class="modal-victory" id="victoryModal">
+    <div class="victory-card">
+      <div style="font-size: 40px; margin-bottom: 12px;">🏆</div>
+      <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 8px;">¡Demostración Completa Finalizada!</h2>
+      <p style="color: #94a3b8; font-size: 13px; line-height: 1.5; margin-bottom: 20px;">
+        Se ha demostrado con éxito la integración punta a punta de <strong>Huawei AICC Telephony</strong>, 
+        el autocompletado en <strong>SIAC Único</strong> y <strong>BMC Helix</strong>, 
+        y el almacenamiento universal en <strong>GaussDB & OBS</strong> para Calidad y Formación.
+      </p>
+      
+      <div style="background: rgba(255,255,255,0.05); border: 1px solid #232d42; border-radius: 12px; padding: 14px; margin-bottom: 24px; text-align: left; font-size: 12px;">
+        <div style="color: #cbd5e1; margin-bottom: 4px;"><strong>Proyecto:</strong> AICC BO Assistant</div>
+        <div style="color: #cbd5e1; margin-bottom: 4px;"><strong>Equipo:</strong> Los Ejecutores (Drey Aymituma, Hector Poma, Gean Franco Quinto)</div>
+        <div style="color: #38bdf8; font-family: monospace;">Tecnología: ModelArts Studio MaaS + Ascend 910B NPU</div>
+      </div>
+
+      <div style="display: flex; justify-content: center; gap: 12px;">
+        <button class="director-btn btn-play-all" onclick="Director.restart(); document.getElementById('victoryModal').style.display='none';">
+          <span>🔄 Reproducir de Nuevo</span>
+        </button>
+        <button class="director-btn" onclick="document.getElementById('victoryModal').style.display='none';">
+          <span>Cerrar</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIRECTOR SCRIPT -->
+  <script>
+    const Director = {
+      isPlaying: false,
+      currentTime: 0,
+      totalDuration: 160, // ~2m 40s total sequence
+      timerInterval: null,
+      currentAct: 1,
+
+      // CUES DE LA PELÍCULA INTERACTIVA
+      cues: [
+        {
+          time: 0,
+          act: 1,
+          scene: 'aicc',
+          text: "☎️ [00:00] Suena la llamada entrante en la cola SQ_BACKOFFICESERVICIOSFIJOSHITSS1 de Huawei AICC...",
+          banner: "📞 Llamada Entrante de Magdalena Terán (976302352)",
+          action: () => {
+            Director.switchScene('aicc');
+            Director.playRing();
+          }
+        },
+        {
+          time: 4,
+          act: 1,
+          scene: 'aicc',
+          text: "🎧 [00:04] Drey contesta la llamada y saluda: 'Buenos días, le saluda Drey Aymituma del soporte técnico...'",
+          banner: "🎙️ Diarización en Vivo: Asesor (Drey) vs Cliente (Magdalena)",
+          action: () => {
+            Director.stopRing();
+            Director.postToFrame('frameAICC', { action: 'START_CALL_DEMO' });
+          }
+        },
+        {
+          time: 25,
+          act: 1,
+          scene: 'aicc',
+          text: "🤖 [00:25] AICC BO Assistant analiza el audio en tiempo real y detecta en Incógnito y Schaman que el servicio está online.",
+          banner: "✔ Descarte Detectado: Incógnito Online y Schaman sin averías",
+          action: () => {}
+        },
+        {
+          time: 52,
+          act: 1,
+          scene: 'aicc',
+          text: "⚡ [00:52] Descarte TR-069: Drey apaga el AutoSelect y separa las redes Wi-Fi en 2.4G y 5G.",
+          banner: "✔ Descarte Detectado: TR-069 AutoSelect OFF & Separación de Bandas",
+          action: () => {}
+        },
+        {
+          time: 85,
+          act: 1,
+          scene: 'aicc',
+          text: "✨ [01:25] La cliente Magdalena confirma que su navegación y canales quedaron restablecidos al 100%.",
+          banner: "✔ Solución Confirmada por Cliente",
+          action: () => {}
+        },
+        {
+          time: 100,
+          act: 1,
+          scene: 'aicc',
+          text: "📴 [01:40] Drey cuelga la llamada. En apenas 5 segundos, AICC se autotipifica y guarda con éxito.",
+          banner: "💾 AICC Autotipificado en 5 segundos (Protección Anti-Pausa Aprobada)",
+          action: () => {
+            Director.postToFrame('frameAICC', { action: 'HANGUP_CALL' });
+          }
+        },
+        {
+          time: 108,
+          act: 2,
+          scene: 'siac',
+          text: "🔄 [01:48] Transición automática a SIAC Único: Entramos al caso 0061568299 y abrimos 'Ver Notas'...",
+          banner: "📄 SIAC Único: Nota registrada automáticamente en el historial",
+          action: () => {
+            Director.switchScene('siac');
+            Director.setActButton(2);
+            setTimeout(() => {
+              Director.postToFrame('frameSIAC', { action: 'SHOW_INTERACTION_AND_NOTES' });
+            }, 600);
+          }
+        },
+        {
+          time: 125,
+          act: 3,
+          scene: 'helix',
+          text: "🔄 [02:05] Transición automática a BMC Helix: En el incidente INC000001802027, la nota ya está publicada en 'Actividad'...",
+          banner: "🟠 BMC Helix: Plantilla Hitss publicada en la barra lateral",
+          action: () => {
+            Director.switchScene('helix');
+            Director.setActButton(3);
+            setTimeout(() => {
+              Director.postToFrame('frameHelix', { action: 'SHOW_TICKET_AND_NOTES' });
+            }, 600);
+          }
+        },
+        {
+          time: 142,
+          act: 4,
+          scene: 'calidad',
+          text: "📊 [02:22] Transición al Portal de Calidad: 100% de llamadas almacenadas en GaussDB. Score 98/100 (Óptima)...",
+          banner: "⭐ GaussDB & OBS: Auditoría universal y detección de planes de formación",
+          action: () => {
+            Director.switchScene('calidad');
+            Director.setActButton(4);
+            setTimeout(() => {
+              Director.postToFrame('frameCalidad', { action: 'SHOW_QUALITY_DASHBOARD' });
+            }, 600);
+          }
+        },
+        {
+          time: 158,
+          act: 4,
+          scene: 'calidad',
+          text: "🏆 [02:38] ¡Demostración completada con éxito! La suite de Los Ejecutores está lista para el jurado.",
+          banner: "🎉 ¡Flujo Operativo Completo Demostrado!",
+          action: () => {
+            document.getElementById('victoryModal').style.display = 'flex';
+            Director.pause();
+          }
+        }
+      ],
+
+      init() {
+        this.updateTimeDisplay();
+      },
+
+      togglePlay() {
+        if (this.isPlaying) {
+          this.pause();
+        } else {
+          this.play();
+        }
+      },
+
+      play() {
+        this.isPlaying = true;
+        document.getElementById('btnPlayMaster').innerHTML = '<span>⏸️ Pausar Video Demo</span>';
+        
+        if (this.timerInterval) clearInterval(this.timerInterval);
+        this.timerInterval = setInterval(() => {
+          this.currentTime += 0.5;
+          this.updateTimeline();
+          this.checkCues();
+          if (this.currentTime >= this.totalDuration) {
+            this.pause();
+          }
+        }, 500);
+      },
+
+      pause() {
+        this.isPlaying = false;
+        document.getElementById('btnPlayMaster').innerHTML = '<span>▶️ Continuar Video Demo</span>';
+        if (this.timerInterval) clearInterval(this.timerInterval);
+        this.stopRing();
+      },
+
+      restart() {
+        this.pause();
+        this.currentTime = 0;
+        this.updateTimeline();
+        this.postToFrame('frameAICC', { action: 'RESET_DEMO' });
+        this.postToFrame('frameSIAC', { action: 'RESET_VIEW' });
+        this.postToFrame('frameHelix', { action: 'SHOW_TICKET_LIST' });
+        this.postToFrame('frameCalidad', { action: 'SHOW_AUDIT' });
+        this.switchScene('aicc');
+        this.setActButton(1);
+        document.getElementById('directorSubtitleText').innerText = 'Presione "▶️ Iniciar Video Demo Completo" para reproducir la demostración intercalada.';
+        document.getElementById('spotlightBanner').style.display = 'none';
+        document.getElementById('btnPlayMaster').innerHTML = '<span>▶️ Iniciar Video Demo Completo (98s)</span>';
+      },
+
+      updateTimeline() {
+        this.updateTimeDisplay();
+        const pct = (this.currentTime / this.totalDuration) * 100;
+        document.getElementById('directorProgressFill').style.width = `${pct}%`;
+      },
+
+      updateTimeDisplay() {
+        const curM = String(Math.floor(this.currentTime / 60)).padStart(2, '0');
+        const curS = String(Math.floor(this.currentTime % 60)).padStart(2, '0');
+        const totM = String(Math.floor(this.totalDuration / 60)).padStart(2, '0');
+        const totS = String(Math.floor(this.totalDuration % 60)).padStart(2, '0');
+        document.getElementById('directorTimeDisplay').innerText = `${curM}:${curS} / ${totM}:${totS}`;
+      },
+
+      seekTimeline(e) {
+        const container = e.currentTarget;
+        const rect = container.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const ratio = Math.max(0, Math.min(1, clickX / rect.width));
+        this.currentTime = ratio * this.totalDuration;
+        this.updateTimeline();
+        this.checkCues(true);
+      },
+
+      jumpToAct(act) {
+        const actTimes = { 1: 0, 2: 108, 3: 125, 4: 142 };
+        this.currentTime = actTimes[act] || 0;
+        this.setActButton(act);
+        this.updateTimeline();
+        this.checkCues(true);
+        if (!this.isPlaying) this.play();
+      },
+
+      setActButton(act) {
+        this.currentAct = act;
+        [1, 2, 3, 4].forEach(a => {
+          const btn = document.getElementById(`btnAct${a}`);
+          if (btn) {
+            if (a === act) btn.classList.add('active');
+            else btn.classList.remove('active');
+          }
+        });
+      },
+
+      checkCues(forceTrigger = false) {
+        for (let i = this.cues.length - 1; i >= 0; i--) {
+          const cue = this.cues[i];
+          if (this.currentTime >= cue.time) {
+            // Apply text and banner
+            document.getElementById('directorSubtitleText').innerText = cue.text;
+            
+            if (cue.banner) {
+              const banner = document.getElementById('spotlightBanner');
+              document.getElementById('spotlightBannerText').innerText = cue.banner;
+              banner.style.display = 'flex';
+            }
+
+            // Trigger action once when crossing threshold
+            if (Math.abs(this.currentTime - cue.time) < 0.6 || forceTrigger) {
+              cue.action();
+            }
+            break;
+          }
+        }
+      },
+
+      switchScene(sceneKey) {
+        const frames = {
+          'aicc': document.getElementById('frameAICC'),
+          'siac': document.getElementById('frameSIAC'),
+          'helix': document.getElementById('frameHelix'),
+          'calidad': document.getElementById('frameCalidad')
+        };
+
+        const tabs = {
+          'aicc': document.getElementById('tabAICC'),
+          'siac': document.getElementById('tabSIAC'),
+          'helix': document.getElementById('tabHelix'),
+          'calidad': document.getElementById('tabCalidad')
+        };
+
+        Object.keys(frames).forEach(k => {
+          if (k === sceneKey) {
+            frames[k].classList.add('active');
+            tabs[k].classList.add('active');
+          } else {
+            frames[k].classList.remove('active');
+            tabs[k].classList.remove('active');
+          }
+        });
+      },
+
+      postToFrame(frameId, message) {
+        const iframe = document.getElementById(frameId);
+        if (iframe && iframe.contentWindow) {
+          iframe.contentWindow.postMessage(message, '*');
+        }
+      },
+
+      playRing() {
+        const ring = document.getElementById('audioRing');
+        if (ring) {
+          ring.currentTime = 0;
+          ring.play().catch(() => {});
+        }
+      },
+
+      stopRing() {
+        const ring = document.getElementById('audioRing');
+        if (ring) {
+          ring.pause();
+          ring.currentTime = 0;
+        }
+      },
+
+      toggleMute() {
+        const btn = document.getElementById('btnMuteMaster');
+        const ring = document.getElementById('audioRing');
+        ring.muted = !ring.muted;
+        btn.innerText = ring.muted ? '🔇' : '🔊';
+        this.postToFrame('frameAICC', { action: 'MUTE_TOGGLE' });
+      },
+
+      toggleFullscreen() {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen().catch(() => {});
+        }
+      }
+    };
+
+    window.Director = Director;
+    window.addEventListener('DOMContentLoaded', () => {
+      Director.init();
+    });
+  </script>
+
+</body>
+</html>

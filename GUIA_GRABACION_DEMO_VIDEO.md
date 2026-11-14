@@ -113,3 +113,4 @@ flowchart LR
 - **Resolución:** Graba a 1080p (1920x1080) en pantalla completa.
 - **Navegador:** Presiona <kbd>F11</kbd> en tu navegador para ocultar barras de marcadores si deseas una vista 100% limpia y cinematográfica.
 - **Lanzador todo-en-uno:** Puedes usar [`abrir_suite_demo.bat`](file:///c:/Users/Drewg/OneDrive/Escritorio/proyecto%20huawei/abrir_suite_demo.bat) opción `[5]` para abrir los 3 sistemas en pestañas continuas antes de empezar a grabar.
+

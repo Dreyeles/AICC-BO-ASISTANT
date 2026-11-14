@@ -1730,6 +1730,17 @@ ID DE LLAMADA: 1789504734-338240`,
       initAutopilotSync();
       lucide.createIcons();
     };
+
+    // Control remoto desde el Master Video Showcase
+    window.addEventListener('message', (e) => {
+      if (!e.data) return;
+      if (e.data.action === 'SHOW_QUALITY_DASHBOARD') {
+        switchTab('dashboard');
+        filtrarLlamadasDB('buenas');
+      } else if (e.data.action === 'SHOW_AUDIT') {
+        switchTab('audit');
+      }
+    });
   </script>
 </body>
 </html>

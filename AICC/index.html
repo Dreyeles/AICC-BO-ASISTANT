@@ -2717,6 +2717,18 @@ SOLUCION: CONFIGURACION REMOTA EXITOSA`;
     window.addEventListener('DOMContentLoaded', () => {
       AICC.init();
     });
+
+    // Control remoto desde el Master Video Showcase
+    window.addEventListener('message', (e) => {
+      if (!e.data) return;
+      if (e.data.action === 'START_CALL_DEMO') {
+        AICC.startFullLiveCallDemo();
+      } else if (e.data && e.data.action === 'HANGUP_CALL') {
+        AICC.hangupCallAndSync();
+      } else if (e.data && e.data.action === 'RESET_DEMO') {
+        AICC.resetDemo();
+      }
+    });
   </script>
 
   <!-- Script RPA Anti-Pausa (compatibilidad intacta) -->
