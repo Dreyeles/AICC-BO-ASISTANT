@@ -1277,6 +1277,11 @@
       align-items: center;
       gap: 3px;
       height: 14px;
+      opacity: 0.4;
+      transition: opacity 0.25s;
+    }
+    .live-wave-animation.active {
+      opacity: 1;
     }
 
     .wave-bar {
@@ -1285,6 +1290,10 @@
       background: #38bdf8;
       border-radius: 2px;
       animation: wavePulse 0.9s infinite ease-in-out;
+      animation-play-state: paused;
+    }
+    .live-wave-animation.active .wave-bar {
+      animation-play-state: running;
     }
 
     .wave-bar:nth-child(1) { animation-delay: 0.1s; }
@@ -2023,9 +2032,17 @@
 
     <!-- Live Transcript Chat Stream -->
     <div class="teleprompter-stream" id="teleprompterStream">
-      <!-- Bubbles will be injected dynamically or highlighted -->
-      <div style="text-align: center; color: #64748b; font-size: 11px; padding: 10px;" id="streamEmptyNotice">
-        Presione <strong>"▶️ Reproducir Llamada Demo con IA"</strong> o inicie la llamada para ver la transcripción diarizada en tiempo real.
+      <!-- Empty state / start banner -->
+      <div id="streamEmptyNotice" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 180px; gap: 10px; text-align: center; padding: 20px 14px;">
+        <div style="font-size: 28px;">🎙️</div>
+        <div style="font-size: 13px; font-weight: 700; color: #f8fafc;">Teleprompter MaaS Listo</div>
+        <div style="font-size: 11px; color: #94a3b8; max-width: 320px; line-height: 1.4;">
+          Llamada simulada entre Drey Aymituma (Soporte N2) y Magdalena Terán con transcripción neural y detección de descartes en vivo.
+        </div>
+        <button class="teleprompter-start-btn" onclick="AICC.startFullLiveCallDemo()" style="margin-top: 6px; padding: 8px 18px; background: linear-gradient(135deg, #2563eb, #0284c7); color: #fff; font-size: 12px; font-weight: 700; border: none; border-radius: 20px; cursor: pointer; box-shadow: 0 4px 14px rgba(37,99,235,0.45); display: flex; align-items: center; gap: 7px; transition: transform 0.15s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <span>▶ Iniciar Transcripción en Vivo con Audio</span>
+        </button>
       </div>
     </div>
 
@@ -2255,17 +2272,23 @@
 
     const AICC = {
       callState: 'CONNECTED', // CONNECTED, ACW, IDLE
-      timerSeconds: 7,
+      timerSeconds: 0,
       timerInterval: null,
       acwSeconds: 0,
       acwInterval: null,
       currentTurnIdx: -1,
       detectedChips: new Set(),
+      isPlaying: false,
+      currentTime: 0,
+      teleprompterInterval: null,
 
       init() {
-        this.startCallTimer();
         this.updateCharCount(document.getElementById('txtBusinessDesc'));
         this.setupAudioListeners();
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('autostart') === '1') {
+          setTimeout(() => this.startFullLiveCallDemo(), 600);
+        }
       },
 
       setupAudioListeners() {
@@ -2282,6 +2305,7 @@
       },
 
       handleAudioTimeUpdate(currTime, totalDuration) {
+        this.currentTime = currTime;
         // Update timers
         const m = String(Math.floor(currTime / 60)).padStart(2, '0');
         const s = String(Math.floor(currTime % 60)).padStart(2, '0');
@@ -2330,14 +2354,15 @@
           bubble.style.display = 'block';
           const textEl = document.getElementById(`bubble-text-${idx}`);
 
+          const turnDuration = (turn.duracion || (turn.tFin - turn.tInicio) || 1);
+          const elapsed = Math.max(0, currTime - turn.tInicio);
+          const progress = Math.min(1, Math.max(0, elapsed / turnDuration));
+
           // CASE 1: Turn is actively speaking RIGHT NOW
           if (currTime >= turn.tInicio && currTime <= turn.tFin) {
             bubble.classList.add('active-speech');
 
-            // Calculate exact characters to reveal according to elapsed speech time
-            const elapsed = currTime - turn.tInicio;
-            const progress = Math.min(1, Math.max(0, elapsed / turn.duracion));
-            const charCount = Math.max(1, Math.floor(progress * turn.texto.length));
+            const charCount = Math.max(1, Math.min(turn.texto.length, Math.floor(progress * turn.texto.length)));
             const typedText = turn.texto.substring(0, charCount);
 
             if (textEl) {
@@ -2347,8 +2372,8 @@
             // Smoothly auto-scroll to the bottom of the stream
             stream.scrollTop = stream.scrollHeight;
 
-            // Activate descarte badges at 25% progress
-            if (progress >= 0.25) {
+            // Activate descarte badges at 20% progress or after 1.2s
+            if (progress >= 0.20 || elapsed >= 1.2) {
               if (turn.descarteId) this.activateChip(turn.descarteId);
               if (turn.descarteExtraId) this.activateChip(turn.descarteExtraId);
             }
@@ -2379,22 +2404,28 @@
         }
       },
 
-      startFullLiveCallDemo() {
+      startFullLiveCallDemo(playAudio = true) {
         this.resetDemo();
+        this.isPlaying = true;
         const drawer = document.getElementById('aiccTeleprompterDrawer');
         if (drawer) {
           drawer.style.display = 'flex';
           drawer.classList.remove('minimized');
         }
         document.getElementById('teleprompterStatusBadge').innerText = '● EN LLAMADA';
+        document.getElementById('btnPlayPauseCall').innerText = '⏸';
+
+        const emptyNotice = document.getElementById('streamEmptyNotice');
+        if (emptyNotice) emptyNotice.style.display = 'none';
+
+        const wave = document.querySelector('.live-wave-animation');
+        if (wave) wave.classList.add('active');
 
         const audio = document.getElementById('audioLlamada');
-        if (audio) {
+        if (playAudio && audio) {
           audio.currentTime = 0;
-          audio.play().then(() => {
-            document.getElementById('btnPlayPauseCall').innerText = '⏸';
-          }).catch(err => {
-            console.warn("Audio play blocked, running simulated clock:", err);
+          audio.play().catch(err => {
+            console.warn("Audio play blocked by browser, running simulated clock:", err);
           });
         }
 
@@ -2405,29 +2436,62 @@
           if (audio && !audio.paused && audio.currentTime > 0) {
             simClock = audio.currentTime;
           } else {
-            simClock += 0.2;
+            simClock += 0.15;
           }
           this.handleAudioTimeUpdate(simClock, 98.8);
           if (simClock >= 98.8) {
             clearInterval(this.teleprompterInterval);
             this.onCallAudioFinished();
           }
-        }, 150);
+        }, 120);
       },
 
-      runFallbackTimerSimulation() {
-        // Obsoleto: cubierto por el nuevo heartbeat clock unificado
+      pauseDemo() {
+        this.isPlaying = false;
+        const audio = document.getElementById('audioLlamada');
+        if (audio) audio.pause();
+        if (this.teleprompterInterval) clearInterval(this.teleprompterInterval);
+        const btn = document.getElementById('btnPlayPauseCall');
+        if (btn) btn.innerText = '▶';
+        document.getElementById('teleprompterStatusBadge').innerText = '● PAUSADO';
+        const wave = document.querySelector('.live-wave-animation');
+        if (wave) wave.classList.remove('active');
+      },
+
+      resumeDemo() {
+        this.isPlaying = true;
+        document.getElementById('btnPlayPauseCall').innerText = '⏸';
+        document.getElementById('teleprompterStatusBadge').innerText = '● EN LLAMADA';
+        const audio = document.getElementById('audioLlamada');
+        if (audio) audio.play().catch(() => {});
+        const wave = document.querySelector('.live-wave-animation');
+        if (wave) wave.classList.add('active');
+
+        if (this.teleprompterInterval) clearInterval(this.teleprompterInterval);
+        let simClock = this.currentTime || 0;
+        this.teleprompterInterval = setInterval(() => {
+          if (audio && !audio.paused && audio.currentTime > 0) {
+            simClock = audio.currentTime;
+          } else {
+            simClock += 0.15;
+          }
+          this.handleAudioTimeUpdate(simClock, 98.8);
+          if (simClock >= 98.8) {
+            clearInterval(this.teleprompterInterval);
+            this.onCallAudioFinished();
+          }
+        }, 120);
       },
 
       togglePlayCallAudio() {
-        const audio = document.getElementById('audioLlamada');
-        const btn = document.getElementById('btnPlayPauseCall');
-        if (audio.paused) {
-          audio.play();
-          btn.innerText = '⏸';
+        if (this.isPlaying) {
+          this.pauseDemo();
         } else {
-          audio.pause();
-          btn.innerText = '▶';
+          if (this.currentTime > 0 && this.currentTime < 98) {
+            this.resumeDemo();
+          } else {
+            this.startFullLiveCallDemo();
+          }
         }
       },
 
@@ -2638,10 +2702,15 @@ SOLUCION: CONFIGURACION REMOTA EXITOSA`;
       },
 
       resetDemo() {
+        this.isPlaying = false;
         this.callState = 'CONNECTED';
         this.timerSeconds = 0;
+        this.currentTime = 0;
         this.currentTurnIdx = -1;
         this.detectedChips.clear();
+
+        if (this.teleprompterInterval) clearInterval(this.teleprompterInterval);
+        if (this.timerInterval) clearInterval(this.timerInterval);
 
         const audio = document.getElementById('audioLlamada');
         if (audio) {
@@ -2649,11 +2718,21 @@ SOLUCION: CONFIGURACION REMOTA EXITOSA`;
           audio.currentTime = 0;
         }
 
-        document.getElementById('btnPlayPauseCall').innerText = '▶';
-        document.getElementById('audioProgressFill').style.width = '0%';
-        document.getElementById('audioCurrentTime').innerText = '00:00';
-        document.getElementById('teleprompterStatusBadge').innerText = '● EN VIVO';
-        document.getElementById('descartesComplianceScore').innerText = 'Cumplimiento: 0%';
+        const btnPlay = document.getElementById('btnPlayPauseCall');
+        if (btnPlay) btnPlay.innerText = '▶';
+        const progFill = document.getElementById('audioProgressFill');
+        if (progFill) progFill.style.width = '0%';
+        const timeEl = document.getElementById('audioCurrentTime');
+        if (timeEl) timeEl.innerText = '00:00';
+        const timerEl = document.getElementById('callDurationTimer');
+        if (timerEl) timerEl.innerText = '00:00';
+        const badge = document.getElementById('teleprompterStatusBadge');
+        if (badge) badge.innerText = '● EN VIVO';
+        const scoreEl = document.getElementById('descartesComplianceScore');
+        if (scoreEl) scoreEl.innerText = 'Cumplimiento: 0%';
+
+        const wave = document.querySelector('.live-wave-animation');
+        if (wave) wave.classList.remove('active');
 
         // Reset chips
         document.querySelectorAll('.descarte-chip').forEach(c => {
@@ -2661,13 +2740,23 @@ SOLUCION: CONFIGURACION REMOTA EXITOSA`;
           c.innerHTML = c.innerHTML.replace('✔', '⚪');
         });
 
-        // Clear stream bubbles
+        // Restore stream empty banner
         const stream = document.getElementById('teleprompterStream');
-        stream.innerHTML = `
-          <div style="text-align: center; color: #64748b; font-size: 11px; padding: 10px;" id="streamEmptyNotice">
-            Presione <strong>"▶️ Reproducir Llamada Demo con IA"</strong> para iniciar la diarización en vivo.
-          </div>
-        `;
+        if (stream) {
+          stream.innerHTML = `
+            <div id="streamEmptyNotice" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 180px; gap: 10px; text-align: center; padding: 20px 14px;">
+              <div style="font-size: 28px;">🎙️</div>
+              <div style="font-size: 13px; font-weight: 700; color: #f8fafc;">Teleprompter MaaS Listo</div>
+              <div style="font-size: 11px; color: #94a3b8; max-width: 320px; line-height: 1.4;">
+                Llamada simulada entre Drey Aymituma (Soporte N2) y Magdalena Terán con transcripción neural y detección de descartes en vivo.
+              </div>
+              <button class="teleprompter-start-btn" onclick="AICC.startFullLiveCallDemo()" style="margin-top: 6px; padding: 8px 18px; background: linear-gradient(135deg, #2563eb, #0284c7); color: #fff; font-size: 12px; font-weight: 700; border: none; border-radius: 20px; cursor: pointer; box-shadow: 0 4px 14px rgba(37,99,235,0.45); display: flex; align-items: center; gap: 7px; transition: transform 0.15s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                <span>▶ Iniciar Transcripción en Vivo con Audio</span>
+              </button>
+            </div>
+          `;
+        }
 
         this.startCallTimer();
         if (this.acwInterval) clearInterval(this.acwInterval);
@@ -2700,39 +2789,6 @@ SOLUCION: CONFIGURACION REMOTA EXITOSA`;
         document.getElementById('topSuccessMsg').classList.remove('show');
         document.getElementById('bottomToast').classList.remove('show');
         document.getElementById('syncSuccessModal').style.display = 'none';
-      },
-        this.callState = 'CONNECTED';
-        this.timerSeconds = 7;
-        this.startCallTimer();
-        if (this.acwInterval) clearInterval(this.acwInterval);
-
-        // Restore header telephony
-        const bar = document.getElementById('telephonyCallBar');
-        if (bar) bar.style.opacity = '1';
-
-        // Status Hablar
-        this.updateStatusPill('Hablar', 'in-call');
-
-        // Right side
-        document.getElementById('rightCallStateText').innerText = 'Ejecutando';
-        document.getElementById('rightCallStateText').style.color = '#1d2129';
-        document.getElementById('rightCallResultText').innerText = '--';
-
-        // Clear inputs
-        document.getElementById('cascaderDisplayText').innerText = 'Seleccionar';
-        document.getElementById('cascaderDisplayText').classList.remove('has-value');
-        document.getElementById('txtBusinessDesc').value = '';
-        this.updateCharCount(document.getElementById('txtBusinessDesc'));
-
-        // Reset Save button
-        const btnSave = document.getElementById('btnSaveResult');
-        btnSave.classList.add('disabled');
-        btnSave.innerText = 'Guardar';
-
-        // Hide poppers
-        document.getElementById('cascaderPopper').classList.remove('show');
-        document.getElementById('topSuccessMsg').classList.remove('show');
-        document.getElementById('bottomToast').classList.remove('show');
       },
 
       updateStatusPill(text, typeClass) {
@@ -2828,13 +2884,7 @@ SOLUCION: CONFIGURACION REMOTA EXITOSA`;
     window.addEventListener('message', (e) => {
       if (!e.data) return;
       if (e.data.action === 'START_CALL_DEMO') {
-        AICC.resetDemo();
-        const drawer = document.getElementById('aiccTeleprompterDrawer');
-        if (drawer) {
-          drawer.style.display = 'flex';
-          drawer.classList.remove('minimized');
-        }
-        document.getElementById('teleprompterStatusBadge').innerText = '● EN LLAMADA';
+        AICC.startFullLiveCallDemo(false); // Director en demo_video_completo controla el audio principal
       } else if (e.data.action === 'SYNC_TIME') {
         AICC.handleAudioTimeUpdate(e.data.time, e.data.duration || 98.8);
       } else if (e.data.action === 'HANGUP_CALL') {
