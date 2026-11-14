@@ -1,0 +1,1693 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>:: SIAC Reclamos ::. - CREACION DE INTERACCION - Trabajo: Microsoft Edge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&family=Consolas&family=Tahoma&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --claro-red: #DA291C;
+      --claro-red-dark: #b81c10;
+      --header-blue-top: #508cb8;
+      --header-blue-mid: #36729e;
+      --header-blue-bot: #295f87;
+      --table-header-blue: #3b77a7;
+      --text-blue: #004b91;
+      --navy-dark: #003366;
+      --border-blue: #84a9c9;
+      --border-light-blue: #b5c9db;
+      --bg-page: #d4dbe2;
+      --bg-card: #f5f8fb;
+      --bg-input: #ffffff;
+      --btn-grad-top: #fbfcfe;
+      --btn-grad-bot: #d5e0ea;
+      --btn-border: #7997b5;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Tahoma, 'Segoe UI', Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: #111;
+      font-size: 11px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+      overflow-x: hidden;
+    }
+
+    /* =========================================================================
+       EDGE BROWSER SIMULATION CHROME
+       ========================================================================= */
+    .edge-browser-bar {
+      background: #202020;
+      color: #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 38px;
+      padding: 0 10px;
+      border-bottom: 1px solid #333;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .edge-tabs {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      height: 100%;
+      padding-top: 5px;
+    }
+
+    .edge-tab {
+      background: #323232;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 6px 6px 0 0;
+      font-size: 11.5px;
+      max-width: 440px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      border-top: 2px solid #0078d4;
+    }
+
+    .edge-tab svg {
+      flex-shrink: 0;
+    }
+
+    .edge-window-controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 13px;
+      color: #bbb;
+      padding-right: 6px;
+    }
+
+    .edge-address-bar {
+      background: #2b2b2b;
+      color: #ddd;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 12px;
+      font-size: 11px;
+      border-bottom: 1px solid #1a1a1a;
+      flex-shrink: 0;
+    }
+
+    .edge-url-chip {
+      background: #1c1c1c;
+      border: 1px solid #444;
+      border-radius: 12px;
+      padding: 2px 10px;
+      color: #99c8ff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      max-width: 800px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .edge-url-chip .warning-icon {
+      color: #e5a50a;
+      font-size: 11px;
+    }
+
+    .edge-url-chip span.dim {
+      color: #aaa;
+    }
+
+    /* =========================================================================
+       CLARO SIAC TOP HEADER (RED BAR)
+       ========================================================================= */
+    .siac-top-header {
+      background: linear-gradient(to bottom, #e12726 0%, #c41818 100%);
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      color: #ffffff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+      flex-shrink: 0;
+    }
+
+    .siac-brand-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .claro-circle-logo {
+      width: 36px;
+      height: 36px;
+      background: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      position: relative;
+    }
+
+    .claro-circle-logo-inner {
+      width: 32px;
+      height: 32px;
+      background: var(--claro-red);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      font-weight: bold;
+      font-style: italic;
+      font-size: 10px;
+      border: 1.5px solid #ffffff;
+    }
+
+    .claro-circle-logo-inner span {
+      position: relative;
+      letter-spacing: -0.5px;
+    }
+
+    .siac-title-group {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .siac-main-title {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+
+    .siac-sub-title {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 9.5px;
+      letter-spacing: 0.4px;
+      opacity: 0.95;
+      text-transform: uppercase;
+      margin-top: 1px;
+    }
+
+    .siac-nodo-tag {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.8px;
+    }
+
+    /* =========================================================================
+       PAGE CONTENT CONTAINER
+       ========================================================================= */
+    .siac-page-viewport {
+      flex: 1;
+      padding: 16px 20px 80px 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* =========================================================================
+       VISTA 1: BÚSQUEDA DE CASOS
+       ========================================================================= */
+    #vista-busqueda {
+      width: 100%;
+      max-width: 1050px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .siac-card-frame {
+      border: 1px solid var(--border-blue);
+      background: #ffffff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border-radius: 1px;
+      overflow: hidden;
+    }
+
+    .siac-card-header-gradient {
+      background: linear-gradient(to bottom, var(--header-blue-top) 0%, var(--header-blue-mid) 50%, var(--header-blue-bot) 100%);
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-weight: bold;
+      font-size: 11.5px;
+      letter-spacing: 0.3px;
+      text-shadow: 0 1px 1px rgba(0,0,0,0.4);
+      border-bottom: 1px solid #1e4b6d;
+    }
+
+    .siac-card-body {
+      padding: 10px 14px 16px 14px;
+      background: #ffffff;
+    }
+
+    /* Buscador Filter Box */
+    .search-filter-box {
+      border: 1px solid #b5c9db;
+      background: #f7f9fc;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      border-radius: 1px;
+    }
+
+    .radio-filter-group {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .radio-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #1a3654;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .radio-label input[type="radio"] {
+      cursor: pointer;
+      accent-color: #1e598b;
+    }
+
+    .search-input-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .siac-input-text {
+      height: 22px;
+      padding: 2px 8px;
+      border: 1px solid #7f9db9;
+      font-size: 11px;
+      font-family: Tahoma, 'Segoe UI', sans-serif;
+      background: #fff;
+      color: #000;
+      width: 190px;
+    }
+
+    .siac-input-text:focus {
+      outline: 1px solid #005fb2;
+      border-color: #005fb2;
+    }
+
+    .siac-btn {
+      height: 22px;
+      padding: 0 16px;
+      background: linear-gradient(to bottom, var(--btn-grad-top) 0%, var(--btn-grad-bot) 100%);
+      border: 1px solid var(--btn-border);
+      border-radius: 2px;
+      color: #003366;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      box-shadow: inset 0 1px 0 #fff;
+    }
+
+    .siac-btn:hover {
+      background: linear-gradient(to bottom, #ffffff 0%, #c4d7e8 100%);
+      border-color: #4a759c;
+    }
+
+    .siac-btn:active {
+      background: #c4d7e8;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    /* Results Table Controls */
+    .table-top-controls {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 6px;
+      margin-bottom: 6px;
+      font-size: 11px;
+      color: #333;
+    }
+
+    .table-top-controls select {
+      height: 20px;
+      font-size: 11px;
+      border: 1px solid #7f9db9;
+      padding: 0 4px;
+      background: #fff;
+    }
+
+    /* Results Table */
+    .table-container-scroll {
+      width: 100%;
+      border: 1px solid #9bb7ce;
+      overflow-x: auto;
+      background: #ffffff;
+    }
+
+    .siac-results-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      text-align: left;
+    }
+
+    .siac-results-table th {
+      background: var(--table-header-blue);
+      color: #ffffff;
+      padding: 6px 10px;
+      font-weight: bold;
+      border-right: 1px solid #6b9fc3;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .siac-results-table th:last-child {
+      border-right: none;
+    }
+
+    .siac-results-table th span.sort-arrow {
+      font-size: 10px;
+      margin-left: 4px;
+      opacity: 0.8;
+    }
+
+    .siac-results-table td {
+      padding: 7px 10px;
+      border-bottom: 1px solid #d4e1ec;
+      border-right: 1px solid #d4e1ec;
+      white-space: nowrap;
+      color: #111;
+    }
+
+    .siac-results-table td:last-child {
+      border-right: none;
+    }
+
+    .siac-results-table tbody tr {
+      background-color: #eef4f9;
+      cursor: pointer;
+      transition: background-color 0.15s;
+    }
+
+    .siac-results-table tbody tr:hover {
+      background-color: #dbeaf7;
+    }
+
+    .siac-results-table tbody tr.selected {
+      background-color: #cde2f5;
+    }
+
+    .case-id-link {
+      color: var(--text-blue);
+      font-weight: bold;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .case-id-link:hover {
+      color: #d31010;
+    }
+
+    .table-footer-pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: #eef3f7;
+      border-top: 1px solid #b5c9db;
+      font-size: 11px;
+      color: #333;
+    }
+
+    .pagination-links {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pagination-links a {
+      color: #004b91;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .pagination-links a.active {
+      font-weight: bold;
+      color: #000;
+      text-decoration: none;
+      background: #fff;
+      padding: 1px 6px;
+      border: 1px solid #b5c9db;
+    }
+
+    .pagination-links a:hover:not(.active) {
+      text-decoration: underline;
+    }
+
+    /* =========================================================================
+       VISTA 2: CREACIÓN DE INTERACCIÓN (SIAC RECLAMOS)
+       ========================================================================= */
+    #vista-interaccion {
+      width: 100%;
+      max-width: 1120px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .reclamos-sub-header {
+      background: #ffffff;
+      padding: 8px 16px;
+      border: 1px solid #b5c9db;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 1px;
+    }
+
+    .reclamos-sub-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .reclamos-sub-title-box h2 {
+      font-size: 14.5px;
+      color: #004080;
+      font-weight: bold;
+      line-height: 1.2;
+    }
+
+    .reclamos-sub-title-box p {
+      font-size: 10.5px;
+      color: #334455;
+      margin-top: 2px;
+    }
+
+    .reclamos-sub-right {
+      text-align: right;
+    }
+
+    .reclamos-user-label {
+      font-size: 11.5px;
+      font-weight: bold;
+      color: var(--navy-dark);
+    }
+
+    .reclamos-nodo-label {
+      font-size: 11px;
+      color: #445566;
+      margin-top: 2px;
+    }
+
+    /* Interaction Main Box */
+    .interaction-outer-frame {
+      border: 1px solid #84a9c9;
+      background: #ffffff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    /* Customer Info Box */
+    .customer-info-bar {
+      border: 1px solid #a9c0d6;
+      background: #f4f8fb;
+      margin: 8px 10px;
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 1px;
+    }
+
+    .customer-info-left {
+      font-size: 12px;
+      color: #0a2e5c;
+    }
+
+    .customer-info-left strong {
+      font-size: 12.5px;
+      color: #002244;
+    }
+
+    .customer-links-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .customer-link {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--text-blue);
+      text-decoration: none;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .customer-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Split Form Layout: Left Form vs Right Reglas Comerciales */
+    .form-split-layout {
+      display: flex;
+      gap: 8px;
+      margin: 0 10px 10px 10px;
+    }
+
+    .form-left-col {
+      flex: 1;
+      border: 1px solid #b5c9db;
+      background: #fbfdff;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-right-col {
+      width: 200px;
+      border: 1px solid #b5c9db;
+      background: #fbfdff;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .form-row-grid {
+      display: grid;
+      grid-template-columns: 110px 1fr 120px 1fr;
+      align-items: center;
+      gap: 6px 8px;
+    }
+
+    .form-row-grid.full-width {
+      grid-template-columns: 110px 1fr;
+    }
+
+    .field-label {
+      font-size: 11px;
+      color: #1a3654;
+      text-align: right;
+      padding-right: 6px;
+    }
+
+    .field-readonly-box {
+      border: 1px solid #7f9db9;
+      background: #ffffff;
+      padding: 3px 6px;
+      font-size: 11px;
+      color: #000;
+      min-height: 22px;
+      display: flex;
+      align-items: center;
+      font-weight: 600;
+    }
+
+    .field-readonly-box.plain {
+      font-weight: normal;
+    }
+
+    .field-empty-box {
+      border: 1px solid #7f9db9;
+      background: #ffffff;
+      min-height: 22px;
+    }
+
+    .rules-header-link {
+      color: var(--text-blue);
+      font-weight: bold;
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 11.5px;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .rules-content-text {
+      font-size: 11px;
+      color: #444;
+      line-height: 1.4;
+    }
+
+    .attachments-link {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-blue);
+      text-decoration: none;
+      font-size: 11px;
+      cursor: pointer;
+      margin-top: 40px;
+    }
+
+    .attachments-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Action Buttons Toolbar */
+    .action-toolbar-container {
+      border-top: 1px solid #c8d9e8;
+      background: #f1f5f9;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .toolbar-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .toolbar-action-btn {
+      height: 26px;
+      padding: 0 12px;
+      background: linear-gradient(to bottom, #ffffff 0%, #e2eaf2 100%);
+      border: 1px solid #8ca5be;
+      border-radius: 2px;
+      color: #0b345d;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 1px 1px rgba(0,0,0,0.06);
+      transition: all 0.15s;
+    }
+
+    .toolbar-action-btn:hover {
+      background: linear-gradient(to bottom, #ffffff 0%, #d0e1f0 100%);
+      border-color: #557d9f;
+    }
+
+    .toolbar-action-btn:active {
+      background: #c3d9ec;
+    }
+
+    .toolbar-action-btn.primary-highlight {
+      background: linear-gradient(to bottom, #eef7ff 0%, #b8daf8 100%);
+      border-color: #2475b8;
+      color: #003666;
+      box-shadow: 0 0 6px rgba(0, 112, 210, 0.35);
+      animation: pulse-glow 2.5s infinite;
+    }
+
+    @keyframes pulse-glow {
+      0% { box-shadow: 0 0 4px rgba(0, 112, 210, 0.2); }
+      50% { box-shadow: 0 0 10px rgba(0, 112, 210, 0.6); }
+      100% { box-shadow: 0 0 4px rgba(0, 112, 210, 0.2); }
+    }
+
+    .toolbar-bottom-center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 10px 0 6px 0;
+      border-top: 1px solid #d8e4ef;
+    }
+
+    /* =========================================================================
+       MODALES CLÁSICOS ASP.NET / SIAC RECLAMOS
+       ========================================================================= */
+    .siac-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(1.5px);
+    }
+
+    .siac-modal-window {
+      background: #ffffff;
+      border: 2px solid #3b77a7;
+      box-shadow: 0 6px 25px rgba(0,0,0,0.45);
+      border-radius: 2px;
+      width: 90%;
+      max-width: 650px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: modalFadeIn 0.2s ease-out;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(-10px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .siac-modal-titlebar {
+      background: linear-gradient(to bottom, #508cb8 0%, #36729e 50%, #295f87 100%);
+      color: #ffffff;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 8px 0 12px;
+      font-weight: bold;
+      font-size: 11.5px;
+      text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+      cursor: move;
+    }
+
+    .siac-modal-close-btn {
+      width: 17px;
+      height: 17px;
+      background: #f7a823;
+      border: 1px solid #b87309;
+      color: #000;
+      font-size: 11px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 1px;
+      line-height: 1;
+    }
+
+    .siac-modal-close-btn:hover {
+      background: #ffb944;
+    }
+
+    .siac-modal-body {
+      padding: 12px 14px;
+      background: #f5f8fb;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .siac-notes-textarea-view {
+      width: 100%;
+      height: 290px;
+      border: 1px solid #222;
+      background: #ffffff;
+      padding: 8px 10px;
+      font-family: 'Consolas', monospace;
+      font-size: 11px;
+      line-height: 1.45;
+      color: #000;
+      overflow-y: scroll;
+      white-space: pre-wrap;
+      outline: none;
+      resize: none;
+    }
+
+    .siac-notes-textarea-edit {
+      width: 100%;
+      height: 230px;
+      border: 1px solid #7f9db9;
+      background: #ffffff;
+      padding: 8px 10px;
+      font-family: 'Consolas', monospace;
+      font-size: 11px;
+      line-height: 1.45;
+      color: #000;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      resize: vertical;
+    }
+
+    .siac-modal-footer {
+      background: #eaf1f7;
+      padding: 8px 12px;
+      border-top: 1px solid #b5c9db;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    /* Modal Form Group */
+    .modal-form-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+    }
+
+    .modal-form-row label {
+      font-weight: bold;
+      color: #003366;
+      width: 110px;
+    }
+
+    .modal-form-row select {
+      flex: 1;
+      height: 22px;
+      border: 1px solid #7f9db9;
+      font-size: 11px;
+      padding: 2px 6px;
+      background: #fff;
+    }
+
+    /* =========================================================================
+       FLOATING DEMO AUTOPILOT CONTROLLER (PARA VIDEO DEMO)
+       ========================================================================= */
+    .floating-demo-bar {
+      position: fixed;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(18, 25, 38, 0.96);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 40px;
+      padding: 6px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+      z-index: 2000;
+    }
+
+    .demo-bar-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: rgba(218, 41, 28, 0.25);
+      border: 1px solid rgba(218, 41, 28, 0.6);
+      border-radius: 20px;
+      color: #ff857f;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.3px;
+    }
+
+    .demo-bar-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #f0f4f8;
+      font-size: 11.5px;
+      padding: 6px 13px;
+      border-radius: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .demo-bar-btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+      transform: translateY(-1px);
+      color: #ffffff;
+    }
+
+    .demo-bar-btn.active-tab {
+      background: #0070d2;
+      border-color: #3ba0f5;
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    .demo-bar-btn.btn-ai-magic {
+      background: linear-gradient(135deg, #e60000 0%, #ff5252 100%);
+      border: none;
+      color: #ffffff;
+      font-weight: 700;
+      box-shadow: 0 2px 10px rgba(230, 0, 0, 0.4);
+    }
+
+    .demo-bar-btn.btn-ai-magic:hover {
+      background: linear-gradient(135deg, #ff1a1a 0%, #ff6b6b 100%);
+      transform: translateY(-1px) scale(1.02);
+      box-shadow: 0 4px 14px rgba(230, 0, 0, 0.6);
+    }
+
+    .demo-bar-btn.btn-run-all {
+      background: linear-gradient(135deg, #00875a 0%, #36b37e 100%);
+      border: none;
+      color: #ffffff;
+      font-weight: 700;
+      box-shadow: 0 2px 10px rgba(0, 135, 90, 0.4);
+    }
+
+    .demo-bar-btn.btn-run-all:hover {
+      background: linear-gradient(135deg, #00a36d 0%, #44d496 100%);
+      transform: translateY(-1px) scale(1.02);
+      box-shadow: 0 4px 14px rgba(0, 135, 90, 0.6);
+    }
+
+    /* Toast Notification */
+    .toast-notification {
+      position: fixed;
+      top: 60px;
+      right: 24px;
+      background: #ffffff;
+      border-left: 4px solid #237804;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      border-radius: 4px;
+      padding: 12px 16px;
+      display: none;
+      align-items: center;
+      gap: 12px;
+      z-index: 3000;
+      font-size: 12px;
+      color: #1d2129;
+      animation: slideInRight 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    }
+
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .toast-icon {
+      font-size: 18px;
+      color: #237804;
+    }
+
+    .toast-text strong {
+      display: block;
+      color: #000;
+      margin-bottom: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =========================================================================
+       EDGE BROWSER FRAME (BARRA SUPERIOR DE MICROSOFT EDGE)
+       ========================================================================= -->
+  <header class="edge-browser-bar">
+    <div class="edge-tabs">
+      <div class="edge-tab">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="8" r="7" stroke="#90caf9" stroke-width="1.5"/>
+          <ellipse cx="8" cy="8" rx="3.5" ry="7" stroke="#90caf9" stroke-width="1.2"/>
+          <line x1="1" y1="8" x2="15" y2="8" stroke="#90caf9" stroke-width="1.2"/>
+        </svg>
+        <span id="browser-tab-title">:: SIAC Reclamos ::. - BUSQUEDA DE CASOS - Trabajo: Microsoft Edge</span>
+      </div>
+    </div>
+    <div class="edge-window-controls">
+      <span>&#8212;</span>
+      <span>&#9633;</span>
+      <span>&#10005;</span>
+    </div>
+  </header>
+
+  <div class="edge-address-bar">
+    <div style="display: flex; gap: 8px; color: #888;">
+      <span style="cursor: pointer;">&#8592;</span>
+      <span style="cursor: pointer;">&#8594;</span>
+      <span style="cursor: pointer;" onclick="location.reload()">&#8635;</span>
+    </div>
+    <div class="edge-url-chip">
+      <span class="warning-icon">&#9888; No seguro</span>
+      <span class="dim">|</span>
+      <span id="browser-url-text">intranetsiacrecns/siacrec/Paginas/Enlaces/SIACREC_Reclamos_Busqueda.aspx?Nodo=03</span>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       CLARO SIAC TOP HEADER (RED BAR)
+       ========================================================================= -->
+  <div class="siac-top-header">
+    <div class="siac-brand-box" onclick="mostrarVista('busqueda')">
+      <div class="claro-circle-logo">
+        <div class="claro-circle-logo-inner">
+          <span>Claro_</span>
+        </div>
+      </div>
+      <div class="siac-title-group">
+        <div class="siac-main-title">SIAC ÚNICO</div>
+        <div class="siac-sub-title">SISTEMA INTEGRADO DE ATENCIÓN A CLIENTES</div>
+      </div>
+    </div>
+    <div class="siac-nodo-tag" id="header-nodo-tag">NODO: 03</div>
+  </div>
+
+  <!-- =========================================================================
+       MAIN PAGE VIEWPORT
+       ========================================================================= -->
+  <main class="siac-page-viewport">
+
+    <!-- =======================================================================
+         VISTA 1: BÚSQUEDA DE CASOS (media_1794620604426_79cc8a96.png)
+         ======================================================================= -->
+    <section id="vista-busqueda">
+      <div class="siac-card-frame">
+        <div class="siac-card-header-gradient">
+          Búsqueda De Casos
+        </div>
+
+        <div class="siac-card-body">
+          <!-- Filtro de Búsqueda -->
+          <div class="search-filter-box">
+            <div class="radio-filter-group">
+              <label class="radio-label">
+                <input type="radio" name="tipoFiltro" value="caso" checked>
+                Nro Caso
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="tipoFiltro" value="reporte">
+                Nro Reporte
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="tipoFiltro" value="reclamo">
+                Nro Reclamo
+              </label>
+            </div>
+
+            <div class="search-input-group">
+              <input type="text" id="input-busqueda-caso" class="siac-input-text" value="0061568299">
+              <button type="button" class="siac-btn" onclick="ejecutarBusqueda()">
+                Buscar
+              </button>
+            </div>
+          </div>
+
+          <!-- Control de registros -->
+          <div class="table-top-controls">
+            <span>Mostrar</span>
+            <select>
+              <option value="10" selected>10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+            </select>
+            <span>registros</span>
+          </div>
+
+          <!-- Tabla de Resultados -->
+          <div class="table-container-scroll">
+            <table class="siac-results-table">
+              <thead>
+                <tr>
+                  <th>ID <span class="sort-arrow">↕</span></th>
+                  <th>Tipificación <span class="sort-arrow">↕</span></th>
+                  <th>Fecha Creación <span class="sort-arrow">↕</span></th>
+                  <th>Origen <span class="sort-arrow">↕</span></th>
+                  <th>Login Agente <span class="sort-arrow">↕</span></th>
+                  <th>Nombre Agente <span class="sort-arrow">↕</span></th>
+                </tr>
+              </thead>
+              <tbody id="tabla-casos-body">
+                <tr onclick="abrirCasoInteraccion('0061568299')">
+                  <td><span class="case-id-link">0061568299</span></td>
+                  <td>HFC - VARIACIÓN - FALLAS TÉCNICAS - INTERNET - ENLACE INTERMITENTE WIFI</td>
+                  <td>12/11/2026 06:47:43 p.m.</td>
+                  <td>Teléfono</td>
+                  <td>E3084592</td>
+                  <td>NORBELYS</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Paginación -->
+          <div class="table-footer-pagination">
+            <div>Visualizando 1 a 1 de 1 registros</div>
+            <div class="pagination-links">
+              <a href="javascript:void(0)">Primero</a>
+              <a href="javascript:void(0)">Anterior</a>
+              <a href="javascript:void(0)" class="active">1</a>
+              <a href="javascript:void(0)">Siguiente</a>
+              <a href="javascript:void(0)">Ultimo</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =======================================================================
+         VISTA 2: CREACIÓN DE INTERACCIÓN (media_1794620625212_b4b0dab7.png)
+         ======================================================================= -->
+    <section id="vista-interaccion">
+      
+      <!-- Subcabecera Reclamos -->
+      <div class="reclamos-sub-header">
+        <div class="reclamos-sub-left">
+          <div class="claro-circle-logo" style="width: 32px; height: 32px;">
+            <div class="claro-circle-logo-inner" style="width: 28px; height: 28px; font-size: 9px;">
+              <span>Claro_</span>
+            </div>
+          </div>
+          <div class="reclamos-sub-title-box">
+            <h2>Sistema de Gestión de Reclamos</h2>
+            <p id="fecha-hora-reclamos">13 de Noviembre del 2026 10:51:53 AM</p>
+          </div>
+        </div>
+        <div class="reclamos-sub-right">
+          <div class="reclamos-user-label">Usuario: E761957 - DREY AYMITUMA JULCA</div>
+          <div class="reclamos-nodo-label">NODO: 02 -</div>
+        </div>
+      </div>
+
+      <!-- Marco Principal de Interacción -->
+      <div class="interaction-outer-frame">
+        <div class="siac-card-header-gradient">
+          Creación De Interacción
+        </div>
+
+        <!-- Info Cliente -->
+        <div class="customer-info-bar">
+          <div class="customer-info-left">
+            CustomerID: <strong>48695751</strong>, Contacto : <strong>MAGDALENA TERAN PANAIFO</strong>
+          </div>
+          <div class="customer-links-right">
+            <a class="customer-link" onclick="mostrarToast('Registro de actividades cargado', 'Visualizando historial completo de interacciones.')">
+              📋 Registro de Actividades
+            </a>
+            <a class="customer-link" onclick="mostrarToast('Histórico de colas', 'Cola asignada: SQ_BACKOFFICESERVICIOSFIJOSHITSS1')">
+              📋 Histórico de Colas
+            </a>
+          </div>
+        </div>
+
+        <!-- Formulario Dividido -->
+        <div class="form-split-layout">
+          <!-- Columna Izquierda: Datos del Caso -->
+          <div class="form-left-col">
+            <!-- Fila 1 -->
+            <div class="form-row-grid">
+              <span class="field-label">Id Caso :</span>
+              <div class="field-readonly-box">0061568299</div>
+              <span class="field-label">Fecha Creación :</span>
+              <div class="field-readonly-box plain">12/11/2026 06:47:43 p.m.</div>
+            </div>
+
+            <!-- Fila 2: Tipo -->
+            <div class="form-row-grid full-width">
+              <span class="field-label">Tipo :</span>
+              <div class="field-readonly-box plain">HFC</div>
+            </div>
+
+            <!-- Fila 3: Clase -->
+            <div class="form-row-grid full-width">
+              <span class="field-label">Clase :</span>
+              <div class="field-readonly-box plain">VARIACIÓN - FALLAS TÉCNICAS</div>
+            </div>
+
+            <!-- Fila 4: SubClase -->
+            <div class="form-row-grid full-width">
+              <span class="field-label">SubClase :</span>
+              <div class="field-readonly-box plain">INTERNET - ENLACE INTERMITENTE WIFI</div>
+            </div>
+
+            <!-- Fila 5: Estado y Fase -->
+            <div class="form-row-grid">
+              <span class="field-label">Estado :</span>
+              <div class="field-readonly-box plain" id="interaccion-estado-box">EN TRÁMITE</div>
+              <span class="field-label">Fase :</span>
+              <div class="field-readonly-box plain">NO PRECISADO</div>
+            </div>
+
+            <!-- Fila 6: Clasificación -->
+            <div class="form-row-grid full-width">
+              <span class="field-label">Clasificación :</span>
+              <div class="field-empty-box"></div>
+            </div>
+
+            <!-- Fila 7: Hoja de Reclamación y Tipo -->
+            <div class="form-row-grid">
+              <span class="field-label">Hoja de Reclamación :</span>
+              <div class="field-empty-box"></div>
+              <span class="field-label">Tipo de Reclamación :</span>
+              <div class="field-empty-box"></div>
+            </div>
+
+            <!-- Fila 8: Condición -->
+            <div class="form-row-grid full-width">
+              <span class="field-label">Condición :</span>
+              <div class="field-readonly-box plain" style="max-width: 120px;">ABRIR</div>
+            </div>
+
+            <!-- Fila 9: Propietario -->
+            <div class="form-row-grid full-width">
+              <span class="field-label">Propietario :</span>
+              <div class="field-readonly-box plain" style="max-width: 220px;">DREY AYMITUMA</div>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Reglas Comerciales -->
+          <div class="form-right-col">
+            <div>
+              <a class="rules-header-link" onclick="mostrarToast('Reglas Comerciales', 'No hay restricciones comerciales vigentes.')">Reglas Comerciales:</a>
+              <div class="rules-content-text">No existe informacion disponible.</div>
+            </div>
+            <div>
+              <a class="attachments-link" onclick="mostrarToast('Archivos Adjuntos', 'No se encontraron adjuntos en este caso.')">
+                📁 Archivos Adjuntos
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Barra de Botones de Acción -->
+        <div class="action-toolbar-container">
+          <div class="toolbar-row">
+            <button type="button" class="toolbar-action-btn" onclick="mostrarToast('Enviar', 'Formulario enviado a validación.')">
+              <span>📨</span> Enviar
+            </button>
+            <button type="button" class="toolbar-action-btn" onclick="mostrarToast('Aceptar', 'Cambios guardados en base de datos SIAC.')">
+              <span style="color: #237804; font-weight: bold;">✔</span> Aceptar
+            </button>
+            <button type="button" class="toolbar-action-btn" onclick="mostrarToast('Recuperar', 'Datos del caso actualizados.')">
+              <span>🔄</span> Recuperar
+            </button>
+            <button type="button" class="toolbar-action-btn" onclick="mostrarToast('Asignar', 'Caso asignado a cola de Backoffice.')">
+              <span>👤</span> Asignar
+            </button>
+            <button type="button" class="toolbar-action-btn" onclick="mostrarToast('Rechazar/Reenviar', 'Acción enviada.')">
+              <span>↩️</span> Rechazar/Reenviar
+            </button>
+            <button type="button" class="toolbar-action-btn" onclick="mostrarToast('Mover', 'Seleccione nueva cola.')">
+              <span>📁</span> Mover
+            </button>
+            <button type="button" class="toolbar-action-btn" onclick="mostrarToast('Cambiar Estado', 'Estado actual: EN TRÁMITE.')">
+              <span>📌</span> Cambiar Estado
+            </button>
+          </div>
+
+          <div class="toolbar-row">
+            <button type="button" class="toolbar-action-btn" onclick="mostrarVista('busqueda')">
+              <span>❌</span> Cerrar
+            </button>
+            <button type="button" class="toolbar-action-btn" onclick="mostrarToast('Re-Abrir', 'Caso se encuentra actualmente abierto.')">
+              <span>📥</span> Re-Abrir
+            </button>
+            
+            <!-- BOTÓN CLAVE: AGREGAR NOTAS -->
+            <button type="button" class="toolbar-action-btn primary-highlight" onclick="abrirModalAgregarNotas()" id="btn-agregar-notas-siac">
+              <span>📝</span> Agregar Notas
+            </button>
+
+            <!-- BOTÓN CLAVE: VER NOTAS -->
+            <button type="button" class="toolbar-action-btn" onclick="abrirModalVerNotas()" id="btn-ver-notas-siac">
+              <span>📄</span> Ver Notas
+            </button>
+          </div>
+
+          <div class="toolbar-bottom-center">
+            <button type="button" class="siac-btn" style="min-width: 100px; height: 24px;" onclick="mostrarToast('Constancia', 'Generando constancia PDF de reclamo...')">
+              Constancia
+            </button>
+            <button type="button" class="siac-btn" style="min-width: 90px; height: 24px;" onclick="mostrarVista('busqueda')">
+              Cerrar
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- =========================================================================
+       MODAL 1: VER NOTAS DEL CASO (media_1794620644403_89c69d52.png)
+       ========================================================================= -->
+  <div class="siac-modal-overlay" id="modal-ver-notas">
+    <div class="siac-modal-window">
+      <div class="siac-modal-titlebar">
+        <span>Ver Notas del Caso</span>
+        <button class="siac-modal-close-btn" onclick="cerrarModalVerNotas()" title="Cerrar">✕</button>
+      </div>
+      <div class="siac-modal-body">
+        <textarea id="textarea-ver-notas" class="siac-notes-textarea-view" readonly></textarea>
+      </div>
+      <div class="siac-modal-footer">
+        <button type="button" class="siac-btn" style="min-width: 80px; height: 24px;" onclick="cerrarModalVerNotas()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- =========================================================================
+       MODAL 2: AGREGAR NOTAS (DONDE DREY PEGA SU PLANTILLA FINAL O DE CICLO)
+       ========================================================================= -->
+  <div class="siac-modal-overlay" id="modal-agregar-notas">
+    <div class="siac-modal-window" style="max-width: 680px;">
+      <div class="siac-modal-titlebar">
+        <span>Agregar Notas del Caso - 0061568299</span>
+        <button class="siac-modal-close-btn" onclick="cerrarModalAgregarNotas()" title="Cerrar">✕</button>
+      </div>
+      <div class="siac-modal-body">
+        <div class="modal-form-row">
+          <label>Tipo de Acción:</label>
+          <select id="select-tipo-accion">
+            <option value="Rev. administrador" selected>Rev. administrador</option>
+            <option value="Tipificación de Backoffice">Tipificación de Backoffice</option>
+            <option value="Gestión N2 Fija">Gestión N2 Fija</option>
+            <option value="Seguimiento de Avería">Seguimiento de Avería</option>
+          </select>
+        </div>
+
+        <div style="font-size: 11px; color: #555; display: flex; justify-content: space-between; align-items: center;">
+          <span>Observaciones / Plantilla de Backoffice:</span>
+          <span style="color: #0070d2; font-weight: 600; cursor: pointer;" onclick="autocompletarPlantillaMaaS()">
+            ⚡ Rellenar con MaaS AI
+          </span>
+        </div>
+
+        <textarea id="textarea-nueva-nota" class="siac-notes-textarea-edit" placeholder="Ingrese o pegue aquí la plantilla de tipificación de Backoffice..."></textarea>
+      </div>
+      <div class="siac-modal-footer">
+        <button type="button" class="siac-btn" style="min-width: 160px; height: 26px; background: linear-gradient(to bottom, #f0f7ff, #cfe2f5); border-color: #2b77a7; color: #003366;" onclick="autocompletarPlantillaMaaS()">
+          ⚡ Pegar Plantilla MaaS AI
+        </button>
+        <button type="button" class="siac-btn" style="min-width: 90px; height: 26px; font-weight: bold;" onclick="guardarNuevaNota()">
+          💾 Guardar
+        </button>
+        <button type="button" class="siac-btn" style="min-width: 80px; height: 26px;" onclick="cerrarModalAgregarNotas()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- =========================================================================
+       BARRA FLOTANTE DE CONTROL DE LA DEMO (PARA GRABACIÓN DE VIDEO)
+       ========================================================================= -->
+  <div class="floating-demo-bar">
+    <div class="demo-bar-badge">
+      <span>●</span> SIAC ÚNICO DEMO
+    </div>
+
+    <button type="button" class="demo-bar-btn active-tab" id="demo-nav-busqueda" onclick="mostrarVista('busqueda')">
+      🔍 Búsqueda de Casos
+    </button>
+
+    <button type="button" class="demo-bar-btn" id="demo-nav-interaccion" onclick="mostrarVista('interaccion')">
+      📄 Creación Interacción (0061568299)
+    </button>
+
+    <button type="button" class="demo-bar-btn" onclick="abrirModalVerNotas()">
+      👁️ Ver Notas
+    </button>
+
+    <button type="button" class="demo-bar-btn btn-ai-magic" onclick="abrirModalAgregarNotasYAutocompletar()">
+      ⚡ Agregar Nota con MaaS AI
+    </button>
+
+    <button type="button" class="demo-bar-btn btn-run-all" onclick="iniciarDemoCompleta()">
+      ▶️ Reproducir Demo en Video (Paso a Paso)
+    </button>
+  </div>
+
+
+  <!-- =========================================================================
+       TOAST DE NOTIFICACIÓN
+       ========================================================================= -->
+  <div class="toast-notification" id="toast-notif">
+    <div class="toast-icon">✔</div>
+    <div class="toast-text">
+      <strong id="toast-title">Notificación</strong>
+      <span id="toast-desc">Operación ejecutada con éxito.</span>
+    </div>
+  </div>
+
+
+  <!-- =========================================================================
+       SCRIPTS DE CONTROL E INTERACTIVIDAD
+       ========================================================================= -->
+  <script>
+    // Historial base extraído de la captura real (media_1794620644403_89c69d52.png)
+    let historialNotas = `*** REGISTRO TELEFÓNICO 12/11/2026 06:47:43 PM E3084592
+Descripción: SOT (ORDEN DE VISITA) - SGA 1.PROBLEMA REPORTADO POR EL CLIENTE : intermitencia con el wifi 2.DIAGNÓSTICO : fallas con wifi , no presenta averia masiva 3.NOMBRE DEL QUE REPORTA: jan 4.ID DE LLAMADA: 179452635556748599300201995300 SessionID: 6f703fad-5b7d-413d-8ad6-ba23c47ba7f5
+*** NOTAS Y CAMBIO DE ESTADO 13/11/2026 10:07:13 AM E761957 Tipo de acción: Rev. administrador
+
+*** NOTAS 13/11/2026 10:44:54 AM E761957 Tipo de acción: Rev. administrador
+BACKOFFICE HITSS
+CELULAR: 931793144
+PROBLEMA DETECTADO: LENTITUD E INTERMITENCIA
+DESCARTES REALIZADOS: Se valida Incógnito con provisión y online
+Se valida Schaman sin alertas
+Se valida TR69 con AutoSelect off
+Se valida bandas separadas
+No se pueden ver canales
+Se llama a cliente
+Cliente corta llamada
+Se deja mensaje en buzón y se envía mensaje por LiveChat
+SOLUCION: N/A`;
+
+    // Plantilla que genera el MaaS AI asistente
+    const plantillaBackofficeAI = `BACKOFFICE HITSS
+CELULAR: 931793144
+PROBLEMA DETECTADO: LENTITUD E INTERMITENCIA
+DESCARTES REALIZADOS: Se valida Incógnito con provisión y online
+Se valida Schaman sin alertas
+Se valida TR69 con AutoSelect off
+Se valida bandas separadas
+No se pueden ver canales
+Se llama a cliente
+Cliente corta llamada
+Se deja mensaje en buzón y se envía mensaje por LiveChat
+SOLUCION: N/A`;
+
+    // Inicialización al cargar la página
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('textarea-ver-notas').value = historialNotas;
+      mostrarVista('busqueda');
+    });
+
+    // Control de Vistas
+    function mostrarVista(vista) {
+      const vBusqueda = document.getElementById('vista-busqueda');
+      const vInteraccion = document.getElementById('vista-interaccion');
+      const btnNavBusqueda = document.getElementById('demo-nav-busqueda');
+      const btnNavInteraccion = document.getElementById('demo-nav-interaccion');
+      const tabTitle = document.getElementById('browser-tab-title');
+      const urlText = document.getElementById('browser-url-text');
+      const nodoTag = document.getElementById('header-nodo-tag');
+
+      if (vista === 'busqueda') {
+        vBusqueda.style.display = 'flex';
+        vInteraccion.style.display = 'none';
+        btnNavBusqueda.classList.add('active-tab');
+        btnNavInteraccion.classList.remove('active-tab');
+        tabTitle.textContent = ':: SIAC Reclamos ::. - BUSQUEDA DE CASOS - Trabajo: Microsoft Edge';
+        urlText.textContent = 'intranetsiacrecns/siacrec/Paginas/Enlaces/SIACREC_Reclamos_Busqueda.aspx?Nodo=03';
+        nodoTag.textContent = 'NODO: 03';
+      } else {
+        vBusqueda.style.display = 'none';
+        vInteraccion.style.display = 'flex';
+        btnNavBusqueda.classList.remove('active-tab');
+        btnNavInteraccion.classList.add('active-tab');
+        tabTitle.textContent = ':: SIAC Reclamos ::. - CREACION DE INTERACCION - Trabajo: Microsoft Edge';
+        urlText.textContent = 'intranetsiacrecns/siacrec/Paginas/Enlaces/SIACREC_Reclamos_interaccion.aspx?EstadoForm=E&tipoCasoInteraccion=1&CasoInteraccionId=0061568299';
+        nodoTag.textContent = 'NODO: 02 -';
+      }
+    }
+
+    function ejecutarBusqueda() {
+      const input = document.getElementById('input-busqueda-caso').value.trim();
+      if (!input) {
+        mostrarToast('Búsqueda', 'Ingrese un número de caso para buscar.');
+        return;
+      }
+      mostrarToast('Buscando caso', `Cargando registro ${input}...`);
+      setTimeout(() => {
+        abrirCasoInteraccion(input);
+      }, 500);
+    }
+
+    function abrirCasoInteraccion(idCaso) {
+      mostrarVista('interaccion');
+      mostrarToast('Caso Cargado', `Interacción para caso ${idCaso} abierta correctamente.`);
+    }
+
+    // Modal Ver Notas
+    function abrirModalVerNotas() {
+      document.getElementById('textarea-ver-notas').value = historialNotas;
+      document.getElementById('modal-ver-notas').style.display = 'flex';
+    }
+
+    function cerrarModalVerNotas() {
+      document.getElementById('modal-ver-notas').style.display = 'none';
+    }
+
+    // Modal Agregar Notas
+    function abrirModalAgregarNotas() {
+      document.getElementById('textarea-nueva-nota').value = '';
+      document.getElementById('modal-agregar-notas').style.display = 'flex';
+    }
+
+    function cerrarModalAgregarNotas() {
+      document.getElementById('modal-agregar-notas').style.display = 'none';
+    }
+
+    function abrirModalAgregarNotasYAutocompletar() {
+      if (document.getElementById('vista-interaccion').style.display === 'none') {
+        mostrarVista('interaccion');
+      }
+      abrirModalAgregarNotas();
+      setTimeout(() => {
+        autocompletarPlantillaMaaS();
+      }, 300);
+    }
+
+    // Autocompletar con MaaS AI (efecto de tipeo realista para el video)
+    function autocompletarPlantillaMaaS() {
+      const textarea = document.getElementById('textarea-nueva-nota');
+      textarea.value = '';
+      let idx = 0;
+      const speed = 7; // ms por carácter para un efecto fluido y visible en video
+
+      function typeChar() {
+        if (idx < plantillaBackofficeAI.length) {
+          textarea.value += plantillaBackofficeAI.charAt(idx);
+          idx++;
+          textarea.scrollTop = textarea.scrollHeight;
+          setTimeout(typeChar, speed);
+        } else {
+          mostrarToast('MaaS AI', 'Plantilla de Backoffice generada y cargada con éxito.');
+        }
+      }
+      typeChar();
+    }
+
+    // Guardar Nueva Nota
+    function guardarNuevaNota() {
+      const texto = document.getElementById('textarea-nueva-nota').value.trim();
+      if (!texto) {
+        mostrarToast('Atención', 'Ingrese el contenido de la nota antes de guardar.');
+        return;
+      }
+
+      const tipoAccion = document.getElementById('select-tipo-accion').value;
+      const now = new Date();
+      const fechaStr = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()} ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}`;
+      
+      const bloqueNuevaNota = `\n\n*** NOTAS ${fechaStr} E761957 Tipo de acción: ${tipoAccion}\n${texto}`;
+      historialNotas += bloqueNuevaNota;
+      document.getElementById('textarea-ver-notas').value = historialNotas;
+
+      cerrarModalAgregarNotas();
+      mostrarToast('Nota Guardada', 'La nota de Backoffice fue registrada en SIAC Reclamos.');
+
+      // Abre automáticamente Ver Notas para que en el video se vea reflejado el cambio
+      setTimeout(() => {
+        abrirModalVerNotas();
+        const viewArea = document.getElementById('textarea-ver-notas');
+        viewArea.scrollTop = viewArea.scrollHeight;
+      }, 700);
+    }
+
+    // Toast Helper
+    let toastTimeout;
+    function mostrarToast(titulo, desc) {
+      const toast = document.getElementById('toast-notif');
+      document.getElementById('toast-title').textContent = titulo;
+      document.getElementById('toast-desc').textContent = desc;
+      toast.style.display = 'flex';
+
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.style.display = 'none';
+      }, 4000);
+    }
+
+    // DEMO SECUENCIA COMPLETA AUTOMÁTICA (Para grabar video sin clicks)
+    function iniciarDemoCompleta() {
+      mostrarVista('busqueda');
+      mostrarToast('Demo Video Iniciada', 'Ejecutando flujo de SIAC Único paso a paso...');
+
+      // Paso 1: Escribir caso en buscador
+      setTimeout(() => {
+        const input = document.getElementById('input-busqueda-caso');
+        input.value = '';
+        let caso = "0061568299";
+        let cIdx = 0;
+        let tInterval = setInterval(() => {
+          if (cIdx < caso.length) {
+            input.value += caso.charAt(cIdx);
+            cIdx++;
+          } else {
+            clearInterval(tInterval);
+          }
+        }, 80);
+      }, 800);
+
+      // Paso 2: Click en Buscar y transición a Vista Interacción
+      setTimeout(() => {
+        mostrarToast('Búsqueda', 'Caso 0061568299 encontrado. Abriendo interacción...');
+        abrirCasoInteraccion('0061568299');
+      }, 2400);
+
+      // Paso 3: Abrir Agregar Notas
+      setTimeout(() => {
+        mostrarToast('Backoffice Hitss', 'Abriendo formulario de Agregar Notas...');
+        abrirModalAgregarNotas();
+      }, 4200);
+
+      // Paso 4: Autocompletar con MaaS AI
+      setTimeout(() => {
+        autocompletarPlantillaMaaS();
+      }, 5400);
+
+      // Paso 5: Guardar Nota
+      setTimeout(() => {
+        guardarNuevaNota();
+      }, 8200);
+
+      // Paso 6: Cerrar y conclusión
+      setTimeout(() => {
+        mostrarToast('Demostración Exitosa', 'Flujo completo de SIAC Único sincronizado.');
+      }, 12500);
+    }
+  </script>
+
+</body>
+</html>

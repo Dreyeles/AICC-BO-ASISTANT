@@ -184,19 +184,38 @@
   </div>
 
   <!-- NAVIGATION TABS -->
-  <div class="bg-[#121620] border-b border-[#222734] px-6 flex gap-6 text-sm">
-    <button onclick="switchTab('audit')" id="tab-audit" class="py-3 px-1 border-b-2 border-huawei-red text-white font-semibold flex items-center gap-2 transition">
-      <i data-lucide="phone-call" class="w-4 h-4 text-huawei-red"></i>
-      Auditoría N2 & Plantilla Hitss en Vivo
-    </button>
-    <button onclick="switchTab('dashboard')" id="tab-dashboard" class="py-3 px-1 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-medium flex items-center gap-2 transition">
-      <i data-lucide="graduation-cap" class="w-4 h-4"></i>
-      Portal de Calidad y Formación (Llamadas 15m - 1h)
-    </button>
-    <button onclick="switchTab('architecture')" id="tab-architecture" class="py-3 px-1 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-medium flex items-center gap-2 transition">
-      <i data-lucide="network" class="w-4 h-4"></i>
-      Arquitectura Huawei AICC + MaaS
-    </button>
+  <div class="bg-[#121620] border-b border-[#222734] px-6 flex flex-wrap items-center justify-between gap-4 text-sm">
+    <div class="flex gap-6">
+      <button onclick="switchTab('audit')" id="tab-audit" class="py-3 px-1 border-b-2 border-huawei-red text-white font-semibold flex items-center gap-2 transition">
+        <i data-lucide="phone-call" class="w-4 h-4 text-huawei-red"></i>
+        Auditoría N2 & Plantilla Hitss en Vivo
+      </button>
+      <button onclick="switchTab('dashboard')" id="tab-dashboard" class="py-3 px-1 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-medium flex items-center gap-2 transition">
+        <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+        Portal de Calidad y Formación (Llamadas 15m - 1h)
+      </button>
+      <button onclick="switchTab('architecture')" id="tab-architecture" class="py-3 px-1 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-medium flex items-center gap-2 transition">
+        <i data-lucide="network" class="w-4 h-4"></i>
+        Arquitectura Huawei AICC + MaaS
+      </button>
+    </div>
+
+    <!-- QUICK LAUNCHERS PARA LOS 3 SISTEMAS OPERACIONALES -->
+    <div class="flex items-center gap-2 py-2">
+      <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider hidden sm:inline">Simuladores N2:</span>
+      <a href="AICC/index.html" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-red-950/60 border border-red-500/40 text-red-300 hover:bg-red-900/60 text-xs font-semibold flex items-center gap-1.5 transition" title="Abrir Simulador Huawei AICC">
+        <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+        <span>Huawei AICC</span>
+      </a>
+      <a href="bmc helix/index.html" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-orange-950/60 border border-orange-500/40 text-orange-300 hover:bg-orange-900/60 text-xs font-semibold flex items-center gap-1.5 transition" title="Abrir Simulador BMC Helix ITSM">
+        <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+        <span>BMC Helix</span>
+      </a>
+      <a href="siac unico/index.html" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-rose-950/60 border border-rose-500/40 text-rose-300 hover:bg-rose-900/60 text-xs font-semibold flex items-center gap-1.5 transition" title="Abrir Simulador SIAC Único Claro">
+        <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+        <span>SIAC Único</span>
+      </a>
+    </div>
   </div>
 
   <!-- MAIN CONTAINER -->
