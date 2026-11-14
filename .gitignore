@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 test_voice.mp3
+video_frames/
 
 # Backups
 *_BACKUP.pptx

@@ -1,0 +1,1858 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Service Cloud - Huawei AICC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-blue: #366bfc;
+      --primary-blue-hover: #2655d9;
+      --primary-blue-light: #e8f1fd;
+      --success-green: #67c23a;
+      --success-green-bg: #f0f9eb;
+      --success-green-border: #e1f3d8;
+      --danger-red: #f56c6c;
+      --warning-orange: #e6a23c;
+      --warning-orange-bg: #fdf6ec;
+      --info-blue-bg: #edf5ff;
+      --info-blue-border: #d9ecff;
+      --text-main: #1d2129;
+      --text-regular: #4e5969;
+      --text-secondary: #86909c;
+      --text-muted: #c0c4cc;
+      --border-color: #e5e6eb;
+      --border-light: #f2f3f5;
+      --bg-page: #f5f7fa;
+      --bg-white: #ffffff;
+      --bg-tab-bar: #edf0f5;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      font-size: 13px;
+      user-select: none;
+    }
+
+    /* TOP HEADER (Customer Service Cloud) */
+    .top-header {
+      height: 48px;
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      position: relative;
+      z-index: 100;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1d2129;
+      cursor: pointer;
+    }
+
+    .brand-logo-icon {
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-pill-logout {
+      background: #ffffff;
+      border: 1px solid #dcdfe6;
+      border-radius: 14px;
+      padding: 3px 12px;
+      font-size: 12px;
+      color: #606266;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-pill-logout:hover {
+      border-color: var(--primary-blue);
+      color: var(--primary-blue);
+    }
+
+    /* Element UI Status Dropdown (.sign-tenant-status) */
+    .status-dropdown-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .sign-tenant-status {
+      background: #ffffff;
+      border: 1px solid #dcdfe6;
+      border-radius: 14px;
+      padding: 3px 12px;
+      font-size: 12px;
+      color: #303133;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    .sign-tenant-status:hover {
+      border-color: var(--primary-blue);
+    }
+
+    .status-dot-indicator {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .status-dot-indicator.in-call { background-color: var(--success-green); }
+    .status-dot-indicator.acw { background-color: var(--warning-orange); }
+    .status-dot-indicator.ready { background-color: var(--success-green); }
+    .status-dot-indicator.paused { background-color: var(--danger-red); }
+
+    .status-select {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 6px;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      width: 170px;
+      display: none;
+      z-index: 2000;
+      padding: 4px 0;
+    }
+    .status-select.show {
+      display: block;
+    }
+    .status-option-item {
+      padding: 8px 14px;
+      font-size: 12px;
+      color: #606266;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.15s;
+    }
+    .status-option-item:hover {
+      background: #f5f7fa;
+      color: var(--primary-blue);
+    }
+    .status-option-item .select-label {
+      font-size: 12px;
+    }
+
+    /* CENTER ACTIVE TELEPHONY BAR */
+    .telephony-center-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: transparent;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    .caller-green-badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #e1f3d8;
+      border: 1px solid #b3e19d;
+      color: var(--success-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .caller-phone-number {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1d2129;
+      letter-spacing: 0.2px;
+    }
+
+    .telephony-divider {
+      color: #dcdfe6;
+      font-size: 12px;
+      margin: 0 2px;
+    }
+
+    .telephony-icon-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #4e5969;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .telephony-icon-btn:hover {
+      background: #f2f3f5;
+      color: var(--primary-blue);
+    }
+
+    .call-duration-timer {
+      font-family: monospace;
+      font-size: 12px;
+      font-weight: 600;
+      color: #4e5969;
+      min-width: 42px;
+      text-align: center;
+    }
+
+    .btn-hangup-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--danger-red);
+      color: #ffffff;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(245, 108, 108, 0.4);
+      position: relative;
+      transition: transform 0.15s, background 0.15s;
+    }
+    .btn-hangup-circle:hover {
+      background: #e64242;
+      transform: scale(1.06);
+    }
+    .btn-hangup-circle:hover .hangup-tooltip {
+      display: block;
+    }
+    .hangup-tooltip {
+      display: none;
+      position: absolute;
+      top: 110%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #303133;
+      color: #ffffff;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+      z-index: 1000;
+    }
+
+    /* RIGHT HEADER */
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-icon-action {
+      color: #4e5969;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+    .header-icon-action:hover {
+      background: #f2f3f5;
+      color: var(--primary-blue);
+    }
+
+    .lang-dropdown {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: #4e5969;
+      cursor: pointer;
+    }
+
+    .user-profile-widget {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .user-avatar-circle {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #e8f1fd;
+      color: var(--primary-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .user-name-text {
+      font-size: 12px;
+      font-weight: 500;
+      color: #1d2129;
+      max-width: 160px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* HORIZONTAL TABS BAR */
+    .horizontal-tabs-bar {
+      height: 36px;
+      background: var(--bg-tab-bar);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      gap: 2px;
+      overflow-x: auto;
+    }
+
+    .tab-item-chip {
+      height: 32px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #4e5969;
+      cursor: pointer;
+      background: transparent;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+    .tab-item-chip:hover {
+      background: rgba(255,255,255,0.7);
+      color: var(--text-main);
+    }
+    .tab-item-chip.active {
+      background: #ffffff;
+      color: var(--primary-blue);
+      font-weight: 600;
+      border-top: 2px solid var(--primary-blue);
+    }
+
+    .tab-close-icon {
+      font-size: 10px;
+      color: #86909c;
+      width: 14px;
+      height: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.15s;
+    }
+    .tab-close-icon:hover {
+      background: #f2f3f5;
+      color: var(--danger-red);
+    }
+
+    /* APP BODY CONTAINER */
+    .app-workspace-body {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    /* COLUMN 0: VERTICAL STRIP ICONS */
+    .left-icon-strip {
+      width: 44px;
+      background: #ffffff;
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 0;
+      gap: 16px;
+    }
+
+    .strip-icon-btn {
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #4e5969;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .strip-icon-btn:hover {
+      background: #f2f3f5;
+      color: var(--primary-blue);
+    }
+    .strip-icon-btn.active {
+      color: var(--primary-blue);
+      background: var(--primary-blue-light);
+    }
+
+    .strip-badge-box {
+      width: 22px;
+      height: 22px;
+      border: 1.5px solid #4e5969;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 11px;
+      color: #4e5969;
+    }
+    .strip-icon-btn.active .strip-badge-box {
+      border-color: var(--primary-blue);
+      color: var(--primary-blue);
+    }
+
+    .strip-bottom {
+      margin-top: auto;
+    }
+
+    /* COLUMN 1: OUTBOUND CALLS DRAWER */
+    .outbound-calls-drawer {
+      width: 225px;
+      background: #ffffff;
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .drawer-header {
+      padding: 10px 12px 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .drawer-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #1d2129;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .drawer-filter-bar {
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .drawer-search-input {
+      flex: 1;
+      height: 28px;
+      border: 1px solid #dcdfe6;
+      border-radius: 14px;
+      padding: 0 10px;
+      font-size: 12px;
+      outline: none;
+      background: #ffffff;
+    }
+    .drawer-search-input:focus {
+      border-color: var(--primary-blue);
+    }
+
+    .btn-drawer-more {
+      height: 28px;
+      border: 1px solid #dcdfe6;
+      background: #ffffff;
+      border-radius: 4px;
+      padding: 0 8px;
+      font-size: 12px;
+      color: #606266;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .calls-scroll-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px 0;
+    }
+
+    .call-list-row {
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-size: 12px;
+      transition: background 0.15s;
+    }
+    .call-list-row:hover {
+      background: #f7f8fa;
+    }
+    .call-list-row.active {
+      background: var(--primary-blue-light);
+    }
+
+    .call-row-number {
+      font-weight: 600;
+      color: #1d2129;
+    }
+    .call-list-row.active .call-row-number {
+      color: var(--primary-blue);
+    }
+
+    .call-row-tag {
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .call-row-tag.success { color: var(--success-green); }
+    .call-row-tag.failed { color: var(--danger-red); }
+
+    .btn-row-call {
+      background: transparent;
+      border: 1px solid #b3d8ff;
+      color: var(--primary-blue);
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .btn-row-call:hover {
+      background: var(--primary-blue);
+      color: #fff;
+    }
+
+    .drawer-pagination {
+      padding: 8px 10px;
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #86909c;
+    }
+
+    /* COLUMN 2: CENTER WORKSPACE */
+    .center-workspace-panel {
+      flex: 1;
+      background: #ffffff;
+      padding: 18px 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .workspace-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+
+    .workspace-caller-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1d2129;
+    }
+
+    .workspace-tools-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #86909c;
+    }
+    .workspace-tool-btn {
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      transition: color 0.15s;
+    }
+    .workspace-tool-btn:hover {
+      color: var(--primary-blue);
+    }
+
+    /* SECTION 1: INFORMACIÓN DE LA TAREA */
+    .section-block-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1d2129;
+      margin-bottom: 12px;
+    }
+
+    .task-info-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 24px;
+      font-size: 12px;
+    }
+    .task-info-table td {
+      padding: 6px 12px 6px 0;
+      vertical-align: top;
+    }
+    .task-label-col {
+      width: 140px;
+      color: #86909c;
+      font-weight: 400;
+    }
+    .task-val-col {
+      color: #1d2129;
+      font-weight: 500;
+    }
+
+    /* SECTION 2: RESULTADO DE NEGOCIO */
+    .business-result-container {
+      margin-top: 10px;
+      max-width: 780px;
+    }
+
+    .form-group-item {
+      margin-bottom: 16px;
+    }
+
+    .form-item-label {
+      font-size: 12px;
+      color: #4e5969;
+      margin-bottom: 6px;
+      display: block;
+      font-weight: 500;
+    }
+    .form-item-label .required-star {
+      color: var(--danger-red);
+      margin-right: 2px;
+    }
+
+    /* Custom Cascader Select Trigger (.select-trigger) */
+    .custom-cascader-box {
+      position: relative;
+    }
+
+    .cascader-input-trigger {
+      width: 100%;
+      height: 32px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      padding: 0 12px;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-size: 12px;
+      color: #606266;
+      transition: border-color 0.2s;
+    }
+    .cascader-input-trigger:hover {
+      border-color: #c0c4cc;
+    }
+    .cascader-input-trigger.is-focus {
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 2px rgba(54, 107, 252, 0.2);
+    }
+    .cascader-input-trigger.has-value {
+      color: #1d2129;
+      font-weight: 500;
+    }
+
+    /* POPPER TREE DROPDOWN (.el-popper) */
+    .cascader-popper-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 4px;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+      width: 100%;
+      min-width: 480px;
+      max-height: 280px;
+      overflow-y: auto;
+      z-index: 1500;
+      display: none;
+      padding: 6px 0;
+    }
+    .cascader-popper-dropdown.show {
+      display: block;
+    }
+
+    .tree-node-item {
+      padding: 6px 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #303133;
+      transition: background 0.15s;
+    }
+    .tree-node-item:hover {
+      background: #f5f7fa;
+      color: var(--primary-blue);
+    }
+    .tree-node-item.selected {
+      color: var(--primary-blue);
+      font-weight: 600;
+      background: #ecf5ff;
+    }
+
+    .tree-expand-caret {
+      font-size: 10px;
+      color: #909399;
+      width: 12px;
+      display: inline-block;
+      transition: transform 0.2s;
+    }
+    .tree-expand-caret.expanded {
+      transform: rotate(90deg);
+    }
+
+    .tree-sub-branches {
+      padding-left: 20px;
+      display: none;
+    }
+    .tree-sub-branches.show {
+      display: block;
+    }
+
+    /* DESCRIPTION TEXTAREA */
+    .business-textarea-wrapper {
+      position: relative;
+    }
+
+    .business-description-textarea {
+      width: 100%;
+      min-height: 120px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      padding: 10px 12px 24px 12px;
+      font-size: 12px;
+      color: #1d2129;
+      line-height: 1.5;
+      outline: none;
+      resize: vertical;
+      background: #ffffff;
+      transition: border-color 0.2s;
+    }
+    .business-description-textarea:focus {
+      border-color: var(--primary-blue);
+    }
+    .business-description-textarea:disabled {
+      background: #f5f7fa;
+      color: #909399;
+      cursor: not-allowed;
+    }
+
+    .textarea-counter-badge {
+      position: absolute;
+      bottom: 8px;
+      right: 12px;
+      font-size: 11px;
+      color: #86909c;
+      font-family: monospace;
+      pointer-events: none;
+    }
+
+    /* SAVE BUTTON */
+    .form-actions-bottom {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 14px;
+    }
+
+    .btn-save-primary {
+      background: var(--primary-blue);
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      padding: 7px 22px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-save-primary:hover {
+      background: var(--primary-blue-hover);
+      box-shadow: 0 2px 8px rgba(54, 107, 252, 0.35);
+    }
+    .btn-save-primary.disabled {
+      background: #f4f4f5;
+      color: #c0c4cc;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* COLUMN 3: RIGHT SIDEBAR */
+    .right-info-sidebar {
+      width: 310px;
+      background: #ffffff;
+      border-left: 1px solid var(--border-color);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .right-caller-avatar-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .avatar-phone-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1d2129;
+    }
+    .avatar-phone-bubble {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--success-green);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .info-list-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 12px;
+    }
+    .info-grid-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .info-grid-row .label {
+      color: #86909c;
+    }
+    .info-grid-row .val {
+      color: #1d2129;
+      font-weight: 500;
+      text-align: right;
+    }
+
+    /* OUTBOUND CALL HISTORY ITEM */
+    .outbound-record-card {
+      margin-top: 8px;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .record-time-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #4e5969;
+    }
+    .record-time-icon {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #d1edc4;
+      color: var(--success-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+    }
+
+    .record-operations-links {
+      display: flex;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--primary-blue);
+      margin-top: 4px;
+    }
+    .record-operations-links a {
+      color: var(--primary-blue);
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .record-operations-links a:hover {
+      text-decoration: underline;
+    }
+
+    /* TOASTS & NOTIFICATIONS (Element UI exact copies) */
+    /* 1. Top center success message (.el-message--success) */
+    .el-message-top {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--success-green-bg);
+      border: 1px solid var(--success-green-border);
+      color: var(--success-green);
+      padding: 10px 18px;
+      border-radius: 4px;
+      font-size: 13px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      z-index: 9999;
+      animation: fadeInDown 0.3s ease;
+    }
+    .el-message-top.show {
+      display: flex;
+    }
+
+    /* 2. Bottom right suggestions toast */
+    .el-notification-bottom-right {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #ffffff;
+      border: 1px solid var(--info-blue-border);
+      border-radius: 6px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+      width: 280px;
+      padding: 14px 16px;
+      display: none;
+      z-index: 9999;
+      animation: fadeInUp 0.3s ease;
+    }
+    .el-notification-bottom-right.show {
+      display: block;
+    }
+    .notification-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--primary-blue);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .notification-content {
+      font-size: 12px;
+      color: #606266;
+      margin-left: 22px;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translate(-50%, -20px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* FLOATING AICC BO ASSISTANT / SIMULATOR CONTROL BAR */
+    .demo-floating-controller {
+      position: fixed;
+      bottom: 16px;
+      left: 60px;
+      background: #1e2430;
+      color: #ffffff;
+      border: 1px solid #364153;
+      border-radius: 24px;
+      padding: 6px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      z-index: 5000;
+      font-size: 12px;
+    }
+
+    .controller-badge {
+      background: linear-gradient(90deg, #cf0a2c, #e60026);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .controller-btn {
+      background: #2b3345;
+      color: #e4e7ed;
+      border: 1px solid #3e4a63;
+      border-radius: 12px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s;
+    }
+    .controller-btn:hover {
+      background: #3c475e;
+      color: #ffffff;
+      border-color: var(--primary-blue);
+    }
+    .controller-btn.primary {
+      background: var(--primary-blue);
+      border-color: var(--primary-blue);
+      color: #ffffff;
+    }
+    .controller-btn.primary:hover {
+      background: var(--primary-blue-hover);
+    }
+    .controller-btn.red {
+      background: var(--danger-red);
+      border-color: var(--danger-red);
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP CENTER SUCCESS MESSAGE (Element UI .el-message) -->
+  <div id="topSuccessMsg" class="el-message-top">
+    <svg width="16" height="16" viewBox="0 0 1024 1024" fill="currentColor">
+      <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm193.5 301.7l-210.6 292a31.8 31.8 0 0 1-51.7 0L318.5 484.9c-3.8-5.3 0-12.7 6.5-12.7h46.9c10.2 0 19.9 4.9 25.9 13.3l71.2 98.8 157.2-218c6-8.3 15.6-13.3 25.9-13.3H700c6.5 0 10.3 7.4 6.5 12.7z"/>
+    </svg>
+    <span>El resultado del negocio se registra correctamente</span>
+    <span onclick="AICC.hideTopSuccess()" style="cursor:pointer; margin-left:8px; font-size:11px;">✕</span>
+  </div>
+
+  <!-- BOTTOM RIGHT SUGGESTIONS TOAST -->
+  <div id="bottomToast" class="el-notification-bottom-right">
+    <div class="notification-header">
+      <svg width="15" height="15" viewBox="0 0 1024 1024" fill="currentColor">
+        <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm32 664c0 4.4-3.6 8-8 8h-48c-4.4 0-8-3.6-8-8V456c0-4.4 3.6-8 8-8h48c4.4 0 8 3.6 8 8v272zm-32-344a48.01 48.01 0 0 1 0-96 48.01 48.01 0 0 1 0 96z"/>
+      </svg>
+      <span>Sugerencias</span>
+    </div>
+    <div class="notification-content">
+      El agente colgó
+    </div>
+  </div>
+
+  <!-- TOP HEADER -->
+  <header class="top-header">
+    <div class="header-left">
+      <!-- Huawei Cloud Brand -->
+      <div class="brand-logo" onclick="AICC.resetDemo()">
+        <div class="brand-logo-icon">
+          <!-- Cloud SVG -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z" fill="url(#cloudGrad)"/>
+            <defs>
+              <linearGradient id="cloudGrad" x1="0" y1="4" x2="24" y2="20" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#4F46E5"/>
+                <stop offset="0.5" stop-color="#3B82F6"/>
+                <stop offset="1" stop-color="#06B6D4"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <span>Customer Service Cloud</span>
+      </div>
+
+      <button class="btn-pill-logout">Cerrar sesión</button>
+
+      <!-- Agent Status Selector (.sign-tenant-status) -->
+      <div class="status-dropdown-container">
+        <div class="sign-tenant-status" id="agentStatusBtn" onclick="AICC.toggleStatusDropdown()">
+          <span class="status-dot-indicator in-call" id="statusDot"></span>
+          <span id="currentStatusText">Hablar</span>
+          <span style="font-size:10px; color:#909399;">▼</span>
+        </div>
+
+        <!-- Dropdown Menu (.status-select) -->
+        <div class="status-select" id="statusSelectMenu">
+          <div class="status-option-item" onclick="AICC.setAgentStatus('Disponible', 'ready')">
+            <span class="status-dot-indicator ready"></span>
+            <span class="select-label">Disponible</span>
+          </div>
+          <div class="status-option-item" onclick="AICC.setAgentStatus('Descanso', 'paused')">
+            <span class="status-dot-indicator paused"></span>
+            <span class="select-label">Descanso</span>
+          </div>
+          <div class="status-option-item" onclick="AICC.setAgentStatus('Hablar', 'in-call')">
+            <span class="status-dot-indicator in-call"></span>
+            <span class="select-label">Hablar</span>
+          </div>
+          <div class="status-option-item" onclick="AICC.setAgentStatus('Recapitulación', 'acw')">
+            <span class="status-dot-indicator acw"></span>
+            <span class="select-label">Recapitulación</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTER ACTIVE TELEPHONY BAR -->
+    <div class="telephony-center-bar" id="telephonyCallBar">
+      <div class="caller-green-badge">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-1.57 1.97c-2.83-1.45-5.15-3.76-6.59-6.59l1.97-1.57c.28-.28.36-.67.25-1.02A11.36 11.36 0 0 1 8.5 4.3a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1C3 13.93 10.07 21 19 21a1 1 0 0 0 1-1v-3.62a1 1 0 0 0-.99-1z"/>
+        </svg>
+      </div>
+      <span class="caller-phone-number" id="centerCallNumber">976302352</span>
+
+      <span class="telephony-divider">|</span>
+
+      <!-- Telephony controls -->
+      <div class="telephony-icon-btn" title="Teclado numérico">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <circle cx="5" cy="5" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="19" cy="5" r="2"/>
+          <circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/>
+          <circle cx="5" cy="19" r="2"/><circle cx="12" cy="19" r="2"/><circle cx="19" cy="19" r="2"/>
+        </svg>
+      </div>
+
+      <div class="telephony-icon-btn" title="Silenciar">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+        </svg>
+      </div>
+
+      <div class="telephony-icon-btn" title="Retener / Pausa">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+        </svg>
+      </div>
+
+      <div class="telephony-icon-btn" title="Transferir llamada">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M14 8h-4c-1.1 0-2 .9-2 2v6h2v-6h4v3l4-4-4-4v3z"/>
+        </svg>
+      </div>
+
+      <div class="telephony-icon-btn" title="Conferencia">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+        </svg>
+      </div>
+
+      <div class="telephony-icon-btn" title="Consulta">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 .88-.36 1.68-.93 2.25z"/>
+        </svg>
+      </div>
+
+      <div class="telephony-icon-btn" title="Compartir pantalla">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/>
+        </svg>
+      </div>
+
+      <!-- Live timer -->
+      <span class="call-duration-timer" id="callDurationTimer">00:38</span>
+
+      <!-- Hangup Red Circle Button -->
+      <button class="btn-hangup-circle" id="btnHangupCall" onclick="AICC.hangupCall()" title="Cuelga">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08a.996.996 0 0 1 0-1.41C3.42 8.52 7.45 6.8 12 6.8s8.58 1.72 11.71 4.87c.39.39.39 1.02 0 1.41l-2.48 2.48c-.18.18-.43.29-.71.29s-.52-.11-.7-.28c-.79-.74-1.69-1.36-2.67-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/>
+        </svg>
+        <span class="hangup-tooltip">Cuelga</span>
+      </button>
+    </div>
+
+    <!-- RIGHT HEADER ITEMS -->
+    <div class="header-right">
+      <div class="header-icon-action" title="Soporte técnico">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 1a9 9 0 0 0-9 9v7c0 1.66 1.34 3 3 3h3v-8H5v-2a7 7 0 0 1 14 0v2h-4v8h3c1.66 0 3-1.34 3-3v-7a9 9 0 0 0-9-9z"/>
+        </svg>
+      </div>
+
+      <div class="header-icon-action" title="Notificaciones">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+        </svg>
+      </div>
+
+      <div class="lang-dropdown">
+        <span>Español</span>
+        <span style="font-size:10px; color:#86909c;">▼</span>
+      </div>
+
+      <!-- User Profile -->
+      <div class="user-profile-widget">
+        <div class="user-avatar-circle">DA</div>
+        <span class="user-name-text">DREY ENMANUEL AYMITU...</span>
+        <span style="font-size:10px; color:#86909c;">▼</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- HORIZONTAL TABS BAR -->
+  <div class="horizontal-tabs-bar">
+    <div class="tab-item-chip">
+      <span>Página de inicio</span>
+      <span class="tab-close-icon">✕</span>
+    </div>
+    <div class="tab-item-chip">
+      <span>Reservar llamadas</span>
+      <span class="tab-close-icon">✕</span>
+    </div>
+    <div class="tab-item-chip active">
+      <span>Reserva para llamadas salientes man...</span>
+      <span class="tab-close-icon">✕</span>
+    </div>
+    <div class="tab-item-chip">
+      <span>Área de trabajo de audio y vídeo</span>
+      <span class="tab-close-icon">✕</span>
+    </div>
+    <div class="tab-item-chip">
+      <span>Tarea de llamada por agentes</span>
+      <span class="tab-close-icon">✕</span>
+    </div>
+    <div class="tab-item-chip">
+      <span>Contacto</span>
+      <span class="tab-close-icon">✕</span>
+    </div>
+    <div class="tab-item-chip">
+      <span>T_BACKOFFICESERVICIOSFIJOSHITSS1</span>
+      <span class="tab-close-icon">✕</span>
+    </div>
+  </div>
+
+  <!-- MAIN WORKSPACE BODY (Column 0, 1, 2, 3) -->
+  <div class="app-workspace-body">
+
+    <!-- COLUMN 0: VERTICAL ICON STRIP -->
+    <div class="left-icon-strip">
+      <div class="strip-icon-btn" title="Inicio">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        </svg>
+      </div>
+
+      <div class="strip-icon-btn active" title="Puesto de trabajo">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 1a9 9 0 0 0-9 9v7c0 1.66 1.34 3 3 3h3v-8H5v-2a7 7 0 0 1 14 0v2h-4v8h3c1.66 0 3-1.34 3-3v-7a9 9 0 0 0-9-9z"/>
+        </svg>
+      </div>
+
+      <div class="strip-icon-btn" title="Marcador y llamadas salientes">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3l-2.5 2.5-1.4-1.4 4.9-4.9 4.9 4.9-1.4 1.4-2.5-2.5v5.3h-2z"/>
+        </svg>
+      </div>
+
+      <div class="strip-icon-btn" title="Tareas">
+        <div class="strip-badge-box">T</div>
+      </div>
+
+      <div class="strip-icon-btn" title="Reportes">
+        <div class="strip-badge-box">R</div>
+      </div>
+
+      <div class="strip-icon-btn" title="Documentos">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+        </svg>
+      </div>
+
+      <div class="strip-bottom">
+        <div class="strip-icon-btn" title="Contraer">
+          <span style="font-size:12px; font-weight:700;">&lt;</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COLUMN 1: OUTBOUND CALLS LIST DRAWER -->
+    <div class="outbound-calls-drawer">
+      <div class="drawer-header">
+        <span class="drawer-title">&lt; Datos de llamadas salientes</span>
+        <span style="font-size:11px; color:#366bfc; cursor:pointer;">R &gt;</span>
+      </div>
+
+      <div class="drawer-filter-bar">
+        <input type="text" class="drawer-search-input" placeholder="Buscar...">
+        <button class="btn-drawer-more">
+          <span>Más</span>
+          <span style="font-size:9px;">▼</span>
+        </button>
+      </div>
+
+      <div class="calls-scroll-list">
+        <!-- Active Row -->
+        <div class="call-list-row active" onclick="AICC.selectPhoneRow('976302352', this)">
+          <span class="call-row-number">976302352</span>
+          <button class="btn-row-call" id="rowCallActionBtn">Llamar...</button>
+        </div>
+
+        <div class="call-list-row" onclick="AICC.selectPhoneRow('931793144', this)">
+          <span class="call-row-number">931793144</span>
+          <span class="call-row-tag success">Exitoso</span>
+        </div>
+
+        <div class="call-list-row" onclick="AICC.selectPhoneRow('973487900', this)">
+          <span class="call-row-number">973487900</span>
+          <span class="call-row-tag success">Exitoso</span>
+        </div>
+
+        <div class="call-list-row" onclick="AICC.selectPhoneRow('952026846', this)">
+          <span class="call-row-number">952026846</span>
+          <span class="call-row-tag success">Exitoso</span>
+        </div>
+
+        <div class="call-list-row" onclick="AICC.selectPhoneRow('982007808', this)">
+          <span class="call-row-number">982007808</span>
+          <span class="call-row-tag success">Exitoso</span>
+        </div>
+
+        <div class="call-list-row" onclick="AICC.selectPhoneRow('982007808', this)">
+          <span class="call-row-number">982007808</span>
+          <span class="call-row-tag failed">Fallo</span>
+        </div>
+
+        <div class="call-list-row" onclick="AICC.selectPhoneRow('982007808', this)">
+          <span class="call-row-number">982007808</span>
+          <span class="call-row-tag success">Exitoso</span>
+        </div>
+
+        <div class="call-list-row" onclick="AICC.selectPhoneRow('982007808', this)">
+          <span class="call-row-number">982007808</span>
+          <span class="call-row-tag failed">Fallo</span>
+        </div>
+
+        <div class="call-list-row" onclick="AICC.selectPhoneRow('933168632', this)">
+          <span class="call-row-number">933168632</span>
+          <span class="call-row-tag success">Exitoso</span>
+        </div>
+
+        <div class="call-list-row" onclick="AICC.selectPhoneRow('986553070', this)">
+          <span class="call-row-number">986553070</span>
+          <span class="call-row-tag success">Exitoso</span>
+        </div>
+      </div>
+
+      <div class="drawer-pagination">
+        <span>Total 1592</span>
+        <span>&lt; 1 2 3 ... 160 &gt;</span>
+      </div>
+    </div>
+
+    <!-- COLUMN 2: CENTER WORKSPACE -->
+    <div class="center-workspace-panel">
+      
+      <!-- HEADER WITH TITLE AND ICONS -->
+      <div class="workspace-header-bar">
+        <h2 class="workspace-caller-title" id="mainHeaderPhone">976302352</h2>
+        <div class="workspace-tools-group">
+          <div class="workspace-tool-btn" title="Historial">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+          </div>
+          <div class="workspace-tool-btn" title="Notas">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+          </div>
+          <div class="workspace-tool-btn" title="Ampliar">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION: INFORMACIÓN DE LA TAREA -->
+      <h3 class="section-block-title">Información de la tarea</h3>
+      <table class="task-info-table">
+        <tbody>
+          <tr>
+            <td class="task-label-col">Nombre de tarea</td>
+            <td class="task-val-col">T_BACKOFFICESERVICIOSFIJOSHITSS1</td>
+          </tr>
+          <tr>
+            <td class="task-label-col">Hora de inicio y fina...</td>
+            <td class="task-val-col">2025-12-03 - 2075-12-03</td>
+          </tr>
+          <tr>
+            <td class="task-label-col">Cola de habilidades</td>
+            <td class="task-val-col">SQ_BACKOFFICESERVICIOSFIJOSHITSS1</td>
+          </tr>
+          <tr>
+            <td class="task-label-col">Descripción de la ta...</td>
+            <td class="task-val-col">--</td>
+          </tr>
+          <tr>
+            <td class="task-label-col">Observaciones</td>
+            <td class="task-val-col">
+              <span style="background:#262a30; color:#fff; padding:2px 8px; border-radius:3px; font-size:11px;">llamada de prueba</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="task-label-col">Reproducir voz</td>
+            <td class="task-val-col">
+              <span style="color:#86909c;">--</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- SECTION: RESULTADO DE NEGOCIO -->
+      <h3 class="section-block-title">Resultado de Negocio</h3>
+      
+      <div class="business-result-container">
+        
+        <!-- SELECTOR RESULTADO DE NEGOCIO -->
+        <div class="form-group-item">
+          <label class="form-item-label">
+            <span class="required-star">*</span> Resultado de Negocio
+          </label>
+          <div class="custom-cascader-box">
+            <div class="cascader-input-trigger" id="cascaderTrigger" onclick="AICC.toggleCascaderPopper()">
+              <span id="cascaderDisplayText">Seleccionar</span>
+              <span style="font-size:10px; color:#86909c;">▼</span>
+            </div>
+
+            <!-- POPPER TREE (Element UI Tree exact simulation) -->
+            <div class="cascader-popper-dropdown" id="cascaderPopper">
+              <div class="tree-node-item" onclick="AICC.toggleTreeNode('branch1', this)">
+                <span class="tree-expand-caret" id="caret-branch1">▶</span>
+                <span class="select-label font-bold">BR_BACKOFFICESERVICIOSFIJOSHITSS2</span>
+              </div>
+              <div class="tree-sub-branches" id="branch1">
+                <div class="tree-node-item" onclick="AICC.toggleTreeNode('branch1_1', this)">
+                  <span class="tree-expand-caret" id="caret-branch1_1">▶</span>
+                  <span class="select-label font-medium">CONTACTO EFECTIVO</span>
+                </div>
+                <div class="tree-sub-branches" id="branch1_1">
+                  <div class="tree-node-item" onclick="AICC.toggleTreeNode('branch1_1_1', this)">
+                    <span class="tree-expand-caret" id="caret-branch1_1_1">▶</span>
+                    <span class="select-label">ATENDIDO</span>
+                  </div>
+                  <div class="tree-sub-branches" id="branch1_1_1">
+                    <div class="tree-node-item" onclick="AICC.selectLeafNode('BR_BACKOFFICESERVICIOSFIJOSHITSS2>CONTACTO EFECTIVO >ATENDIDO>Confirmación de Atención')">
+                      <span style="color:#366bfc; margin-right:4px;">•</span>
+                      <span class="select-label font-semibold">Confirmación de Atención</span>
+                    </div>
+                    <div class="tree-node-item" onclick="AICC.selectLeafNode('BR_BACKOFFICESERVICIOSFIJOSHITSS2>CONTACTO EFECTIVO >ATENDIDO>Consulta Resuelta')">
+                      <span style="color:#86909c; margin-right:4px;">•</span>
+                      <span class="select-label">Consulta Resuelta</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- OTHER BRANCHES -->
+              <div class="tree-node-item" onclick="AICC.selectLeafNode('NO CONTACTO > BUZON DE VOZ')">
+                <span style="color:#86909c; margin-right:4px;">•</span>
+                <span class="select-label">NO CONTACTO > BUZÓN DE VOZ (Ciclo 2x3)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEXTAREA DESCRIPCIÓN DEL NEGOCIO -->
+        <div class="form-group-item">
+          <label class="form-item-label">Descripción del neg...</label>
+          <div class="business-textarea-wrapper">
+            <textarea class="business-description-textarea" id="txtBusinessDesc" placeholder="" oninput="AICC.updateCharCount(this)"></textarea>
+            <span class="textarea-counter-badge" id="charCounter">0 / 1000</span>
+          </div>
+        </div>
+
+        <!-- SAVE BUTTON -->
+        <div class="form-actions-bottom">
+          <button class="btn-save-primary disabled" id="btnSaveResult" onclick="AICC.saveBusinessResult()">Guardar</button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- COLUMN 3: RIGHT INFO SIDEBAR -->
+    <div class="right-info-sidebar">
+      
+      <!-- Top phone badge -->
+      <div class="right-caller-avatar-bar">
+        <span class="avatar-phone-text" id="rightPhoneTop">976302352</span>
+        <div class="avatar-phone-bubble">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-1.57 1.97c-2.83-1.45-5.15-3.76-6.59-6.59l1.97-1.57c.28-.28.36-.67.25-1.02A11.36 11.36 0 0 1 8.5 4.3a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1C3 13.93 10.07 21 19 21a1 1 0 0 0 1-1v-3.62a1 1 0 0 0-.99-1z"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Section: Información de llamadas -->
+      <h3 class="section-block-title">Información de llamadas</h3>
+      <div class="info-list-grid">
+        <div class="info-grid-row">
+          <span class="label">ID de reserva</span>
+          <span class="val" id="reservaIdVal">1794585220928030273449598</span>
+        </div>
+        <div class="info-grid-row">
+          <span class="label"></span>
+          <span class="val">71231</span>
+        </div>
+        <div class="info-grid-row">
+          <span class="label">Número llamado</span>
+          <span class="val" id="rightCalledNumber">976302352</span>
+        </div>
+      </div>
+
+      <!-- Section: Registro de llamadas salientes -->
+      <h3 class="section-block-title" style="margin-top: 24px;">Registro de llamadas salientes</h3>
+      
+      <div class="outbound-record-card">
+        <div class="record-time-header">
+          <div class="record-time-icon">📞</div>
+          <span id="recordTimestamp">2026-11-13 10:53:42 - 2026-11-13 10:54:45</span>
+        </div>
+
+        <div class="info-list-grid" style="margin-top: 6px;">
+          <div class="info-grid-row">
+            <span class="label">Número d...</span>
+            <span class="val" id="rightRecordPhone">976302352</span>
+          </div>
+          <div class="info-grid-row">
+            <span class="label">Estado</span>
+            <span class="val" id="rightCallStateText">Ejecutando</span>
+          </div>
+          <div class="info-grid-row">
+            <span class="label">Resultado</span>
+            <span class="val" id="rightCallResultText">--</span>
+          </div>
+          <div class="info-grid-row">
+            <span class="label">Causa de ...</span>
+            <span class="val">--</span>
+          </div>
+          <div class="info-grid-row">
+            <span class="label">Operación</span>
+            <div class="val">
+              <span id="operationModeLabel">Resultado comercial</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="record-operations-links">
+          <a href="#" onclick="return false;">Resultado comercial</a>
+          <span style="color:#dcdfe6;">|</span>
+          <a href="#" onclick="return false;">Registro de resultados</a>
+          <span style="color:#dcdfe6;">|</span>
+          <a href="#" onclick="return false;">Reproducir</a>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- FLOATING AICC BO ASSISTANT / SIMULATOR CONTROL BAR -->
+  <div class="demo-floating-controller">
+    <span class="controller-badge">Huawei Cloud MaaS</span>
+    
+    <button class="controller-btn primary" onclick="AICC.runFullVideoSequence()" title="Ejecuta automáticamente la secuencia idéntica al video de AICC">
+      <span>▶️ Reproducir Demo Video (38s)</span>
+    </button>
+    
+    <button class="controller-btn" onclick="AICC.triggerInboundCall()">
+      <span>📞 Conectar Llamada</span>
+    </button>
+    
+    <button class="controller-btn red" onclick="AICC.hangupCall()">
+      <span>📴 Colgar</span>
+    </button>
+
+    <button class="controller-btn" onclick="AICC.autoFillWithMaaS()">
+      <span>⚡ Auto-Tipificar con MaaS</span>
+    </button>
+
+    <button class="controller-btn" onclick="AICC.resetDemo()">
+      <span>🔄 Reiniciar</span>
+    </button>
+  </div>
+
+  <!-- JAVASCRIPT SIMULATION LOGIC -->
+  <script>
+    const AICC = {
+      callState: 'CONNECTED', // CONNECTED, ACW, IDLE
+      timerSeconds: 38,
+      timerInterval: null,
+      acwSeconds: 0,
+      acwInterval: null,
+
+      init() {
+        this.startCallTimer();
+        this.updateCharCount(document.getElementById('txtBusinessDesc'));
+      },
+
+      startCallTimer() {
+        if (this.timerInterval) clearInterval(this.timerInterval);
+        this.timerInterval = setInterval(() => {
+          this.timerSeconds++;
+          const m = String(Math.floor(this.timerSeconds / 60)).padStart(2, '0');
+          const s = String(this.timerSeconds % 60).padStart(2, '0');
+          const display = `${m}:${s}`;
+          const el = document.getElementById('callDurationTimer');
+          if (el) el.innerText = display;
+        }, 1000);
+      },
+
+      hangupCall() {
+        if (this.callState === 'ACW' || this.callState === 'IDLE') return;
+
+        this.callState = 'ACW';
+        if (this.timerInterval) clearInterval(this.timerInterval);
+
+        // Hide center active call bar
+        const bar = document.getElementById('telephonyCallBar');
+        if (bar) bar.style.opacity = '0.35';
+
+        // Update top status to "Recapitulación" with timer
+        this.acwSeconds = 1;
+        this.updateStatusPill('Recapitulación 00:01', 'acw');
+        
+        if (this.acwInterval) clearInterval(this.acwInterval);
+        this.acwInterval = setInterval(() => {
+          this.acwSeconds++;
+          const m = String(Math.floor(this.acwSeconds / 60)).padStart(2, '0');
+          const s = String(this.acwSeconds % 60).padStart(2, '0');
+          this.updateStatusPill(`Recapitulación ${m}:${s}`, 'acw');
+        }, 1000);
+
+        // Right side updates: Estado: Finalizado, Resultado: Exitoso
+        document.getElementById('rightCallStateText').innerText = 'Finalizado';
+        document.getElementById('rightCallStateText').style.color = '#1d2129';
+        document.getElementById('rightCallResultText').innerText = 'Exitoso';
+        document.getElementById('rightCallResultText').style.color = '#67c23a';
+
+        // Show bottom right toast: "Sugerencias: El agente colgó"
+        this.showBottomToast();
+
+        // Enable save button (turns blue)
+        const btnSave = document.getElementById('btnSaveResult');
+        btnSave.classList.remove('disabled');
+
+        // Automatically expand/show cascader ready for tipification
+        const trigger = document.getElementById('cascaderTrigger');
+        trigger.classList.add('is-focus');
+      },
+
+      autoFillWithMaaS() {
+        // Auto-select cascader result
+        const tipification = 'BR_BACKOFFICESERVICIOSFIJOSHITSS2>CONTACTO EFECTIVO >ATENDIDO>Confirmación de Atención';
+        this.selectLeafNode(tipification);
+
+        // Auto-fill Description textarea
+        const descText = 'CAS-982280-26 - Fernando Alarcón - INT_HFC_LENTITUD_UPSTREAM (SOT 90888521)';
+        const txt = document.getElementById('txtBusinessDesc');
+        txt.value = descText;
+        this.updateCharCount(txt);
+
+        // Enable save button
+        const btnSave = document.getElementById('btnSaveResult');
+        btnSave.classList.remove('disabled');
+      },
+
+      saveBusinessResult() {
+        const btnSave = document.getElementById('btnSaveResult');
+        if (btnSave.classList.contains('disabled')) return;
+
+        // Stop ACW timer
+        if (this.acwInterval) clearInterval(this.acwInterval);
+
+        // Show top center success toast: "El resultado del negocio se registra correctamente"
+        this.showTopSuccess();
+
+        // Change status to "Disponible" (green dot)
+        this.updateStatusPill('Disponible', 'ready');
+        this.callState = 'IDLE';
+
+        // Disable save button again
+        btnSave.classList.add('disabled');
+        btnSave.innerText = 'Guardado ✓';
+        setTimeout(() => { btnSave.innerText = 'Guardar'; }, 2500);
+
+        // Update list tag on the left
+        const rowBtn = document.getElementById('rowCallActionBtn');
+        if (rowBtn) {
+          rowBtn.outerHTML = '<span class="call-row-tag success">Exitoso</span>';
+        }
+      },
+
+      triggerInboundCall() {
+        this.resetDemo();
+      },
+
+      runFullVideoSequence() {
+        this.resetDemo();
+        // Step 1: Wait 3 seconds in call
+        setTimeout(() => {
+          this.hangupCall();
+          // Step 2: In ACW, auto-fill with MaaS after 2 seconds
+          setTimeout(() => {
+            this.autoFillWithMaaS();
+            // Step 3: Save after 2 seconds
+            setTimeout(() => {
+              this.saveBusinessResult();
+            }, 2000);
+          }, 2000);
+        }, 3000);
+      },
+
+      resetDemo() {
+        this.callState = 'CONNECTED';
+        this.timerSeconds = 7;
+        this.startCallTimer();
+        if (this.acwInterval) clearInterval(this.acwInterval);
+
+        // Restore header telephony
+        const bar = document.getElementById('telephonyCallBar');
+        if (bar) bar.style.opacity = '1';
+
+        // Status Hablar
+        this.updateStatusPill('Hablar', 'in-call');
+
+        // Right side
+        document.getElementById('rightCallStateText').innerText = 'Ejecutando';
+        document.getElementById('rightCallStateText').style.color = '#1d2129';
+        document.getElementById('rightCallResultText').innerText = '--';
+
+        // Clear inputs
+        document.getElementById('cascaderDisplayText').innerText = 'Seleccionar';
+        document.getElementById('cascaderDisplayText').classList.remove('has-value');
+        document.getElementById('txtBusinessDesc').value = '';
+        this.updateCharCount(document.getElementById('txtBusinessDesc'));
+
+        // Reset Save button
+        const btnSave = document.getElementById('btnSaveResult');
+        btnSave.classList.add('disabled');
+        btnSave.innerText = 'Guardar';
+
+        // Hide poppers
+        document.getElementById('cascaderPopper').classList.remove('show');
+        document.getElementById('topSuccessMsg').classList.remove('show');
+        document.getElementById('bottomToast').classList.remove('show');
+      },
+
+      updateStatusPill(text, typeClass) {
+        document.getElementById('currentStatusText').innerText = text;
+        const dot = document.getElementById('statusDot');
+        dot.className = `status-dot-indicator ${typeClass}`;
+      },
+
+      toggleStatusDropdown() {
+        const menu = document.getElementById('statusSelectMenu');
+        menu.classList.toggle('show');
+      },
+
+      setAgentStatus(text, typeClass) {
+        this.updateStatusPill(text, typeClass);
+        document.getElementById('statusSelectMenu').classList.remove('show');
+      },
+
+      toggleCascaderPopper() {
+        const popper = document.getElementById('cascaderPopper');
+        popper.classList.toggle('show');
+      },
+
+      toggleTreeNode(branchId, element) {
+        const branch = document.getElementById(branchId);
+        const caret = document.getElementById(`caret-${branchId}`);
+        if (branch.classList.contains('show')) {
+          branch.classList.remove('show');
+          if (caret) caret.classList.remove('expanded');
+        } else {
+          branch.classList.add('show');
+          if (caret) caret.classList.add('expanded');
+        }
+      },
+
+      selectLeafNode(fullPath) {
+        const display = document.getElementById('cascaderDisplayText');
+        display.innerText = fullPath;
+        display.classList.add('has-value');
+        document.getElementById('cascaderPopper').classList.remove('show');
+        
+        // Enable Save button
+        const btnSave = document.getElementById('btnSaveResult');
+        btnSave.classList.remove('disabled');
+      },
+
+      updateCharCount(textarea) {
+        const len = textarea.value.length;
+        document.getElementById('charCounter').innerText = `${len} / 1000`;
+        if (len > 0) {
+          const btnSave = document.getElementById('btnSaveResult');
+          btnSave.classList.remove('disabled');
+        }
+      },
+
+      selectPhoneRow(phone, rowEl) {
+        document.querySelectorAll('.call-list-row').forEach(r => r.classList.remove('active'));
+        rowEl.classList.add('active');
+        document.getElementById('centerCallNumber').innerText = phone;
+        document.getElementById('mainHeaderPhone').innerText = phone;
+        document.getElementById('rightPhoneTop').innerText = phone;
+        document.getElementById('rightCalledNumber').innerText = phone;
+        document.getElementById('rightRecordPhone').innerText = phone;
+      },
+
+      showBottomToast() {
+        const toast = document.getElementById('bottomToast');
+        toast.classList.add('show');
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, 4000);
+      },
+
+      showTopSuccess() {
+        const msg = document.getElementById('topSuccessMsg');
+        msg.classList.add('show');
+        setTimeout(() => {
+          msg.classList.remove('show');
+        }, 3500);
+      },
+
+      hideTopSuccess() {
+        document.getElementById('topSuccessMsg').classList.remove('show');
+      }
+    };
+
+    window.AICC = AICC;
+    window.addEventListener('DOMContentLoaded', () => {
+      AICC.init();
+    });
+  </script>
+
+  <!-- Script RPA Anti-Pausa (compatibilidad intacta) -->
+  <script src="rpa_anti_pausa.js"></script>
+</body>
+</html>
