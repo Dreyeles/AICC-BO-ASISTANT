@@ -1197,6 +1197,17 @@
           Creación De Interacción
         </div>
 
+        <!-- Banner de Sincronización Automática MaaS AI -->
+        <div id="siacSyncAlertBanner" style="display: none; background: #e6f7ea; border: 1px solid #52c41a; color: #135200; padding: 6px 14px; margin: 8px 10px 0 10px; font-size: 11px; display: flex; align-items: center; justify-content: space-between; border-radius: 2px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 14px;">⚡</span>
+            <span><strong>AICC BO Assistant (MaaS AI):</strong> Nota técnica y descartes sincronizados automáticamente desde la llamada en vivo.</span>
+          </div>
+          <button type="button" class="siac-btn" style="height: 20px; font-size: 10px; padding: 0 8px;" onclick="abrirModalVerNotas()">
+            Ver Nota Sincronizada 📄
+          </button>
+        </div>
+
         <!-- Info Cliente -->
         <div class="customer-info-bar">
           <div class="customer-info-left">
@@ -1437,8 +1448,8 @@
       👁️ Ver Notas
     </button>
 
-    <button type="button" class="demo-bar-btn btn-ai-magic" onclick="abrirModalAgregarNotasYAutocompletar()">
-      ⚡ Agregar Nota con MaaS AI
+    <button type="button" class="demo-bar-btn btn-ai-magic" onclick="forzarSincronizacionDesdeAICC()">
+      ⚡ Sincronizar Nota desde AICC (MaaS)
     </button>
 
     <button type="button" class="demo-bar-btn btn-run-all" onclick="iniciarDemoCompleta()">
@@ -1500,7 +1511,66 @@ SOLUCION: N/A`;
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('textarea-ver-notas').value = historialNotas;
       mostrarVista('busqueda');
+      verificarSincronizacionDesdeAICC();
     });
+
+    // Escucha eventos de localStorage de otras pestañas (como AICC)
+    window.addEventListener('storage', (event) => {
+      if (event.key === 'aicc_bo_last_sync') {
+        verificarSincronizacionDesdeAICC();
+      }
+    });
+
+    let yaSincronizado = false;
+    function verificarSincronizacionDesdeAICC() {
+      try {
+        const syncDataRaw = localStorage.getItem('aicc_bo_last_sync');
+        if (syncDataRaw && !yaSincronizado) {
+          const syncData = JSON.parse(syncDataRaw);
+          aplicarSincronizacion(syncData);
+        }
+      } catch (e) {
+        console.warn("Storage sync check", e);
+      }
+    }
+
+    function forzarSincronizacionDesdeAICC() {
+      const mockSync = {
+        fechaDisplay: new Date().toLocaleDateString('es-PE') + ' ' + new Date().toLocaleTimeString('es-PE'),
+        plantillaHitss: `BACKOFFICE HITSS
+CELULAR: 976302352
+PROBLEMA DETECTADO: LENTITUD E INTERMITENCIA
+DESCARTES REALIZADOS: Se valida Incógnito con provisión y online
+Se valida Schaman sin alertas masivas
+Se valida TR69 con AutoSelect off
+Se valida bandas separadas 2.4G y 5G
+Pruebas de navegación y streaming exitosas
+Se llama a cliente: Magdalena Terán Panaifo
+Cliente confirma solución en línea
+SOLUCION: CONFIGURACION REMOTA EXITOSA`
+      };
+      aplicarSincronizacion(mockSync);
+      mostrarVista('interaccion');
+      setTimeout(() => {
+        abrirModalVerNotas();
+      }, 600);
+    }
+
+    function aplicarSincronizacion(syncData) {
+      if (yaSincronizado) return;
+      yaSincronizado = true;
+
+      const fechaStr = syncData.fechaDisplay || new Date().toLocaleString('es-PE');
+      const nuevaNotaMaaS = `\n\n*** NOTAS ${fechaStr} E761957 Tipo de acción: Rev. administrador\n${syncData.plantillaHitss || plantillaBackofficeAI}`;
+      historialNotas += nuevaNotaMaaS;
+      document.getElementById('textarea-ver-notas').value = historialNotas;
+
+      // Mostrar banner en Vista Interacción
+      const banner = document.getElementById('siacSyncAlertBanner');
+      if (banner) banner.style.display = 'flex';
+
+      mostrarToast('Sincronización en Tiempo Real', 'Nota de descartes generada por Huawei MaaS sincronizada en SIAC Único.');
+    }
 
     // Control de Vistas
     function mostrarVista(vista) {
@@ -1691,3 +1761,4 @@ SOLUCION: N/A`;
 
 </body>
 </html>
+

@@ -1046,6 +1046,339 @@
       border-color: var(--danger-red);
       color: #ffffff;
     }
+
+    /* TELEPROMPTER & LIVE DIARIZATION COPILOT (MAAS AI) */
+    .aicc-teleprompter-drawer {
+      position: fixed;
+      top: 54px;
+      right: 20px;
+      width: 440px;
+      max-height: calc(100vh - 110px);
+      background: rgba(15, 20, 32, 0.96);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(0, 112, 210, 0.5);
+      border-radius: 12px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+      z-index: 1500;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      font-size: 11.5px;
+      color: #e4e7ed;
+    }
+
+    .aicc-teleprompter-drawer.minimized {
+      height: 44px;
+      overflow: hidden;
+    }
+
+    .teleprompter-header {
+      background: linear-gradient(90deg, #0e1526, #1c2742);
+      border-bottom: 1px solid rgba(0, 112, 210, 0.3);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .teleprompter-title-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-live-pulse {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(220, 38, 38, 0.25);
+      border: 1px solid #dc2626;
+      color: #fca5a5;
+      padding: 2px 7px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 9.5px;
+      letter-spacing: 0.5px;
+      animation: pulse 1.8s infinite;
+    }
+
+    .teleprompter-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .teleprompter-btn-icon {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #cbd5e1;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.15s;
+    }
+
+    .teleprompter-btn-icon:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+
+    /* Customer Call Banner in Teleprompter */
+    .teleprompter-caller-banner {
+      background: #111827;
+      padding: 8px 14px;
+      border-bottom: 1px solid #1f293d;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+    }
+
+    .teleprompter-audio-bar {
+      background: #151d30;
+      padding: 8px 14px;
+      border-bottom: 1px solid #1f293d;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .audio-btn-circle {
+      width: 30px;
+      height: 30px;
+      background: linear-gradient(135deg, #0070d2, #005fb2);
+      border-radius: 50%;
+      border: none;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 12px;
+      box-shadow: 0 2px 8px rgba(0, 112, 210, 0.4);
+      flex-shrink: 0;
+    }
+
+    .audio-progress-bar {
+      flex: 1;
+      height: 4px;
+      background: #2b354f;
+      border-radius: 2px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .audio-progress-fill {
+      height: 100%;
+      background: #0070d2;
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    /* Transcript Stream */
+    .teleprompter-stream {
+      padding: 12px;
+      max-height: 250px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: #0b0f19;
+    }
+
+    .transcript-bubble {
+      padding: 8px 11px;
+      border-radius: 8px;
+      line-height: 1.4;
+      animation: fadeInBubble 0.3s ease;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+
+    @keyframes fadeInBubble {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .transcript-bubble.asesor {
+      background: rgba(0, 112, 210, 0.14);
+      border-color: rgba(0, 112, 210, 0.3);
+      border-left: 3px solid #0070d2;
+    }
+
+    .transcript-bubble.cliente {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.3);
+      border-left: 3px solid #10b981;
+    }
+
+    .transcript-bubble.active-speech {
+      box-shadow: 0 0 10px rgba(0, 112, 210, 0.5);
+      border-color: #38bdf8;
+    }
+
+    .bubble-speaker-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+      font-weight: 700;
+      font-size: 10.5px;
+    }
+
+    .speaker-asesor-name {
+      color: #60a5fa;
+    }
+
+    .speaker-cliente-name {
+      color: #34d399;
+    }
+
+    .bubble-text {
+      color: #f1f5f9;
+      font-size: 11.5px;
+    }
+
+    /* Real-Time Descartes Checklist */
+    .teleprompter-descartes-panel {
+      background: #111827;
+      border-top: 1px solid #1f293d;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .descartes-header {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .descarte-tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .descarte-chip {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #64748b;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.3s;
+    }
+
+    .descarte-chip.detected {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: #10b981;
+      color: #34d399;
+      font-weight: 600;
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+    }
+
+    /* MULTI-SYSTEM SYNC MODAL */
+    .sync-modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(5, 10, 20, 0.75);
+      backdrop-filter: blur(6px);
+      z-index: 2500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      animation: modalFadeIn 0.25s ease;
+    }
+
+    .sync-modal-card {
+      background: #121826;
+      border: 1px solid rgba(0, 112, 210, 0.5);
+      border-radius: 16px;
+      width: 90%;
+      max-width: 620px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+      overflow: hidden;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sync-modal-header {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      border-bottom: 1px solid #334155;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sync-modal-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .sync-system-row {
+      background: #1a2234;
+      border: 1px solid #28354f;
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .sync-system-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sync-status-badge {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid #10b981;
+      color: #34d399;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .sync-btn-link {
+      background: #0070d2;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.15s;
+    }
+
+    .sync-btn-link:hover {
+      background: #005fb2;
+    }
   </style>
 </head>
 <body>
@@ -1574,20 +1907,191 @@
 
   </div>
 
+  <!-- =========================================================================
+       WIDGET: TELEPROMPTER & DIARIZACIÓN EN TIEMPO REAL (MAAS AI COPILOT)
+       ========================================================================= -->
+  <div id="aiccTeleprompterDrawer" class="aicc-teleprompter-drawer">
+    <!-- Header -->
+    <div class="teleprompter-header" onclick="AICC.toggleTeleprompterMinimize()">
+      <div class="teleprompter-title-badge">
+        <span class="badge-live-pulse" id="teleprompterStatusBadge">● EN VIVO</span>
+        <span style="font-weight: 700; color: #fff; font-size: 12px;">AICC BO Assistant | Teleprompter MaaS</span>
+      </div>
+      <div class="teleprompter-controls">
+        <button class="teleprompter-btn-icon" id="btnMuteAudio" onclick="event.stopPropagation(); AICC.toggleMuteAudio()" title="Silenciar / Activar voz de IA para hablar tú mismo">
+          🔊
+        </button>
+        <button class="teleprompter-btn-icon" onclick="event.stopPropagation(); AICC.toggleTeleprompterMinimize()" title="Minimizar / Maximizar">
+          &#8212;
+        </button>
+      </div>
+    </div>
+
+    <!-- Caller & Case Details -->
+    <div class="teleprompter-caller-banner">
+      <div>
+        <span style="color: #94a3b8;">Cliente:</span>
+        <strong style="color: #f1f5f9; margin-left: 3px;">Magdalena Terán Panaifo</strong>
+      </div>
+      <div style="font-family: monospace; color: #38bdf8;">
+        CASO: 0061568299 | 976302352
+      </div>
+    </div>
+
+    <!-- Audio Player Bar -->
+    <div class="teleprompter-audio-bar">
+      <audio id="audioLlamada" src="llamada_drey_magdalena.mp3" preload="auto"></audio>
+      <button class="audio-btn-circle" id="btnPlayPauseCall" onclick="AICC.togglePlayCallAudio()">
+        ▶
+      </button>
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+        <div class="audio-progress-bar" onclick="AICC.seekAudio(event)">
+          <div class="audio-progress-fill" id="audioProgressFill"></div>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 10px; color: #94a3b8; font-family: monospace;">
+          <span id="audioCurrentTime">00:00</span>
+          <span>Diarización Neural: Asesor (Drey) vs Cliente (Magdalena)</span>
+          <span id="audioTotalTime">01:38</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Transcript Chat Stream -->
+    <div class="teleprompter-stream" id="teleprompterStream">
+      <!-- Bubbles will be injected dynamically or highlighted -->
+      <div style="text-align: center; color: #64748b; font-size: 11px; padding: 10px;" id="streamEmptyNotice">
+        Presione <strong>"▶️ Reproducir Llamada Demo con IA"</strong> o inicie la llamada para ver la transcripción diarizada en tiempo real.
+      </div>
+    </div>
+
+    <!-- Live Descartes Checklist Panel -->
+    <div class="teleprompter-descartes-panel">
+      <div class="descartes-header">
+        <span>Descartes Detectados por MaaS AI:</span>
+        <span id="descartesComplianceScore" style="color: #34d399;">Cumplimiento: 0%</span>
+      </div>
+      <div class="descarte-tag-row">
+        <span class="descarte-chip" id="chip-saludo">
+          <span>⚪</span> Saludo y Titular
+        </span>
+        <span class="descarte-chip" id="chip-sintoma">
+          <span>⚪</span> Diagnóstico Wifi
+        </span>
+        <span class="descarte-chip" id="chip-incognito">
+          <span>⚪</span> Incógnito Online
+        </span>
+        <span class="descarte-chip" id="chip-schaman">
+          <span>⚪</span> Schaman sin Alertas
+        </span>
+        <span class="descarte-chip" id="chip-tr069">
+          <span>⚪</span> TR-069 AutoSelect OFF
+        </span>
+        <span class="descarte-chip" id="chip-wifi">
+          <span>⚪</span> Bandas 2.4G / 5G Separadas
+        </span>
+        <span class="descarte-chip" id="chip-solucion">
+          <span>⚪</span> Solución Confirmada
+        </span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- =========================================================================
+       MODAL: SINCRONIZACIÓN MULTI-SISTEMA EXITOSA
+       ========================================================================= -->
+  <div class="sync-modal-overlay" id="syncSuccessModal">
+    <div class="sync-modal-card">
+      <div class="sync-modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 20px;">🎉</span>
+          <div>
+            <h3 style="font-size: 14.5px; font-weight: bold; color: #fff;">¡Sincronización Multi-Sistema Exitosa!</h3>
+            <p style="font-size: 11px; color: #94a3b8; margin-top: 2px;">Huawei Cloud MaaS distribuyó los descartes técnicos en tiempo real.</p>
+          </div>
+        </div>
+        <button onclick="AICC.closeSyncModal()" style="background: none; border: none; color: #94a3b8; font-size: 16px; cursor: pointer;">✕</button>
+      </div>
+
+      <div class="sync-modal-body">
+        <!-- AICC -->
+        <div class="sync-system-row">
+          <div class="sync-system-info">
+            <span style="font-size: 16px;">🔴</span>
+            <div>
+              <strong style="font-size: 12px; color: #fff;">Huawei AICC (Customer Service Cloud)</strong>
+              <div style="font-size: 10.5px; color: #94a3b8;">Tipificación horaria guardada en 5s. Estado agente: Disponible.</div>
+            </div>
+          </div>
+          <span class="sync-status-badge">✔ REGISTRADO</span>
+        </div>
+
+        <!-- SIAC ÚNICO -->
+        <div class="sync-system-row">
+          <div class="sync-system-info">
+            <span style="font-size: 16px;">🔴</span>
+            <div>
+              <strong style="font-size: 12px; color: #fff;">SIAC Único (Sistema de Reclamos Claro)</strong>
+              <div style="font-size: 10.5px; color: #94a3b8;">Caso 0061568299 actualizado con plantilla de descartes en "Ver Notas".</div>
+            </div>
+          </div>
+          <a href="../siac unico/index.html" target="_blank" class="sync-btn-link">
+            <span>🔗 Abrir SIAC Único</span>
+          </a>
+        </div>
+
+        <!-- BMC HELIX -->
+        <div class="sync-system-row">
+          <div class="sync-system-info">
+            <span style="font-size: 16px;">🟠</span>
+            <div>
+              <strong style="font-size: 12px; color: #fff;">BMC Helix ITSM (Remedy)</strong>
+              <div style="font-size: 10.5px; color: #94a3b8;">Incidente INC000001802027 actualizado con nota en barra lateral Actividad.</div>
+            </div>
+          </div>
+          <a href="../bmc helix/index.html" target="_blank" class="sync-btn-link" style="background: #e65100;">
+            <span>🔗 Abrir BMC Helix</span>
+          </a>
+        </div>
+
+        <!-- PORTAL CALIDAD Y FORMACIÓN -->
+        <div class="sync-system-row">
+          <div class="sync-system-info">
+            <span style="font-size: 16px;">⭐</span>
+            <div>
+              <strong style="font-size: 12px; color: #fff;">Portal de Calidad y Formación (GaussDB / OBS)</strong>
+              <div style="font-size: 10.5px; color: #94a3b8;">Audio y transcripción almacenados. Calificación: 98/100 (Llamada Óptima).</div>
+            </div>
+          </div>
+          <a href="../index.html" target="_blank" class="sync-btn-link" style="background: #10b981;">
+            <span>🔗 Ver Calidad</span>
+          </a>
+        </div>
+      </div>
+
+      <div style="background: #0d121d; padding: 12px 20px; border-top: 1px solid #28354f; display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="controller-btn primary" onclick="AICC.closeSyncModal()" style="height: 28px; padding: 0 16px;">
+          Entendido / Continuar
+        </button>
+      </div>
+    </div>
+  </div>
+
+
   <!-- FLOATING AICC BO ASSISTANT / SIMULATOR CONTROL BAR -->
   <div class="demo-floating-controller">
     <span class="controller-badge">Huawei Cloud MaaS</span>
     
-    <button class="controller-btn primary" onclick="AICC.runFullVideoSequence()" title="Ejecuta automáticamente la secuencia idéntica al video de AICC">
-      <span>▶️ Reproducir Demo Video (38s)</span>
+    <button class="controller-btn primary" onclick="AICC.startFullLiveCallDemo()" title="Inicia la llamada real con audio, transcripción diarizada y auto-sincronización">
+      <span>▶️ Reproducir Llamada Demo con IA (98s)</span>
     </button>
     
-    <button class="controller-btn" onclick="AICC.triggerInboundCall()">
-      <span>📞 Conectar Llamada</span>
+    <button class="controller-btn" onclick="AICC.toggleTeleprompterVisibility()">
+      <span>🎙️ Teleprompter en Vivo</span>
     </button>
-    
-    <button class="controller-btn red" onclick="AICC.hangupCall()">
-      <span>📴 Colgar</span>
+
+    <button class="controller-btn red" onclick="AICC.hangupCallAndSync()">
+      <span>📴 Colgar y Sincronizar Todo</span>
     </button>
 
     <button class="controller-btn" onclick="AICC.autoFillWithMaaS()">
@@ -1601,16 +2105,321 @@
 
   <!-- JAVASCRIPT SIMULATION LOGIC -->
   <script>
+    // Diálogo estructurado sincronizado con 'llamada_drey_magdalena.mp3'
+    const DIALOGO_AICC = [
+      {
+        id: 1,
+        hablante: "asesor",
+        nombre: "Drey Aymituma (Asesor N2)",
+        avatar: "🎧",
+        texto: "Buenos días, le saluda Drey Aymituma del soporte técnico de segundo nivel de Claro. ¿Me comunico con la señora Magdalena Terán?",
+        descarteId: "chip-saludo",
+        tInicio: 0.0,
+        tFin: 9.67
+      },
+      {
+        id: 2,
+        hablante: "cliente",
+        nombre: "Magdalena Terán (Cliente)",
+        avatar: "👤",
+        texto: "Buenos días joven Drey, sí con ella misma. Menos mal me llaman, tengo problemas con el internet en mi casa, está súper lento, el wifi se me para cortando y no puedo ni ver mis canales.",
+        descarteId: "chip-sintoma",
+        tInicio: 9.67,
+        tFin: 21.09
+      },
+      {
+        id: 3,
+        hablante: "asesor",
+        nombre: "Drey Aymituma (Asesor N2)",
+        avatar: "🎧",
+        texto: "Comprendo perfectamente su molestia señora Magdalena, descuide que hoy mismo lo solucionamos. Permítame unos segundos mientras realizo los descartes en línea. Estoy validando la plataforma Incógnito: su módem aparece aprovisionado y con señal activa. Asimismo en Schaman no registramos averías masivas en su zona.",
+        descarteId: "chip-incognito",
+        descarteExtraId: "chip-schaman",
+        tInicio: 21.09,
+        tFin: 43.91
+      },
+      {
+        id: 4,
+        hablante: "cliente",
+        nombre: "Magdalena Terán (Cliente)",
+        avatar: "👤",
+        texto: "Menos mal joven, porque pensé que era una caída general de toda la cuadra.",
+        tInicio: 43.91,
+        tFin: 48.81
+      },
+      {
+        id: 5,
+        hablante: "asesor",
+        nombre: "Drey Aymituma (Asesor N2)",
+        avatar: "🎧",
+        texto: "Es una saturación interna en su router. En este momento estoy ingresando por TR-069: veo que la opción de AutoSelect estaba activada y saturando el canal. Procedo a apagar el AutoSelect y a separar las redes wifi en frecuencias independientes de dos punto cuatro y cinco gigahertz. ¿Me confirma si ya puede visualizar ambas redes en su celular?",
+        descarteId: "chip-tr069",
+        descarteExtraId: "chip-wifi",
+        tInicio: 48.81,
+        tFin: 73.55
+      },
+      {
+        id: 6,
+        hablante: "cliente",
+        nombre: "Magdalena Terán (Cliente)",
+        avatar: "👤",
+        texto: "A ver... ¡Sí! Ya me aparecieron las dos redes, me conecté a la de cinco y ya me cargó el video al instante. ¡Qué rápido joven, de verdad muchas gracias!",
+        descarteId: "chip-solucion",
+        tInicio: 73.55,
+        tFin: 84.93
+      },
+      {
+        id: 7,
+        hablante: "asesor",
+        nombre: "Drey Aymituma (Asesor N2)",
+        avatar: "🎧",
+        texto: "Excelente señora Magdalena, queda configurado y estabilizado. Se despide Drey Aymituma de Claro. Que tenga un excelente día.",
+        tInicio: 84.93,
+        tFin: 95.78
+      },
+      {
+        id: 8,
+        hablante: "cliente",
+        nombre: "Magdalena Terán (Cliente)",
+        avatar: "👤",
+        texto: "Muchas gracias joven Drey, hasta luego.",
+        tInicio: 95.78,
+        tFin: 99.0
+      }
+    ];
+
     const AICC = {
       callState: 'CONNECTED', // CONNECTED, ACW, IDLE
-      timerSeconds: 38,
+      timerSeconds: 7,
       timerInterval: null,
       acwSeconds: 0,
       acwInterval: null,
+      currentTurnIdx: -1,
+      detectedChips: new Set(),
 
       init() {
         this.startCallTimer();
         this.updateCharCount(document.getElementById('txtBusinessDesc'));
+        this.setupAudioListeners();
+      },
+
+      setupAudioListeners() {
+        const audio = document.getElementById('audioLlamada');
+        if (!audio) return;
+
+        audio.addEventListener('timeupdate', () => {
+          this.handleAudioTimeUpdate(audio.currentTime, audio.duration || 98.8);
+        });
+
+        audio.addEventListener('ended', () => {
+          this.onCallAudioFinished();
+        });
+      },
+
+      handleAudioTimeUpdate(currTime, totalDuration) {
+        // Update timer
+        const m = String(Math.floor(currTime / 60)).padStart(2, '0');
+        const s = String(Math.floor(currTime % 60)).padStart(2, '0');
+        document.getElementById('audioCurrentTime').innerText = `${m}:${s}`;
+        document.getElementById('callDurationTimer').innerText = `${m}:${s}`;
+
+        const pct = (currTime / totalDuration) * 100;
+        document.getElementById('audioProgressFill').style.width = `${pct}%`;
+
+        // Check dialogue turns
+        DIALOGO_AICC.forEach((turn, idx) => {
+          if (currTime >= turn.tInicio && currTime <= turn.tFin) {
+            if (this.currentTurnIdx !== idx) {
+              this.currentTurnIdx = idx;
+              this.renderBubble(turn, idx);
+            }
+          }
+        });
+      },
+
+      renderBubble(turn, idx) {
+        const emptyNotice = document.getElementById('streamEmptyNotice');
+        if (emptyNotice) emptyNotice.style.display = 'none';
+
+        const stream = document.getElementById('teleprompterStream');
+        let bubble = document.getElementById(`bubble-turn-${idx}`);
+
+        if (!bubble) {
+          bubble = document.createElement('div');
+          bubble.id = `bubble-turn-${idx}`;
+          bubble.className = `transcript-bubble ${turn.hablante}`;
+          bubble.innerHTML = `
+            <div class="bubble-speaker-header">
+              <span class="${turn.hablante === 'asesor' ? 'speaker-asesor-name' : 'speaker-cliente-name'}">
+                ${turn.avatar} ${turn.nombre}
+              </span>
+              <span style="font-size: 9.5px; opacity: 0.7;">${String(Math.floor(turn.tInicio/60)).padStart(2,'0')}:${String(Math.floor(turn.tInicio%60)).padStart(2,'0')}</span>
+            </div>
+            <div class="bubble-text">${turn.texto}</div>
+          `;
+          stream.appendChild(bubble);
+        }
+
+        document.querySelectorAll('.transcript-bubble').forEach(b => b.classList.remove('active-speech'));
+        bubble.classList.add('active-speech');
+        stream.scrollTop = stream.scrollHeight;
+
+        // Activate Descarte Chip
+        if (turn.descarteId) this.activateChip(turn.descarteId);
+        if (turn.descarteExtraId) this.activateChip(turn.descarteExtraId);
+      },
+
+      activateChip(chipId) {
+        const chip = document.getElementById(chipId);
+        if (chip && !this.detectedChips.has(chipId)) {
+          this.detectedChips.add(chipId);
+          chip.classList.add('detected');
+          chip.innerHTML = chip.innerHTML.replace('⚪', '✔');
+
+          // Update Score
+          const score = Math.min(100, Math.round((this.detectedChips.size / 7) * 100));
+          const scoreEl = document.getElementById('descartesComplianceScore');
+          if (scoreEl) scoreEl.innerText = `Cumplimiento: ${score}%`;
+        }
+      },
+
+      startFullLiveCallDemo() {
+        this.resetDemo();
+        const drawer = document.getElementById('aiccTeleprompterDrawer');
+        drawer.style.display = 'flex';
+        drawer.classList.remove('minimized');
+
+        const audio = document.getElementById('audioLlamada');
+        audio.currentTime = 0;
+        audio.play().then(() => {
+          document.getElementById('btnPlayPauseCall').innerText = '⏸';
+          document.getElementById('teleprompterStatusBadge').innerText = '● EN LLAMADA';
+        }).catch(err => {
+          console.warn("Auto-play blocked, running simulation timer", err);
+          this.runFallbackTimerSimulation();
+        });
+      },
+
+      runFallbackTimerSimulation() {
+        let simTime = 0;
+        const total = 98.8;
+        const interval = setInterval(() => {
+          simTime += 0.5;
+          this.handleAudioTimeUpdate(simTime, total);
+          if (simTime >= total) {
+            clearInterval(interval);
+            this.onCallAudioFinished();
+          }
+        }, 500);
+      },
+
+      togglePlayCallAudio() {
+        const audio = document.getElementById('audioLlamada');
+        const btn = document.getElementById('btnPlayPauseCall');
+        if (audio.paused) {
+          audio.play();
+          btn.innerText = '⏸';
+        } else {
+          audio.pause();
+          btn.innerText = '▶';
+        }
+      },
+
+      seekAudio(event) {
+        const bar = event.currentTarget;
+        const rect = bar.getBoundingClientRect();
+        const clickX = event.clientX - rect.left;
+        const pct = clickX / rect.width;
+        const audio = document.getElementById('audioLlamada');
+        if (audio && audio.duration) {
+          audio.currentTime = pct * audio.duration;
+        }
+      },
+
+      toggleMuteAudio() {
+        const audio = document.getElementById('audioLlamada');
+        const btn = document.getElementById('btnMuteAudio');
+        audio.muted = !audio.muted;
+        btn.innerText = audio.muted ? '🔇' : '🔊';
+        btn.title = audio.muted ? 'Audio silenciado (puedes hablar con tu micrófono)' : 'Audio activo';
+      },
+
+      toggleTeleprompterMinimize() {
+        const drawer = document.getElementById('aiccTeleprompterDrawer');
+        drawer.classList.toggle('minimized');
+      },
+
+      toggleTeleprompterVisibility() {
+        const drawer = document.getElementById('aiccTeleprompterDrawer');
+        if (drawer.style.display === 'none') {
+          drawer.style.display = 'flex';
+          drawer.classList.remove('minimized');
+        } else {
+          drawer.classList.toggle('minimized');
+        }
+      },
+
+      onCallAudioFinished() {
+        document.getElementById('btnPlayPauseCall').innerText = '▶';
+        document.getElementById('teleprompterStatusBadge').innerText = '● FINALIZADA';
+        this.hangupCallAndSync();
+      },
+
+      hangupCallAndSync() {
+        const audio = document.getElementById('audioLlamada');
+        if (audio && !audio.paused) audio.pause();
+
+        this.hangupCall();
+
+        // Autocompletar tipificación AICC y guardar
+        setTimeout(() => {
+          this.autoFillWithMaaS();
+
+          setTimeout(() => {
+            this.saveBusinessResult();
+            this.broadcastMultiSystemSync();
+          }, 1200);
+        }, 800);
+      },
+
+      broadcastMultiSystemSync() {
+        // Escribe evento compartido en localStorage para que SIAC y BMC Helix sincronicen al instante
+        const syncPayload = {
+          timestamp: new Date().toISOString(),
+          fechaDisplay: new Date().toLocaleDateString('es-PE') + ' ' + new Date().toLocaleTimeString('es-PE'),
+          casoId: "0061568299",
+          ticketHelix: "INC000001802027",
+          cliente: "MAGDALENA TERAN PANAIFO",
+          telefono: "976302352",
+          scoreCalidad: 98,
+          descartes: "Se valida Incógnito con provisión y online. Se valida Schaman sin alertas masivas. Se valida TR69 con AutoSelect off. Se separan bandas 2.4G y 5G.",
+          plantillaHitss: `BACKOFFICE HITSS
+CELULAR: 976302352
+PROBLEMA DETECTADO: LENTITUD E INTERMITENCIA
+DESCARTES REALIZADOS: Se valida Incógnito con provisión y online
+Se valida Schaman sin alertas
+Se valida TR69 con AutoSelect off
+Se valida bandas separadas
+No se pueden ver canales
+Se llama a cliente
+Cliente confirma estabilización de señal
+SOLUCION: CONFIGURACION REMOTA EXITOSA`
+        };
+
+        try {
+          localStorage.setItem('aicc_bo_last_sync', JSON.stringify(syncPayload));
+        } catch (e) {
+          console.error("Local storage sync error", e);
+        }
+
+        // Abre modal de sincronización multi-sistema
+        setTimeout(() => {
+          document.getElementById('syncSuccessModal').style.display = 'flex';
+        }, 700);
+      },
+
+      closeSyncModal() {
+        document.getElementById('syncSuccessModal').style.display = 'none';
       },
 
       startCallTimer() {
@@ -1670,8 +2479,15 @@
         const tipification = 'BR_BACKOFFICESERVICIOSFIJOSHITSS2>CONTACTO EFECTIVO >ATENDIDO>Confirmación de Atención';
         this.selectLeafNode(tipification);
 
-        // Auto-fill Description textarea
-        const descText = 'CAS-982280-26 - Fernando Alarcón - INT_HFC_LENTITUD_UPSTREAM (SOT 90888521)';
+        // Auto-fill Description textarea with the real Backoffice Hitss descarte note
+        const descText = `CASO: 0061568299 - MAGDALENA TERAN PANAIFO - HFC VARIACION
+BACKOFFICE HITSS
+CELULAR: 976302352
+DESCARTES REALIZADOS:
+- Incognito: Online y aprovisionado OK
+- Schaman: Sin alertas masivas
+- TR-069: AutoSelect OFF, bandas 2.4G/5G separadas
+SOLUCION: CONFIGURACION REMOTA EXITOSA`;
         const txt = document.getElementById('txtBusinessDesc');
         txt.value = descText;
         this.updateCharCount(txt);
@@ -1712,22 +2528,73 @@
       },
 
       runFullVideoSequence() {
-        this.resetDemo();
-        // Step 1: Wait 3 seconds in call
-        setTimeout(() => {
-          this.hangupCall();
-          // Step 2: In ACW, auto-fill with MaaS after 2 seconds
-          setTimeout(() => {
-            this.autoFillWithMaaS();
-            // Step 3: Save after 2 seconds
-            setTimeout(() => {
-              this.saveBusinessResult();
-            }, 2000);
-          }, 2000);
-        }, 3000);
+        this.startFullLiveCallDemo();
       },
 
       resetDemo() {
+        this.callState = 'CONNECTED';
+        this.timerSeconds = 0;
+        this.currentTurnIdx = -1;
+        this.detectedChips.clear();
+
+        const audio = document.getElementById('audioLlamada');
+        if (audio) {
+          audio.pause();
+          audio.currentTime = 0;
+        }
+
+        document.getElementById('btnPlayPauseCall').innerText = '▶';
+        document.getElementById('audioProgressFill').style.width = '0%';
+        document.getElementById('audioCurrentTime').innerText = '00:00';
+        document.getElementById('teleprompterStatusBadge').innerText = '● EN VIVO';
+        document.getElementById('descartesComplianceScore').innerText = 'Cumplimiento: 0%';
+
+        // Reset chips
+        document.querySelectorAll('.descarte-chip').forEach(c => {
+          c.classList.remove('detected');
+          c.innerHTML = c.innerHTML.replace('✔', '⚪');
+        });
+
+        // Clear stream bubbles
+        const stream = document.getElementById('teleprompterStream');
+        stream.innerHTML = `
+          <div style="text-align: center; color: #64748b; font-size: 11px; padding: 10px;" id="streamEmptyNotice">
+            Presione <strong>"▶️ Reproducir Llamada Demo con IA"</strong> para iniciar la diarización en vivo.
+          </div>
+        `;
+
+        this.startCallTimer();
+        if (this.acwInterval) clearInterval(this.acwInterval);
+
+        // Restore header telephony
+        const bar = document.getElementById('telephonyCallBar');
+        if (bar) bar.style.opacity = '1';
+
+        // Status Hablar
+        this.updateStatusPill('Hablar', 'in-call');
+
+        // Right side
+        document.getElementById('rightCallStateText').innerText = 'Ejecutando';
+        document.getElementById('rightCallStateText').style.color = '#1d2129';
+        document.getElementById('rightCallResultText').innerText = '--';
+
+        // Clear inputs
+        document.getElementById('cascaderDisplayText').innerText = 'Seleccionar';
+        document.getElementById('cascaderDisplayText').classList.remove('has-value');
+        document.getElementById('txtBusinessDesc').value = '';
+        this.updateCharCount(document.getElementById('txtBusinessDesc'));
+
+        // Reset Save button
+        const btnSave = document.getElementById('btnSaveResult');
+        btnSave.classList.add('disabled');
+        btnSave.innerText = 'Guardar';
+
+        // Hide poppers
+        document.getElementById('cascaderPopper').classList.remove('show');
+        document.getElementById('topSuccessMsg').classList.remove('show');
+        document.getElementById('bottomToast').classList.remove('show');
+        document.getElementById('syncSuccessModal').style.display = 'none';
+      },
         this.callState = 'CONNECTED';
         this.timerSeconds = 7;
         this.startCallTimer();

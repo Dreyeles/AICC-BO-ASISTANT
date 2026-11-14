@@ -556,6 +556,260 @@
 
       </div>
 
+      <!-- ========================================================================= -->
+      <!-- BASE DE DATOS CENTRALIZADA DE LLAMADAS (HUAWEI CLOUD GAUSSDB / OBS DATA LAKE) -->
+      <!-- ========================================================================= -->
+      <div class="bg-[#151922] border border-[#232938] rounded-2xl p-6 shadow-xl space-y-5">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#232938] pb-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-huawei-red/20 text-rose-300 border border-huawei-red/30 uppercase tracking-wider font-mono">GaussDB + OBS Storage</span>
+              <span class="text-xs text-slate-400 font-mono">100% Llamadas Almacenadas</span>
+            </div>
+            <h3 class="text-lg font-extrabold text-white mt-1 flex items-center gap-2">
+              <i data-lucide="database" class="w-5 h-5 text-huawei-red"></i>
+              Base de Datos de Transcripciones y Calidad N2
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">Filtrado en tiempo real para las áreas de <strong>Calidad</strong> y <strong>Formación Continua</strong>. Calificación automática basada en descartes certificados.</p>
+          </div>
+
+          <!-- FILTERS FOR QUALITY & FORMATION -->
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="filtrarLlamadasDB('all')" id="btnDbFilterAll" class="px-3 py-1.5 rounded-xl bg-huawei-red text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md">
+              <i data-lucide="list-filter" class="w-3.5 h-3.5"></i>
+              <span>Todas (1,592)</span>
+            </button>
+            <button onclick="filtrarLlamadasDB('buenas')" id="btnDbFilterGood" class="px-3 py-1.5 rounded-xl bg-[#1d2331] hover:bg-emerald-950/60 border border-emerald-500/30 text-emerald-300 text-xs font-semibold transition flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span>Llamadas Buenas (1,465 - 92%)</span>
+            </button>
+            <button onclick="filtrarLlamadasDB('malas')" id="btnDbFilterBad" class="px-3 py-1.5 rounded-xl bg-[#1d2331] hover:bg-rose-950/60 border border-rose-500/30 text-rose-300 text-xs font-semibold transition flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-rose-400"></span>
+              <span>Llamadas Observadas (127 - 8%)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- TABLE OF AUDITED CALLS -->
+        <div class="overflow-x-auto rounded-xl border border-[#232938]">
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-[#11141C] text-slate-400 font-mono text-[11px] uppercase border-b border-[#232938]">
+              <tr>
+                <th class="py-3 px-3.5">ID / Hora</th>
+                <th class="py-3 px-3.5">Asesor N2</th>
+                <th class="py-3 px-3.5">Cliente / Teléfono</th>
+                <th class="py-3 px-3.5">Descartes Auditados (Flyer 41)</th>
+                <th class="py-3 px-3.5">Score Calidad</th>
+                <th class="py-3 px-3.5">Diagnóstico para Formación</th>
+                <th class="py-3 px-3.5 text-center">Acción</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#1f2635]" id="dbCallsTableBody">
+              <!-- ROW 1: DREY AYMITUMA (LLAMADA BUENA MODELO) -->
+              <tr class="hover:bg-[#1a2130] transition call-row-item call-buena bg-emerald-950/10">
+                <td class="py-3 px-3.5 font-mono text-slate-300">
+                  <div class="font-bold text-white">REC-20261113-976302352</div>
+                  <div class="text-[10px] text-slate-500">13/11/2026 10:53 AM (01:38)</div>
+                </td>
+                <td class="py-3 px-3.5">
+                  <div class="font-semibold text-sky-300">Drey E. Aymituma Julca</div>
+                  <div class="text-[10px] text-slate-400 font-mono">E761957 - Backoffice Hitss</div>
+                </td>
+                <td class="py-3 px-3.5">
+                  <div class="font-medium text-white">Magdalena Terán Panaifo</div>
+                  <div class="text-[10px] text-slate-400 font-mono">Caso: 0061568299 | 976302352</div>
+                </td>
+                <td class="py-3 px-3.5">
+                  <div class="flex flex-wrap gap-1">
+                    <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] border border-emerald-500/30">✔ Incógnito Online</span>
+                    <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] border border-emerald-500/30">✔ Schaman OK</span>
+                    <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] border border-emerald-500/30">✔ TR69 AutoSelect OFF</span>
+                    <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] border border-emerald-500/30">✔ Bandas 2.4G/5G</span>
+                  </div>
+                </td>
+                <td class="py-3 px-3.5">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-sm font-extrabold text-emerald-400 font-mono">98/100</span>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">ÓPTIMA</span>
+                  </div>
+                </td>
+                <td class="py-3 px-3.5">
+                  <div class="text-slate-200">Protocolo cumplido al 100%. Empatía alta y solución técnica ágil.</div>
+                  <div class="text-[10px] text-emerald-400 font-medium mt-0.5">🌟 Recomendada como audio de inducción para nuevos ingresos</div>
+                </td>
+                <td class="py-3 px-3.5 text-center">
+                  <button onclick="abrirModalAudioDrey()" class="px-2.5 py-1.5 rounded-lg bg-sky-600/30 hover:bg-sky-600/50 border border-sky-400/40 text-sky-200 font-semibold text-[11px] flex items-center gap-1 mx-auto transition">
+                    <i data-lucide="play" class="w-3 h-3"></i>
+                    <span>Ver Transcripción</span>
+                  </button>
+                </td>
+              </tr>
+
+              <!-- ROW 2: LLAMADA OBSERVADA 1 -->
+              <tr class="hover:bg-[#1a2130] transition call-row-item call-mala bg-rose-950/10">
+                <td class="py-3 px-3.5 font-mono text-slate-300">
+                  <div class="font-bold text-white">REC-20261113-982007808</div>
+                  <div class="text-[10px] text-slate-500">13/11/2026 09:20 AM (07:15)</div>
+                </td>
+                <td class="py-3 px-3.5">
+                  <div class="font-semibold text-rose-300">Agente en Inducción N2</div>
+                  <div class="text-[10px] text-slate-400 font-mono">E884102 - Backoffice Hitss</div>
+                </td>
+                <td class="py-3 px-3.5">
+                  <div class="font-medium text-white">Carlos Mendoza</div>
+                  <div class="text-[10px] text-slate-400 font-mono">Caso: 0061559812 | 982007808</div>
+                </td>
+                <td class="py-3 px-3.5">
+                  <div class="flex flex-wrap gap-1">
+                    <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px]">✔ Incógnito</span>
+                    <span class="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 text-[10px] border border-rose-500/40">❌ Sin TR-069</span>
+                    <span class="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 text-[10px] border border-rose-500/40">❌ Silencio 3m 40s</span>
+                  </div>
+                </td>
+                <td class="py-3 px-3.5">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-sm font-extrabold text-rose-400 font-mono">62/100</span>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40">OBSERVADA</span>
+                  </div>
+                </td>
+                <td class="py-3 px-3.5">
+                  <div class="text-slate-300">Omitió apagar AutoSelect en router y dejó silencio prolongado sin interactuar.</div>
+                  <div class="text-[10px] text-amber-300 font-medium mt-0.5">📚 Módulo asignado: "Gestión Remota TR-069 y Manejo de Tiempos Muertos"</div>
+                </td>
+                <td class="py-3 px-3.5 text-center">
+                  <span class="text-[10px] font-mono text-slate-400 bg-slate-800/80 px-2 py-1 rounded">En Coaching</span>
+                </td>
+              </tr>
+
+              <!-- ROW 3: LLAMADA OBSERVADA 2 -->
+              <tr class="hover:bg-[#1a2130] transition call-row-item call-mala bg-rose-950/10">
+                <td class="py-3 px-3.5 font-mono text-slate-300">
+                  <div class="font-bold text-white">REC-20261112-933168632</div>
+                  <div class="text-[10px] text-slate-500">12/11/2026 05:42 PM (04:10)</div>
+                </td>
+                <td class="py-3 px-3.5">
+                  <div class="font-semibold text-rose-300">Asesor N1 Derivador</div>
+                  <div class="text-[10px] text-slate-400 font-mono">E550193 - Helpdesk</div>
+                </td>
+                <td class="py-3 px-3.5">
+                  <div class="font-medium text-white">Lucía Paredes</div>
+                  <div class="text-[10px] text-slate-400 font-mono">Caso: 0061548801 | 933168632</div>
+                </td>
+                <td class="py-3 px-3.5">
+                  <div class="flex flex-wrap gap-1">
+                    <span class="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 text-[10px] border border-rose-500/40">❌ Sin Schaman</span>
+                    <span class="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 text-[10px] border border-rose-500/40">❌ Sin Despedida</span>
+                  </div>
+                </td>
+                <td class="py-3 px-3.5">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-sm font-extrabold text-rose-400 font-mono">58/100</span>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40">OBSERVADA</span>
+                  </div>
+                </td>
+                <td class="py-3 px-3.5">
+                  <div class="text-slate-300">Derivación prematura a N2 sin descartar avería masiva ni validar titularidad.</div>
+                  <div class="text-[10px] text-amber-300 font-medium mt-0.5">📚 Módulo asignado: "Criterios Estrictos de Derivación N1 a N2 Fija"</div>
+                </td>
+                <td class="py-3 px-3.5 text-center">
+                  <span class="text-[10px] font-mono text-slate-400 bg-slate-800/80 px-2 py-1 rounded">En Coaching</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- MODAL DE INSPECCIÓN DE LLAMADA DE DREY AYMITUMA -->
+      <div id="modalInspectionDrey" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#151922] border border-[#2b3447] rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden shadow-2xl animate-fade-in">
+          
+          <div class="p-5 border-b border-[#232938] flex items-center justify-between bg-[#11141C]">
+            <div class="flex items-center gap-3">
+              <span class="p-2 rounded-xl bg-emerald-500/20 text-emerald-400"><i data-lucide="award" class="w-5 h-5"></i></span>
+              <div>
+                <h3 class="text-base font-bold text-white">Auditoría Diarizada: Drey Aymituma vs Magdalena Terán</h3>
+                <p class="text-xs text-slate-400 font-mono">ID: REC-20261113-976302352 | Duración: 01:38 | Score: 98/100</p>
+              </div>
+            </div>
+            <button onclick="cerrarModalAudioDrey()" class="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-800 transition">✕</button>
+          </div>
+
+          <div class="p-5 overflow-y-auto space-y-4 flex-1">
+            <!-- AUDIO PLAYER -->
+            <div class="bg-[#0E121A] border border-[#232938] rounded-xl p-4 flex items-center gap-4">
+              <audio id="audioDreyMagdalenaModal" src="AICC/llamada_drey_magdalena.mp3" preload="auto"></audio>
+              <button onclick="toggleAudioModalDrey()" id="btnPlayModalDrey" class="w-10 h-10 rounded-full bg-huawei-red text-white flex items-center justify-center font-bold shadow-lg shadow-huawei-red/30 cursor-pointer">
+                ▶
+              </button>
+              <div class="flex-1 space-y-1">
+                <div class="flex justify-between text-xs text-slate-400 font-mono">
+                  <span id="timeModalDrey">00:00</span>
+                  <span>Audio Oficial Diarizado (Voces Neurales Peruanas)</span>
+                  <span>01:38</span>
+                </div>
+                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden cursor-pointer" onclick="seekAudioModalDrey(event)">
+                  <div id="progressModalDrey" class="bg-huawei-red h-full w-0 transition-all"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- CHAT BUBBLES -->
+            <div class="space-y-3 text-xs">
+              <div class="p-3 rounded-xl bg-sky-950/30 border border-sky-800/40">
+                <div class="font-bold text-sky-400 flex items-center gap-1.5 mb-1">
+                  <span>🎧 Drey Aymituma (Asesor N2 Claro)</span>
+                  <span class="text-[10px] text-slate-500 font-mono">00:00</span>
+                </div>
+                <p class="text-slate-200">Buenos días, le saluda Drey Aymituma del soporte técnico de segundo nivel de Claro. ¿Me comunico con la señora Magdalena Terán?</p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-emerald-950/30 border border-emerald-800/40">
+                <div class="font-bold text-emerald-400 flex items-center gap-1.5 mb-1">
+                  <span>👤 Magdalena Terán (Cliente)</span>
+                  <span class="text-[10px] text-slate-500 font-mono">00:09</span>
+                </div>
+                <p class="text-slate-200">Buenos días joven Drey, sí con ella misma. Menos mal me llaman, tengo problemas con el internet en mi casa, está súper lento, el wifi se me para cortando y no puedo ni ver mis canales.</p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-sky-950/30 border border-sky-800/40">
+                <div class="font-bold text-sky-400 flex items-center gap-1.5 mb-1">
+                  <span>🎧 Drey Aymituma (Asesor N2 Claro)</span>
+                  <span class="text-[10px] text-slate-500 font-mono">00:21</span>
+                </div>
+                <p class="text-slate-200">Comprendo perfectamente su molestia señora Magdalena, descuide que hoy mismo lo solucionamos. Permítame unos segundos mientras realizo los descartes en línea. Estoy validando la plataforma Incógnito: su módem aparece aprovisionado y con señal activa. Asimismo en Schaman no registramos averías masivas en su zona.</p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-sky-950/30 border border-sky-800/40">
+                <div class="font-bold text-sky-400 flex items-center gap-1.5 mb-1">
+                  <span>🎧 Drey Aymituma (Asesor N2 Claro)</span>
+                  <span class="text-[10px] text-slate-500 font-mono">00:48</span>
+                </div>
+                <p class="text-slate-200">Es una saturación interna en su router. En este momento estoy ingresando por TR-069: veo que la opción de AutoSelect estaba activada y saturando el canal. Procedo a apagar el AutoSelect y a separar las redes wifi en frecuencias independientes de dos punto cuatro y cinco gigahertz. ¿Me confirma si ya puede visualizar ambas redes en su celular?</p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-emerald-950/30 border border-emerald-800/40">
+                <div class="font-bold text-emerald-400 flex items-center gap-1.5 mb-1">
+                  <span>👤 Magdalena Terán (Cliente)</span>
+                  <span class="text-[10px] text-slate-500 font-mono">01:13</span>
+                </div>
+                <p class="text-slate-200">A ver... ¡Sí! Ya me aparecieron las dos redes, me conecté a la de cinco y ya me cargó el video al instante. ¡Qué rápido joven, de verdad muchas gracias!</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-4 bg-[#11141C] border-t border-[#232938] flex justify-between items-center text-xs">
+            <span class="text-emerald-400 font-semibold flex items-center gap-1">
+              <i data-lucide="check-circle" class="w-4 h-4"></i>
+              Certificado por ModelArts Guard & Huawei Cloud MaaS
+            </span>
+            <button onclick="cerrarModalAudioDrey()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-medium transition">
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- ========================================== -->
@@ -1004,6 +1258,84 @@ ID DE LLAMADA: 1789504734-338240`,
         initCharts();
       }
       lucide.createIcons();
+    }
+
+    // FILTRADO INTELIGENTE DE LLAMADAS EN GAUSSDB (CALIDAD Y FORMACIÓN)
+    function filtrarLlamadasDB(filtro) {
+      const btnAll = document.getElementById('btnDbFilterAll');
+      const btnGood = document.getElementById('btnDbFilterGood');
+      const btnBad = document.getElementById('btnDbFilterBad');
+      const rows = document.querySelectorAll('.call-row-item');
+
+      // Reset button styles
+      [btnAll, btnGood, btnBad].forEach(b => {
+        b.className = "px-3 py-1.5 rounded-xl bg-[#1d2331] text-slate-300 text-xs font-semibold transition flex items-center gap-1.5 border border-[#2d3748]";
+      });
+
+      if (filtro === 'all') {
+        btnAll.className = "px-3 py-1.5 rounded-xl bg-huawei-red text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md";
+        rows.forEach(r => r.style.display = '');
+      } else if (filtro === 'buenas') {
+        btnGood.className = "px-3 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md";
+        rows.forEach(r => {
+          r.style.display = r.classList.contains('call-buena') ? '' : 'none';
+        });
+      } else if (filtro === 'malas') {
+        btnBad.className = "px-3 py-1.5 rounded-xl bg-rose-600 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md";
+        rows.forEach(r => {
+          r.style.display = r.classList.contains('call-mala') ? '' : 'none';
+        });
+      }
+      lucide.createIcons();
+    }
+
+    // MODAL INSPECCIÓN LLAMADA DREY AYMITUMA (CALIDAD)
+    function abrirModalAudioDrey() {
+      const modal = document.getElementById('modalInspectionDrey');
+      modal.classList.remove('hidden');
+      const audio = document.getElementById('audioDreyMagdalenaModal');
+      
+      audio.ontimeupdate = () => {
+        const m = String(Math.floor(audio.currentTime / 60)).padStart(2, '0');
+        const s = String(Math.floor(audio.currentTime % 60)).padStart(2, '0');
+        document.getElementById('timeModalDrey').innerText = `${m}:${s}`;
+        const pct = (audio.currentTime / (audio.duration || 98.8)) * 100;
+        document.getElementById('progressModalDrey').style.width = `${pct}%`;
+      };
+
+      audio.onended = () => {
+        document.getElementById('btnPlayModalDrey').innerText = '▶';
+      };
+      lucide.createIcons();
+    }
+
+    function cerrarModalAudioDrey() {
+      const modal = document.getElementById('modalInspectionDrey');
+      modal.classList.add('hidden');
+      const audio = document.getElementById('audioDreyMagdalenaModal');
+      if (audio) audio.pause();
+      document.getElementById('btnPlayModalDrey').innerText = '▶';
+    }
+
+    function toggleAudioModalDrey() {
+      const audio = document.getElementById('audioDreyMagdalenaModal');
+      const btn = document.getElementById('btnPlayModalDrey');
+      if (audio.paused) {
+        audio.play();
+        btn.innerText = '⏸';
+      } else {
+        audio.pause();
+        btn.innerText = '▶';
+      }
+    }
+
+    function seekAudioModalDrey(event) {
+      const audio = document.getElementById('audioDreyMagdalenaModal');
+      if (!audio || !audio.duration) return;
+      const rect = event.currentTarget.getBoundingClientRect();
+      const clickX = event.clientX - rect.left;
+      const pct = clickX / rect.width;
+      audio.currentTime = pct * audio.duration;
     }
 
     // CHARTS INITIALIZATION

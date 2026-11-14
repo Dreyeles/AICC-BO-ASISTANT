@@ -1444,7 +1444,11 @@ ID DE LLAMADA: 179452635596748599300201995300
       <span>🔍 Detalle Ticket</span>
     </button>
 
-    <button class="bmc-control-btn primary" onclick="HelixApp.injectMaaSTemplate()" title="Simula que AICC BO Assistant inyecta la plantilla Hitss en 1 clic">
+    <button class="bmc-control-btn primary" onclick="HelixApp.forceSyncFromAICC()" title="Simula o recibe la sincronización automática desde la llamada de AICC">
+      <span>⚡ Sincronizar Nota desde AICC (MaaS)</span>
+    </button>
+
+    <button class="bmc-control-btn" onclick="HelixApp.injectMaaSTemplate()" title="Simula que AICC BO Assistant inyecta la plantilla Hitss en 1 clic">
       <span>⚡ Pegar Plantilla MaaS AI</span>
     </button>
 
@@ -1458,6 +1462,86 @@ ID DE LLAMADA: 179452635596748599300201995300
     const HelixApp = {
       currentView: 'list', // 'list' or 'detail'
       totalNotes: 5,
+      synced: false,
+
+      init() {
+        this.renderTicketList();
+        this.checkSyncFromAICC();
+        window.addEventListener('storage', (e) => {
+          if (e.key === 'aicc_bo_last_sync') {
+            this.checkSyncFromAICC();
+          }
+        });
+      },
+
+      checkSyncFromAICC() {
+        try {
+          const raw = localStorage.getItem('aicc_bo_last_sync');
+          if (raw && !this.synced) {
+            const data = JSON.parse(raw);
+            this.applySyncData(data);
+          }
+        } catch (e) {
+          console.warn(e);
+        }
+      },
+
+      forceSyncFromAICC() {
+        const mock = {
+          fechaDisplay: new Date().toLocaleDateString('es-PE') + ' ' + new Date().toLocaleTimeString('es-PE'),
+          plantillaHitss: `BACKOFFICE HITSS
+CELULAR: 976302352
+PROBLEMA DETECTADO: LENTITUD E INTERMITENCIA
+DESCARTES REALIZADOS: Se valida Incógnito con provisión y online
+Se valida Schaman sin alertas masivas
+Se valida TR69 con AutoSelect off
+Se valida bandas separadas 2.4G y 5G
+Pruebas de navegación y streaming exitosas
+Se llama a cliente: Magdalena Terán Panaifo
+Cliente confirma solución en línea
+SOLUCION: CONFIGURACION REMOTA EXITOSA`
+        };
+        this.applySyncData(mock);
+        this.openTicket('INC000001802027');
+      },
+
+      applySyncData(data) {
+        if (this.synced) return;
+        this.synced = true;
+
+        const timeStr = data.fechaDisplay || new Date().toLocaleString('es-PE');
+        const text = data.plantillaHitss || `BACKOFFICE HITSS\nCELULAR: 976302352\nPROBLEMA: LENTITUD E INTERMITENCIA\nSOLUCION: CONFIGURACION REMOTA`;
+
+        const feed = document.getElementById('activityFeedList');
+        if (!feed) return;
+
+        const newCard = document.createElement('div');
+        newCard.className = 'feed-item-card';
+        newCard.style.animation = 'feedHighlight 1.5s ease';
+        newCard.innerHTML = `
+          <div class="feed-avatar-bubble" style="background: #e6f7ea; color: #237804; border: 1px solid #b7eb8f;">🤖</div>
+          <div class="feed-content-block">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <span class="feed-item-author">DREY E AYMITUMA JULCA</span>
+                <span class="feed-item-action" style="color: #237804; font-weight: 600;"> (vía AICC BO Assistant MaaS)</span>
+              </div>
+              <span style="background: #e6f7ea; color: #237804; border: 1px solid #b7eb8f; padding: 1px 6px; border-radius: 10px; font-size: 10px; font-weight: bold;">
+                ⚡ Sincronizado en Vivo
+              </span>
+            </div>
+            <div class="feed-note-text-box template-box" style="border-left: 3px solid #237804; background: #f6ffed;">
+${text}
+            </div>
+            <div class="feed-item-time">${timeStr} (Sincronizado automáticamente al colgar en Huawei AICC)</div>
+          </div>
+        `;
+
+        feed.insertBefore(newCard, feed.firstChild);
+        this.totalNotes++;
+        document.getElementById('notesCurrentCount').innerText = this.totalNotes;
+        document.getElementById('notesTotalCount').innerText = this.totalNotes;
+      },
 
       init() {
         this.showListView();
